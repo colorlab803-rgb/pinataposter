@@ -1,0 +1,48 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Typecheck and Lint",
+			"type": "shell",
+			"command": "npm run typecheck && npm run lint",
+			"problemMatcher": [
+				"$tsc",
+				"$eslint-stylish"
+			]
+		},
+		{
+			"label": "Typecheck Only",
+			"type": "shell",
+			"command": "npm run typecheck",
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Typecheck Only",
+			"type": "shell",
+			"command": "npm run typecheck",
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Typecheck Only",
+			"type": "shell",
+			"command": "npm run typecheck",
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"label": "Typecheck and Lint",
+			"type": "shell",
+			"command": "npm run typecheck && npm run lint",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		}
+	]
+}

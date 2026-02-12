@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/eslintrc",
+  "root": true,
+  "extends": ["next/core-web-vitals"],
+  "parserOptions": { "ecmaVersion": "latest" },
+  "rules": {
+    "@next/next/no-img-element": "off",
+    "react/jsx-key": "warn",
+  "no-console": ["warn", {"allow": ["warn", "error"]}],
+  "react/no-unescaped-entities": "off",
+  "react-hooks/exhaustive-deps": "warn"
+  }
+}

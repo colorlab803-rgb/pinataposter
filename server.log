@@ -1,0 +1,3071 @@
+nohup: no se tendrá en cuenta la entrada
+
+> nextn@0.1.0 dev
+> next dev --turbopack -p 3000
+
+   ▲ Next.js 15.3.3 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.102:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1471ms
+ ⚠ Webpack is configured while Turbopack is not, which may cause problems.
+ ⚠ See instructions if you need to configure Turbopack:
+  https://nextjs.org/docs/app/api-reference/next-config-js/turbo
+
+ ○ Compiling /api/health/firebase-admin ...
+ ✓ Compiled /api/health/firebase-admin in 1255ms
+ GET /api/health/firebase-admin 401 in 1483ms
+ ○ Compiling / ...
+ ✓ Compiled / in 5.7s
+ GET / 200 in 6086ms
+ ○ Compiling /api/health/system ...
+ ✓ Compiled /api/health/system in 551ms
+🏠 Buscando secret "FIREBASE_PROJECT_ID" en development...
+✅ Secret "FIREBASE_PROJECT_ID" encontrado (length: 14)
+🏠 Buscando secret "FIREBASE_CLIENT_EMAIL" en development...
+✅ Secret "FIREBASE_CLIENT_EMAIL" encontrado (length: 62)
+🏠 Buscando secret "FIREBASE_PRIVATE_KEY" en development...
+✅ Secret "FIREBASE_PRIVATE_KEY" encontrado (length: 1704)
+🏠 Buscando secret "GEMINI_API_KEY" en development...
+✅ Secret "GEMINI_API_KEY" encontrado (length: 39)
+🏠 Buscando secret "REPLICATE_API_TOKEN" en development...
+✅ Secret "REPLICATE_API_TOKEN" encontrado (length: 40)
+🔥 Inicializando Firebase Admin - Entorno: Local
+📋 Config: projectId=imagen-gigante, hasClientEmail=true, hasPrivateKey=true
+🏠 Buscando secret "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET" en development...
+✅ Secret "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET" encontrado (length: 34)
+🏠 Inicializando en desarrollo local con credenciales de servicio
+✅ Firebase Admin inicializado en desarrollo
+✅ Test de conectividad Firebase exitoso
+ GET /api/health/system 200 in 1745ms
+ ○ Compiling /api/credits ...
+ ✓ Compiled /api/credits in 1925ms
+🎯 API Credits GET - Inicio de petición
+❌ No se encontró token de autorización
+ GET /api/credits 401 in 2169ms
+ ○ Compiling /msp430 ...
+ ✓ Compiled /msp430 in 6.4s
+ GET /msp430?id=9aadfd09-0ec3-4abe-a563-c48eaec345fb&vscodeBrowserReqId=1758421054030 200 in 7173ms
+ GET / 200 in 168ms
+ ○ Compiling /api/get-ip ...
+ ✓ Compiled /api/get-ip in 618ms
+ GET /api/get-ip 200 in 670ms
+ GET /api/get-ip 200 in 38ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+ ○ Compiling /api/users/sync-profile ...
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+ ✓ Compiled /api/users/sync-profile in 1172ms
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 1470ms
+ GET /api/users/trial-status 200 in 1566ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+ POST /api/users/sync-profile 200 in 1602ms
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 362ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 327ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 309ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 383ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 432ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 610ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 349ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 389ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 302ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 61
+💰 Créditos obtenidos: 61 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 307ms
+ ✓ Compiled in 650ms
+ ✓ Compiled in 433ms
+ ✓ Compiled / in 33ms
+ GET / 200 in 165ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 878ms
+ ✓ Compiled in 429ms
+ ✓ Compiled / in 10ms
+ GET / 200 in 76ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 535ms
+ ✓ Compiled in 418ms
+ GET / 200 in 550ms
+ GET /api/get-ip 200 in 48ms
+ GET /api/get-ip 200 in 37ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+ POST /api/users/sync-profile 200 in 244ms
+ GET /api/users/trial-status 200 in 373ms
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 630ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 403ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 388ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 364ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 345ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 315ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 361ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 370ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 322ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 293ms
+ ✓ Compiled in 371ms
+ GET / 200 in 541ms
+ GET /api/get-ip 200 in 60ms
+ GET /api/get-ip 200 in 95ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+ POST /api/users/sync-profile 200 in 298ms
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+ GET /api/users/trial-status 200 in 438ms
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 552ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 298ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 320ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 343ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 449ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 389ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 389ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 351ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 303ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 344ms
+ ✓ Compiled in 351ms
+ GET / 200 in 522ms
+ GET /api/get-ip 200 in 58ms
+ GET /api/get-ip 200 in 40ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+ POST /api/users/sync-profile 200 in 268ms
+ GET /api/users/trial-status 200 in 415ms
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 573ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 403ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 333ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 280ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 346ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 385ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 281ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 304ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 315ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 378ms
+ GET / 200 in 143ms
+ GET /api/get-ip 200 in 45ms
+ GET /api/get-ip 200 in 35ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+ POST /api/users/sync-profile 200 in 275ms
+ GET /api/users/trial-status 200 in 416ms
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 579ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 384ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 381ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 314ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 309ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 352ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 308ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 354ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 298ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 391ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 302ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 669ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 585ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 1130ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 1085ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 408ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 291ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 290ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 268ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 319ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 505ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 284ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 314ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 303ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 309ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 309ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 324ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+💰 Créditos obtenidos: 44 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 370ms
+ ○ Compiling /api/generate-design ...
+ ✓ Compiled /api/generate-design in 1977ms
+🪙 Reservando 3 créditos para generación de imagen...
+🔍 Paso 1: Verificando usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+✅ Usuario verificado
+🔍 Paso 2: Verificando 3 créditos suficientes
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 44
+✅ Créditos suficientes confirmados
+🔍 Paso 3: Obteniendo Admin Firestore
+✅ Admin Firestore obtenido
+🔍 Paso 4: Creando transacción de reserva
+🪙 Creando reserva de 3 créditos para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+✅ Reserva creada con ID: gAv3kNh0ILrCam5WBGYV
+✅ Créditos reservados, transactionId: gAv3kNh0ILrCam5WBGYV
+[GENERATE] 🔑 Verificando claves API...
+[GENERATE] GEMINI_API_KEY disponible: true
+🏠 Buscando secret "GOOGLE_GENAI_API_KEY" en development...
+✅ Secret "GOOGLE_GENAI_API_KEY" encontrado (length: 39)
+[GENERATE] GOOGLE_GENAI_API_KEY disponible: true
+[GENERATE] Longitud de clave seleccionada: 39
+[GENERATE] Environment: development
+[GENERATE] App Hosting detectado: false
+Generando imagen con PinataPoster IA...
+Prompt original del usuario: el perro rojo, sin texto, solo la imagen del personaje o objeto
+Prompt optimizado: Create a clean vector-style template design of el perro rojo, sin texto, solo la imagen del personaje o objeto. This should be a flat, 2D illustration with the following specifications:
+
+- Simple, clean vector art style (like a sticker or cutout template)
+- Solid colors with clear, defined edges
+- No shadows, gradients, or 3D effects
+- No background elements or decorations
+- Pure white background (#FFFFFF)
+- The design should be centered and ready to be cut out as a silhouette
+- Clean line art with bold, simple shapes
+- Flat cartoon style, suitable for printing and cutting
+- The image should look like a template or pattern piece for crafting
+- No texture effects, just clean flat colors and black outlines
+- IMPORTANT: If the design includes characters or faces, they MUST have clearly visible eyes, nose, and mouth
+- All facial features should be simple but clearly defined with black outlines
+- Eyes should be prominent and visible, never hidden or missing
+- Character faces should be friendly and complete with all basic facial features
+
+This is for creating a piñata template that will be printed, cut out, and used as a pattern on cardboard.
+🎭 Prompt de personaje detectado, verificando calidad...
+Imagen generada exitosamente con PinataPoster IA
+Iniciando upscale automático x4 con PinataPoster IA...
+[UpscaleInline] 🚀 Iniciando upscale 4x con PinataPoster IA...
+[UpscaleInline] 📷 Imagen original: https://storage.googleapis.com/imagen-gigante.firebasestorage.app/pinata-ai/original-c84cfc6806-1758423110408.png
+[UpscaleInline] ⏱️ Upscale completado en 7.0s
+[UpscaleInline] Upscale completed successfully
+✅ Upscale completado, usando imagen escalada
+✅ Confirmando consumo de 3 créditos para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+✅ Créditos consumidos exitosamente: transacción gAv3kNh0ILrCam5WBGYV
+✅ Créditos consumidos exitosamente tras generación exitosa
+🔄 Iniciando guardado en historial para userId: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📝 Datos del diseño a guardar: {
+  userId: 'qqpFunj4pKVqbCEer0V5W1JQrBw2',
+  originalPrompt: 'el perro rojo, sin texto, solo la imagen del personaje o objeto',
+  hasImageUrl: true,
+  imageUrlLength: 113,
+  generator: 'PinataPoster-IA'
+}
+🔄 PinataAIServiceServer.saveDesign iniciado para userId: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📁 Tipo de imagen: {
+  isBase64: false,
+  imageUrlLength: 113,
+  startsWithData: 'https://storage.goog'
+}
+💾 Guardando en Firestore colección: pinata_ai_designs
+📊 Datos a guardar: {
+  userId: 'qqpFunj4pKVqbCEer0V5W1JQrBw2',
+  originalPrompt: 'el perro rojo, sin texto, solo la imagen del perso...',
+  hasStorageImageUrl: false,
+  hasOriginalUrl: true,
+  hasUpscaledUrl: true,
+  isUpscaled: true,
+  generator: 'PinataPoster-IA'
+}
+✅ Documento creado exitosamente con Admin SDK, ID: 8kDoNHzFrpt7hJWDV1og
+✅ Diseño guardado exitosamente en historial: {
+  savedDesignId: '8kDoNHzFrpt7hJWDV1og',
+  userId: 'qqpFunj4pKVqbCEer0V5W1JQrBw2',
+  prompt: 'el perro rojo, sin texto, solo la imagen del perso...'
+}
+ POST /api/generate-design 200 in 32813ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 455ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 296ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 339ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 293ms
+ GET / 200 in 154ms
+ GET /api/get-ip 200 in 37ms
+ GET /api/get-ip 200 in 38ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+ POST /api/users/sync-profile 200 in 254ms
+ GET /api/users/trial-status 200 in 346ms
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 569ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 344ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 378ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 302ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 328ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 301ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 327ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 334ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 298ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 329ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 310ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 310ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 309ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 336ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 328ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+💰 Créditos obtenidos: 41 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 358ms
+ ○ Compiling /api/generate-styled-number ...
+ ✓ Compiled /api/generate-styled-number in 1374ms
+🪙 Reservando 3 créditos para generación de número estilizado...
+🔍 Paso 1: Verificando usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+✅ Usuario verificado
+🔍 Paso 2: Verificando 3 créditos suficientes
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 41
+✅ Créditos suficientes confirmados
+🔍 Paso 3: Obteniendo Admin Firestore
+✅ Admin Firestore obtenido
+🔍 Paso 4: Creando transacción de reserva
+🪙 Creando reserva de 3 créditos para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+✅ Reserva creada con ID: zfCpwR0h1WMTPmAlHXCi
+✅ Créditos reservados para número, transactionId: zfCpwR0h1WMTPmAlHXCi
+[STYLED NUMBER] Verificando claves API...
+[STYLED NUMBER] GEMINI_API_KEY disponible: true
+[STYLED NUMBER] GOOGLE_GENAI_API_KEY disponible: true
+[STYLED NUMBER] Longitud de clave seleccionada: 39
+[STYLED NUMBER] Environment: development
+Generando número estilizado con PinataPoster IA...
+Número: 3 Estilo: sin estilo (número básico)
+Prompt optimizado: Create a clean, simple number "3" design. Requirements:
+
+BASIC NUMBER DESIGN:
+- Clean, bold number "3" with thick, readable typography
+- Pure white background (#FFFFFF)
+- Simple black outline defining the number's shape
+- No decorative elements, themes, or additional graphics
+- Professional, minimalist design suitable for any occasion
+- The number should fill most of the canvas area with clear, bold typography
+
+VISUAL SPECIFICATIONS:
+- High quality vector-style illustration with clean, defined edges
+- Solid black outline on white background
+- No shadows, gradients, or 3D effects - keep it completely flat
+- Perfect for piñata templates and general crafting purposes
+- Clean line art suitable for cutting and crafting applications
+
+TECHNICAL REQUIREMENTS:
+- Suitable for piñata templates and crafting
+- Clean, printable design without blur or artifacts
+- The number "3" must be clearly legible and well-defined
+- Flat design suitable for cutting and crafting applications
+- Black outline separating the number from the white background
+
+Create a simple, clean number "3" without any thematic decorations or styling.
+Número estilizado generado exitosamente con PinataPoster IA
+Iniciando upscale automático x4 para número estilizado...
+[UpscaleInline] 🚀 Iniciando upscale 4x con PinataPoster IA...
+[UpscaleInline] 📷 Imagen original: https://storage.googleapis.com/imagen-gigante.firebasestorage.app/pinata-ai/original-16db9f975d-1758423167146.png
+[UpscaleInline] ⏱️ Upscale completado en 3.0s
+[UpscaleInline] Upscale completed successfully
+✅ Upscale completado para número estilizado
+✅ Confirmando consumo de 3 créditos para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+✅ Créditos consumidos exitosamente: transacción zfCpwR0h1WMTPmAlHXCi
+✅ Créditos consumidos exitosamente tras generación de número exitosa
+🔄 PinataAIServiceServer.saveDesign iniciado para userId: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📁 Tipo de imagen: {
+  isBase64: false,
+  imageUrlLength: 113,
+  startsWithData: 'https://storage.goog'
+}
+💾 Guardando en Firestore colección: pinata_ai_designs
+📊 Datos a guardar: {
+  userId: 'qqpFunj4pKVqbCEer0V5W1JQrBw2',
+  originalPrompt: 'Número "3" básico...',
+  hasStorageImageUrl: false,
+  hasOriginalUrl: true,
+  hasUpscaledUrl: true,
+  isUpscaled: true,
+  generator: 'PinataPoster-NumbersAI'
+}
+✅ Documento creado exitosamente con Admin SDK, ID: dw7idP7uPo5jXf3K5Vsr
+✅ Número estilizado guardado en historial: dw7idP7uPo5jXf3K5Vsr
+ POST /api/generate-styled-number 200 in 15959ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 568ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 300ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 290ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 288ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 325ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 505ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 355ms
+ ✓ Compiled in 461ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 508ms
+ ✓ Compiled in 414ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 577ms
+ ✓ Compiled in 393ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 564ms
+ ✓ Compiled in 364ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 502ms
+ ✓ Compiled in 340ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 477ms
+ ✓ Compiled in 352ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 559ms
+ GET / 200 in 154ms
+ GET /api/get-ip 200 in 42ms
+ GET /api/get-ip 200 in 41ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+ POST /api/users/sync-profile 200 in 792ms
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 972ms
+ GET /api/users/trial-status 200 in 978ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 412ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 373ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 335ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 416ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 383ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 315ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 319ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 382ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 316ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 323ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 1802ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 1033ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 1004ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 859ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 920ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 828ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 483ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 592ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 856ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 898ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 847ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 1103ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 902ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 900ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 2310ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 973ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 774ms
+🎯 API Credits GET - Inicio de petición
+🔑 Obteniendo Firebase Admin Auth...
+🌍 Entorno: {
+  NODE_ENV: 'development',
+  K_SERVICE: false,
+  GCLOUD_PROJECT: undefined,
+  GOOGLE_CLOUD_PROJECT: undefined
+}
+✅ Firebase Admin Auth obtenido correctamente
+🔍 Verificando token de usuario...
+👤 Usuario autenticado: qqpFunj4pKVqbCEer0V5W1JQrBw2 (rickying0328@gmail.com)
+🔒 Permisos de admin: false
+📊 Consultando créditos para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2 (propio)
+🔍 Verificando disponibilidad de Firebase Admin...
+🔍 Firebase Admin disponible: true
+🔍 Verificando estado de email para usuario: qqpFunj4pKVqbCEer0V5W1JQrBw2
+📧 Usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 verificado: true
+🔍 Leyendo créditos con Admin SDK para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2 de colección: user_credits
+📊 Créditos encontrados via Admin SDK - Balance: 38
+💰 Créditos obtenidos: 38 para usuario qqpFunj4pKVqbCEer0V5W1JQrBw2
+ GET /api/credits 200 in 507ms

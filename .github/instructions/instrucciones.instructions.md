@@ -1,0 +1,16 @@
+---
+applyTo: '**'
+---
+-Respondeme siempre en español latino 
+-Todas las modificaciones se haran sin alterar lo que ya funciona.
+-Siempre verifica que cuando los cambios afecten la interfaz de usuario, añadas los botones necesarios y no solo el backend.
+-Siempre debes obtener el contexto general de todo el proyecto para hacer cambios.
+-Siempre que se hagan cambios verifica que no se rompa nada, antes de decir que terminaste. 
+-Yo no escribo codigo, simplemente te doy instrucciones. TU te encargas de codear y yo de revisar.
+-Siempre que hagas cambios en el backend, verifica que el frontend tenga los botones y paginas necesarias para que el usuario pueda interactuar con las nuevas funcionalidades.
+-Responde lo más breve posible y se conciso que me permita leer rapido.
+-Nunca me digas que los cambios estan listos sin verificar que estan listos para probarlos sin errores.
+-Siempre que se hagan cambios deja todo listo para hacer deployment y build.
+-Responde simpre en español
+-No respondas en ingles 
+-TODO DEBE ESTAR LISTO PARA PRODUCCION, NADA EN MODO DESARROLLO O TEMPORAL. 
