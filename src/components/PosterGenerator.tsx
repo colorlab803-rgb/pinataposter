@@ -270,12 +270,12 @@ export function PosterGenerator({
     }
   }
   
-  const getGrid = (targetW: number, targetH: number): { cols: number, rows: number } => {
+  const getGrid = useCallback((targetW: number, targetH: number): { cols: number, rows: number } => {
     const { printableWidth, printableHeight } = getPrintableArea()
     const cols = Math.ceil(targetW / printableWidth)
     const rows = Math.ceil(targetH / printableHeight)
     return { cols, rows }
-  }
+  }, [getPrintableArea])
 
   useEffect(() => {
     if (!processedImageSrc || !targetWidthCm || !targetHeightCm) {
@@ -309,7 +309,7 @@ export function PosterGenerator({
         })
       }
     }
-  }, [processedImageSrc, targetWidthCm, targetHeightCm, paperSize, orientation, getPrintableArea, toast])
+  }, [processedImageSrc, targetWidthCm, targetHeightCm, getGrid, toast])
 
   const handleSelectImageClick = () => {
     setIsImageLoading(true)
@@ -447,7 +447,7 @@ export function PosterGenerator({
     return true
   }
 
-  const generateSlices = async (image: HTMLImageElement, grid: {cols: number, rows: number}, quality: number = 0.9) => {
+  const generateSlices = useCallback(async (image: HTMLImageElement, grid: {cols: number, rows: number}, quality: number = 0.9) => {
     const finalWidthCm = parseFloat(targetWidthCm)
     const finalHeightCm = parseFloat(targetHeightCm)
     const pxPerCm = image.width / finalWidthCm
@@ -512,7 +512,7 @@ export function PosterGenerator({
       }
     }
     return slices
-  }
+  }, [includeBleed, targetWidthCm, targetHeightCm])
 
   // Generar miniaturas de vista previa cuando haya grid y medidas listas
   useEffect(() => {
@@ -540,7 +540,7 @@ export function PosterGenerator({
     }
     run()
     return () => { cancelled = true }
-  }, [processedImageSrc, grid?.cols, grid?.rows, includeBleed, targetWidthCm, targetHeightCm])
+  }, [processedImageSrc, grid, includeBleed, targetWidthCm, targetHeightCm, generateSlices])
 
   const handleDownloadRequest = async (type: DownloadType) => {
     if (!validateInputs()) return
@@ -563,7 +563,7 @@ export function PosterGenerator({
   useLayoutEffect(() => {
     // Validaciones más estrictas para evitar race conditions
     if (!keepAspectRatio) return
-    if (!imageDimensions || imageDimensions.width <= 0 || imageDimensions.height <= 0) return
+    if (imageDimensions.width <= 0 || imageDimensions.height <= 0) return
     
     // Solo procesar si tenemos exactamente uno de los dos campos
     const w = parseFloat(targetWidthCm || "")
@@ -576,14 +576,12 @@ export function PosterGenerator({
       const aspect = imageDimensions.height / imageDimensions.width
       const calculatedHeight = (w * aspect).toFixed(2)
       if (targetHeightCm !== calculatedHeight) {
-        console.log('✅ Auto-calculando altura (PosterGenerator layoutEffect):', calculatedHeight)
         setTargetHeightCm(calculatedHeight)
       }
     } else if (!hasValidW && hasValidH) {
       const aspect = imageDimensions.width / imageDimensions.height
       const calculatedWidth = (h * aspect).toFixed(2)
       if (targetWidthCm !== calculatedWidth) {
-        console.log('✅ Auto-calculando ancho (PosterGenerator layoutEffect):', calculatedWidth)
         setTargetWidthCm(calculatedWidth)
       }
     }
@@ -592,12 +590,10 @@ export function PosterGenerator({
   // Fallback para re-establecer dimensiones si hay imagen pero dimensiones en 0 (problema de hidratación)
   useEffect(() => {
     if (processedImageSrc && imageDimensions.width === 0 && imageDimensions.height === 0) {
-      console.log('🔧 Detectado problema de dimensiones en PosterGenerator, reintentando...')
       const img = new window.Image()
       img.crossOrigin = 'anonymous'
       img.onload = () => {
         const newDimensions = { width: img.width, height: img.height }
-        console.log('🔧 Reestableciendo dimensiones en PosterGenerator:', newDimensions)
         setImageDimensions(newDimensions)
       }
       img.onerror = () => {

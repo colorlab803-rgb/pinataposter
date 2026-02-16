@@ -40,13 +40,6 @@ export default async function getCroppedImg(
   const scaleX = image.naturalWidth / image.width
   const scaleY = image.naturalHeight / image.height
   
-  console.log('Crop details:', {
-    naturalDimensions: { width: image.naturalWidth, height: image.naturalHeight },
-    displayDimensions: { width: image.width, height: image.height },
-    scale: { x: scaleX, y: scaleY },
-    crop: crop
-  });
-  
   try {
     ctx.drawImage(
       image,
