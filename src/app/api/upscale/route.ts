@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { recordUpscaleUsage } from '@/lib/db'
 
 const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN
 
@@ -37,6 +39,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: 'El servicio de upscale no está configurado. Falta REPLICATE_API_TOKEN.' },
       { status: 500 }
+    )
+  }
+
+  // Verificar autenticación
+  const session = await getServerSession()
+  if (!session?.user?.email) {
+    return NextResponse.json(
+      { error: 'Debes iniciar sesión con Google para usar el upscale.' },
+      { status: 401 }
+    )
+  }
+
+  // Verificar límite de upscale según tier
+  const usageCheck = recordUpscaleUsage(session.user.email)
+  if (!usageCheck.allowed) {
+    return NextResponse.json(
+      { error: usageCheck.reason || 'Límite de upscale alcanzado.' },
+      { status: 429 }
     )
   }
 

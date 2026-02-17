@@ -57,6 +57,7 @@ interface PosterGeneratorProps {
   onImageChange?: (imageFile: File | null) => void
   showImageUpload?: boolean
   showTitle?: boolean
+  onOpenPricing?: () => void
 }
 
 export function PosterGenerator({ 
@@ -64,7 +65,8 @@ export function PosterGenerator({
   templateTitle,
   onImageChange,
   showImageUpload = true,
-  showTitle = true
+  showTitle = true,
+  onOpenPricing
 }: PosterGeneratorProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [originalImageSrc, setOriginalImageSrc] = useState<string | null>(initialImageSrc || null)
@@ -118,6 +120,9 @@ export function PosterGenerator({
 
   // Auto-crop state
   const [isAutoCropping, setIsAutoCropping] = useState(false)
+
+  // Watermark state (from rate-limit API)
+  const [showWatermark, setShowWatermark] = useState(true)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -200,6 +205,10 @@ export function PosterGenerator({
         if (!data.allowed) {
           setRateLimitBlocked(true)
           setRateLimitMessage(data.message)
+        }
+        // Actualizar estado de marca de agua según tier
+        if (typeof data.watermark === 'boolean') {
+          setShowWatermark(data.watermark)
         }
       } catch {
         // Si falla, no bloquear
@@ -478,6 +487,19 @@ export function PosterGenerator({
       const data = await res.json()
 
       if (!res.ok) {
+        if (res.status === 401) {
+          toast.error('Inicia sesión para mejorar imágenes', {
+            description: 'Necesitas una cuenta para usar esta función.',
+          })
+          return
+        }
+        if (res.status === 429) {
+          toast.error('Límite de mejoras alcanzado', {
+            description: data.error || 'Mejora tu plan para más usos.',
+            action: onOpenPricing ? { label: 'Ver planes', onClick: onOpenPricing } : undefined,
+          })
+          return
+        }
         toast.error('Error al mejorar imagen', {
           description: data.error || 'No se pudo procesar la imagen.',
         })
@@ -683,6 +705,10 @@ export function PosterGenerator({
         setDownloadType(null)
         return
       }
+      // Actualizar watermark después de registrar descarga
+      if (typeof data.watermark === 'boolean') {
+        setShowWatermark(data.watermark)
+      }
     } catch {
       console.warn('No se pudo registrar el rate-limit, continuando descarga.')
     }
@@ -846,17 +872,19 @@ export function PosterGenerator({
         const coordText = `Fila ${row + 1}, Columna ${col + 1} (${String.fromCharCode(65 + col)}${row + 1})`
         doc.text(coordText, MARGIN_CM, pageH - 0.5)
 
-        // Marca de agua diagonal
-        doc.saveGraphicsState()
-        doc.setGState(new (doc as any).GState({ opacity: 0.08 }))
-        doc.setFontSize(40)
-        doc.setTextColor(128, 128, 128)
-        const wmText = 'PiñataPoster'
-        const angleDeg = -45
-        const centerX = pageW / 2
-        const centerY = pageH / 2
-        doc.text(wmText, centerX, centerY, { align: 'center', baseline: 'middle', angle: angleDeg })
-        doc.restoreGraphicsState()
+        // Marca de agua diagonal (solo para plan gratuito)
+        if (showWatermark) {
+          doc.saveGraphicsState()
+          doc.setGState(new (doc as any).GState({ opacity: 0.08 }))
+          doc.setFontSize(40)
+          doc.setTextColor(128, 128, 128)
+          const wmText = 'PiñataPoster'
+          const angleDeg = -45
+          const centerX = pageW / 2
+          const centerY = pageH / 2
+          doc.text(wmText, centerX, centerY, { align: 'center', baseline: 'middle', angle: angleDeg })
+          doc.restoreGraphicsState()
+        }
       })
 
       // Add assembly plan if enabled and multiple pages
@@ -916,13 +944,15 @@ export function PosterGenerator({
             }
         }
 
-        // Marca de agua en la página del plano de armado
-        doc.saveGraphicsState()
-        doc.setGState(new (doc as any).GState({ opacity: 0.08 }))
-        doc.setFontSize(40)
-        doc.setTextColor(128, 128, 128)
-        doc.text('PiñataPoster', planPageW / 2, planPageH / 2, { align: 'center', baseline: 'middle', angle: -45 })
-        doc.restoreGraphicsState()
+        // Marca de agua en la página del plano de armado (solo para plan gratuito)
+        if (showWatermark) {
+          doc.saveGraphicsState()
+          doc.setGState(new (doc as any).GState({ opacity: 0.08 }))
+          doc.setFontSize(40)
+          doc.setTextColor(128, 128, 128)
+          doc.text('PiñataPoster', planPageW / 2, planPageH / 2, { align: 'center', baseline: 'middle', angle: -45 })
+          doc.restoreGraphicsState()
+        }
       }
 
       const pdfBlob = doc.output('blob')

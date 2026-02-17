@@ -1,13 +1,37 @@
 'use client'
 
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { PosterGenerator } from '@/components/PosterGenerator'
-import { Scissors, ArrowLeft, Sparkles } from 'lucide-react'
+import { Scissors, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { AuthButton } from '@/components/AuthButton'
+import { PricingDialog } from '@/components/PricingDialog'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
 
 export default function GeneratorPage() {
+  const { data: session } = useSession()
+  const [isPricingOpen, setIsPricingOpen] = useState(false)
+  const [userTier, setUserTier] = useState<string>('Gratis')
+
+  const fetchUserData = useCallback(async () => {
+    try {
+      const res = await fetch('/api/user')
+      const data = await res.json()
+      if (data.tierName) {
+        setUserTier(data.tierName)
+      }
+    } catch {
+      // silently fail
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchUserData()
+  }, [session, fetchUserData])
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -42,10 +66,7 @@ export default function GeneratorPage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-blue-500/20 backdrop-blur-sm rounded-full border border-blue-500/30">
-                  <Sparkles className="h-4 w-4 text-blue-400" />
-                  <span className="text-sm font-medium text-blue-100">Gratis</span>
-                </div>
+                <AuthButton onOpenPricing={() => setIsPricingOpen(true)} tierName={userTier} />
                 <ThemeToggle />
               </div>
             </div>
@@ -61,10 +82,17 @@ export default function GeneratorPage() {
             <PosterGenerator 
               showImageUpload={true}
               showTitle={false}
+              onOpenPricing={() => setIsPricingOpen(true)}
             />
           </motion.div>
         </main>
       </div>
+
+      <PricingDialog
+        open={isPricingOpen}
+        onOpenChange={setIsPricingOpen}
+        currentTier={userTier}
+      />
     </div>
   )
 }
