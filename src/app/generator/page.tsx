@@ -39,31 +39,31 @@ export default function GeneratorPage() {
 
       <div className="relative z-10">
         <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-50">
-          <div className="container mx-auto px-4 py-4">
+          <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 sm:gap-4">
                 <Link href="/">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-white hover:text-purple-300 hover:bg-white/10"
+                    className="text-white hover:text-purple-300 hover:bg-white/10 px-2 sm:px-3"
                   >
-                    <ArrowLeft className="h-5 w-5 mr-2" />
-                    Volver
+                    <ArrowLeft className="h-5 w-5 sm:mr-2" />
+                    <span className="hidden sm:inline">Volver</span>
                   </Button>
                 </Link>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                    <Scissors className="h-6 w-6 text-white" />
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg flex-shrink-0">
+                    <Scissors className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                   </div>
-                  <div>
-                    <h1 className="text-xl font-bold text-white">Dividir Imagen</h1>
-                    <p className="text-xs text-purple-300">Convierte imágenes en secciones imprimibles</p>
+                  <div className="min-w-0">
+                    <h1 className="text-base sm:text-xl font-bold text-white truncate">Dividir Imagen</h1>
+                    <p className="text-[10px] sm:text-xs text-purple-300 hidden sm:block">Convierte imágenes en secciones imprimibles</p>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5 sm:gap-3">
                 <AuthButton onOpenPricing={() => setIsPricingOpen(true)} designCredits={designCredits} />
                 <ThemeToggle />
               </div>
@@ -71,7 +71,7 @@ export default function GeneratorPage() {
           </div>
         </header>
 
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

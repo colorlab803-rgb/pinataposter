@@ -1131,70 +1131,75 @@ export function PosterGenerator({
     <TooltipProvider>
       <div className="w-full max-w-6xl mx-auto">
         {showTitle && (
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-2">
+          <div className="text-center mb-4 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">
               {templateTitle ? `Generar Poster: ${templateTitle}` : 'Generador de Posters'}
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Configura el tamaño y descarga tu diseño listo para imprimir
             </p>
           </div>
         )}
 
         {/* Stepper */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Stepper steps={steps} currentStep={currentStep} />
         </div>
 
         <Card className="shadow-lg">
-          <CardContent className="p-6">
+          <CardContent className="p-3 sm:p-6">
             
             {/* Step 0: Image Upload Section */}
             {currentStep === 0 && showImageUpload && (
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-4">📷 Subir Imagen</h3>
-                <div className={`flex flex-col gap-4 items-center justify-center min-h-[200px] border-2 border-dashed rounded-lg p-6 bg-muted/50 transition-colors duration-150 ${
+              <div className="mb-4 sm:mb-6">
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">📷 Subir Imagen</h3>
+                <div className={`flex flex-col gap-3 sm:gap-4 items-center justify-center min-h-[180px] sm:min-h-[200px] border-2 border-dashed rounded-lg p-4 sm:p-6 bg-muted/50 transition-colors duration-150 ${
                   isProcessing ? 'border-primary bg-primary/5' : ''
                 }`}>
                   <input type="file" accept="image/png, image/jpeg" ref={fileInputRef} onChange={handleImageChange} className="hidden" />
                   
                   {processedImageSrc ? (
                     <div className="text-center w-full">
-                      <img src={processedImageSrc} alt="Preview" className="max-w-full max-h-[400px] object-contain rounded mx-auto shadow-md" />
+                      <img src={processedImageSrc} alt="Preview" className="max-w-full max-h-[250px] sm:max-h-[400px] object-contain rounded mx-auto shadow-md" />
                       
                       {/* Vista previa info */}
-                      <div className="mb-4 p-2 sm:p-3 rounded-md border bg-muted/40 flex items-center gap-3 mt-4">
-                        <div className="w-16 h-16 bg-background rounded overflow-hidden flex items-center justify-center flex-shrink-0">
-                          <img
-                            src={processedImageSrc}
-                            alt="Vista previa"
-                            className="w-full h-full object-cover"
-                          />
+                      <div className="mb-3 sm:mb-4 p-2 sm:p-3 rounded-md border bg-muted/40 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 mt-3 sm:mt-4">
+                        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-background rounded overflow-hidden flex items-center justify-center flex-shrink-0">
+                            <img
+                              src={processedImageSrc}
+                              alt="Vista previa"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium">Vista previa</p>
+                            {imageDimensions.width && imageDimensions.height ? (
+                              <p className="text-xs text-muted-foreground truncate">
+                                {imageDimensions.width} × {imageDimensions.height} px
+                              </p>
+                            ) : null}
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium">Vista previa</p>
-                          {imageDimensions.width && imageDimensions.height ? (
-                            <p className="text-xs text-muted-foreground truncate">
-                              {imageDimensions.width} × {imageDimensions.height} px
-                            </p>
-                          ) : null}
-                        </div>
-                        <div className="flex gap-2 flex-wrap justify-end">
+                        <div className="grid grid-cols-2 sm:flex gap-2 w-full sm:w-auto sm:flex-wrap sm:justify-end">
                           <Button 
                             variant="outline" 
                             size="sm" 
                             onClick={handleAutoCrop}
                             disabled={isAutoCropping}
+                            className="text-xs sm:text-sm touch-target"
                           >
                             {isAutoCropping ? (
                               <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Detectando...
+                                <Loader2 className="h-4 w-4 mr-1 sm:mr-2 animate-spin" />
+                                <span className="hidden sm:inline">Detectando...</span>
+                                <span className="sm:hidden">...</span>
                               </>
                             ) : (
                               <>
-                                <ScanSearch className="h-4 w-4 mr-2" />
-                                Autorecorte
+                                <ScanSearch className="h-4 w-4 mr-1 sm:mr-2" />
+                                <span className="hidden sm:inline">Autorecorte</span>
+                                <span className="sm:hidden">Auto</span>
                               </>
                             )}
                           </Button>
@@ -1203,30 +1208,34 @@ export function PosterGenerator({
                             size="sm" 
                             onClick={handleUpscale}
                             disabled={isUpscaling || isUpscaled}
+                            className="text-xs sm:text-sm touch-target"
                           >
                             {isUpscaling ? (
                               <>
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Mejorando...
+                                <Loader2 className="h-4 w-4 mr-1 sm:mr-2 animate-spin" />
+                                <span className="hidden sm:inline">Mejorando...</span>
+                                <span className="sm:hidden">...</span>
                               </>
                             ) : isUpscaled ? (
                               <>
-                                <CheckCircle2 className="h-4 w-4 mr-2" />
-                                Mejorada
+                                <CheckCircle2 className="h-4 w-4 mr-1 sm:mr-2" />
+                                <span className="hidden sm:inline">Mejorada</span>
+                                <span className="sm:hidden">OK</span>
                               </>
                             ) : (
                               <>
-                                <Wand2 className="h-4 w-4 mr-2" />
-                                Mejorar calidad
+                                <Wand2 className="h-4 w-4 mr-1 sm:mr-2" />
+                                <span className="hidden sm:inline">Mejorar calidad</span>
+                                <span className="sm:hidden">Mejorar</span>
                               </>
                             )}
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => setIsCropModalOpen(true)}>
-                            <CropIcon className="h-4 w-4 mr-2" />
+                          <Button variant="outline" size="sm" onClick={() => setIsCropModalOpen(true)} className="text-xs sm:text-sm touch-target">
+                            <CropIcon className="h-4 w-4 mr-1 sm:mr-2" />
                             Recortar
                           </Button>
-                          <Button variant="outline" size="sm" onClick={handleSelectImageClick}>
-                            <Upload className="h-4 w-4 mr-2" />
+                          <Button variant="outline" size="sm" onClick={handleSelectImageClick} className="text-xs sm:text-sm touch-target">
+                            <Upload className="h-4 w-4 mr-1 sm:mr-2" />
                             Cambiar
                           </Button>
                         </div>
@@ -1274,10 +1283,10 @@ export function PosterGenerator({
             {/* Step 1 y 2: Configuración y Vista Previa */}
             {currentStep >= 1 && processedImageSrc && (
               <>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                   {/* Size Configuration */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">📐 Configuración de Tamaño</h3>
+                  <div className="space-y-3 sm:space-y-4">
+                    <h3 className="text-base sm:text-lg font-semibold">📐 Configuración de Tamaño</h3>
                     
                       <div className="space-y-4">
                         <div className="flex items-center space-x-2">
@@ -1415,35 +1424,35 @@ export function PosterGenerator({
                   </div>
 
                   {/* Preview */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">👁️ Vista Previa</h3>
+                  <div className="space-y-3 sm:space-y-4">
+                    <h3 className="text-base sm:text-lg font-semibold">👁️ Vista Previa</h3>
                     
                     {grid && grid.cols * grid.rows > 1 ? (
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between text-sm text-muted-foreground p-3 bg-muted rounded-md">
+                      <div className="space-y-3 sm:space-y-4">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-sm text-muted-foreground p-2 sm:p-3 bg-muted rounded-md">
                           <div className='flex items-center gap-2'>
-                            <Layers className="h-4 w-4" />
-                            <span>
-                              <strong>{grid.cols * grid.rows} hojas</strong> ({selectedPages.size} seleccionadas) en <strong>{orientation === 'portrait' ? 'vertical' : 'horizontal'}</strong>
+                            <Layers className="h-4 w-4 flex-shrink-0" />
+                            <span className="text-xs sm:text-sm">
+                              <strong>{grid.cols * grid.rows} hojas</strong> ({selectedPages.size} sel.) en <strong>{orientation === 'portrait' ? 'vertical' : 'horizontal'}</strong>
                             </span>
                           </div>
-                          <Button variant="outline" size="sm" onClick={toggleSelectAll}>
-                            <CheckSquare className='mr-2 h-4 w-4'/>
-                            {selectedPages.size === grid.cols * grid.rows ? 'Deseleccionar todo' : 'Seleccionar todo'}
+                          <Button variant="outline" size="sm" onClick={toggleSelectAll} className="w-full sm:w-auto text-xs sm:text-sm">
+                            <CheckSquare className='mr-1 sm:mr-2 h-4 w-4'/>
+                            {selectedPages.size === grid.cols * grid.rows ? 'Deseleccionar' : 'Seleccionar todo'}
                           </Button>
                         </div>
                         
                         {/* Vista previa con imagen completa y grid superpuesto */}
-                        <div className="bg-muted/50 rounded-lg flex items-center justify-center p-4 border-2 border-dashed relative min-h-[300px]">
+                        <div className="bg-muted/50 rounded-lg flex items-center justify-center p-2 sm:p-4 border-2 border-dashed relative min-h-[200px] sm:min-h-[300px]">
                           {/* Indicadores de medidas */}
                           {targetWidthCm && targetHeightCm && (
                             <>
-                              <div className="absolute top-1/2 -left-3 -translate-y-1/2 -rotate-90 origin-bottom-left bg-primary/80 text-primary-foreground text-xs px-2 py-1 rounded-t-md flex items-center gap-1 z-10 pointer-events-none">
-                                <Ruler className="h-3 w-3" />
+                              <div className="absolute top-1/2 -left-2 sm:-left-3 -translate-y-1/2 -rotate-90 origin-bottom-left bg-primary/80 text-primary-foreground text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-t-md flex items-center gap-1 z-10 pointer-events-none">
+                                <Ruler className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                                 <span>{targetHeightCm} cm</span>
                               </div>
-                              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary/80 text-primary-foreground text-xs px-2 py-1 rounded-b-md flex items-center gap-1 z-10 pointer-events-none">
-                                <Ruler className="h-3 w-3" />
+                              <div className="absolute -top-2 sm:-top-3 left-1/2 -translate-x-1/2 bg-primary/80 text-primary-foreground text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-b-md flex items-center gap-1 z-10 pointer-events-none">
+                                <Ruler className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
                                 <span>{targetWidthCm} cm</span>
                               </div>
                             </>
@@ -1456,7 +1465,7 @@ export function PosterGenerator({
                               aspectRatio: (imageDimensions.width > 0 && imageDimensions.height > 0) 
                                 ? imageDimensions.width / imageDimensions.height 
                                 : '4 / 3',
-                              maxHeight: '500px'
+                              maxHeight: '400px'
                             }}
                           >
                             {processedImageSrc ? (
@@ -1537,17 +1546,19 @@ export function PosterGenerator({
 
                 {/* Navegación entre steps */}
                 {currentStep === 1 && (
-                  <div className="mt-6 pt-6 border-t flex gap-4 justify-between">
-                    <Button variant="outline" onClick={prevStep}>
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Anterior
+                  <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t flex gap-3 sm:gap-4 justify-between">
+                    <Button variant="outline" onClick={prevStep} className="touch-target">
+                      <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                      <span className="hidden sm:inline">Anterior</span>
+                      <span className="sm:hidden">Atrás</span>
                     </Button>
                     <Button 
                       onClick={nextStep}
                       disabled={isNextStepDisabled()}
+                      className="touch-target"
                     >
                       Siguiente
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      <ArrowRight className="ml-1 sm:ml-2 h-4 w-4" />
                     </Button>
                   </div>
                 )}
@@ -1555,19 +1566,21 @@ export function PosterGenerator({
                 {/* Download Section - Solo en Step 2 */}
                 {currentStep === 2 && targetWidthCm && targetHeightCm && (
                   <>
-                    <div className="mt-6 pt-6 border-t">
-                      <Button variant="outline" onClick={prevStep} className="mb-4">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Anterior
+                    <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
+                      <Button variant="outline" onClick={prevStep} className="mb-3 sm:mb-4 touch-target">
+                        <ArrowLeft className="mr-1 sm:mr-2 h-4 w-4" />
+                        <span className="hidden sm:inline">Anterior</span>
+                        <span className="sm:hidden">Atrás</span>
                       </Button>
                     </div>
-                    <div className="mt-6 pt-6 border-t">
-                      <h3 className="text-lg font-semibold mb-4">📥 Descargar</h3>
-                      <div className="flex gap-4 justify-center">
+                    <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
+                      <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">📥 Descargar</h3>
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                       <Button 
                         size="lg" 
                         onClick={() => handleDownloadRequest('pdf')}
                         disabled={isProcessing || !grid || selectedPages.size === 0 || rateLimitBlocked}
+                        className="w-full sm:w-auto touch-target"
                       >
                         {isProcessing ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -1582,6 +1595,7 @@ export function PosterGenerator({
                         size="lg" 
                         onClick={() => handleDownloadRequest('zip')}
                         disabled={isProcessing || !grid || selectedPages.size === 0 || rateLimitBlocked}
+                        className="w-full sm:w-auto touch-target"
                       >
                         {isProcessing ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -1608,15 +1622,15 @@ export function PosterGenerator({
         {/* Crop Modal */}
         {isCropModalOpen && originalImageSrc && (
           <Dialog open={isCropModalOpen} onOpenChange={setIsCropModalOpen}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
+            <DialogContent className="max-w-[95vw] sm:max-w-4xl max-h-[90vh] overflow-hidden">
               <DialogHeader>
-                <DialogTitle>Recortar imagen</DialogTitle>
-                <DialogDescription>
-                  Puedes recortar la imagen o usar la imagen completa. El recorte te ayuda a enfocar en la parte más importante.
+                <DialogTitle className="text-base sm:text-lg">Recortar imagen</DialogTitle>
+                <DialogDescription className="text-xs sm:text-sm">
+                  Puedes recortar la imagen o usar la imagen completa.
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="flex-1 overflow-auto max-h-[60vh]">
+              <div className="flex-1 overflow-auto max-h-[50vh] sm:max-h-[60vh]">
                 <ReactCrop
                   crop={crop}
                   onChange={(_, percentCrop) => setCrop(percentCrop)}
@@ -1634,11 +1648,11 @@ export function PosterGenerator({
                 </ReactCrop>
               </div>
 
-              <DialogFooter className="gap-2">
-                <Button variant="outline" onClick={handleSkipCrop}>
+              <DialogFooter className="gap-2 flex-col sm:flex-row">
+                <Button variant="outline" onClick={handleSkipCrop} className="w-full sm:w-auto touch-target">
                   Usar imagen completa
                 </Button>
-                <Button onClick={showCroppedImage}>
+                <Button onClick={showCroppedImage} className="w-full sm:w-auto touch-target">
                   Aplicar recorte
                 </Button>
               </DialogFooter>
@@ -1649,7 +1663,7 @@ export function PosterGenerator({
         {/* File Name Dialog */}
         {isFileNameDialogOpen && (
           <Dialog open={isFileNameDialogOpen} onOpenChange={setIsFileNameDialogOpen}>
-            <DialogContent>
+            <DialogContent className="max-w-[90vw] sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Nombre del archivo</DialogTitle>
                 <DialogDescription>
@@ -1669,11 +1683,11 @@ export function PosterGenerator({
                 </div>
               </div>
 
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsFileNameDialogOpen(false)}>
+              <DialogFooter className="gap-2 flex-col sm:flex-row">
+                <Button variant="outline" onClick={() => setIsFileNameDialogOpen(false)} className="w-full sm:w-auto touch-target">
                   Cancelar
                 </Button>
-                <Button onClick={handleConfirmDownload}>
+                <Button onClick={handleConfirmDownload} className="w-full sm:w-auto touch-target">
                   Descargar
                 </Button>
               </DialogFooter>
@@ -1684,7 +1698,7 @@ export function PosterGenerator({
         {/* Download Complete Modal */}
         {isDownloadCompleteModalOpen && downloadCompleteInfo && (
           <Dialog open={isDownloadCompleteModalOpen} onOpenChange={setIsDownloadCompleteModalOpen}>
-            <DialogContent>
+            <DialogContent className="max-w-[90vw] sm:max-w-md">
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
