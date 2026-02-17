@@ -73,6 +73,7 @@ export function PosterGenerator({
 
   const [targetWidthCm, setTargetWidthCm] = useState<string>("")
   const [targetHeightCm, setTargetHeightCm] = useState<string>("")
+  const [editingDimension, setEditingDimension] = useState<'width' | 'height' | null>(null)
   const [keepAspectRatio, setKeepAspectRatio] = useState<boolean>(true)
   const [paperSize, setPaperSize] = useState<PaperSize>('Letter')
   const [orientation, setOrientation] = useState<Orientation>('portrait')
@@ -536,20 +537,23 @@ export function PosterGenerator({
     const hasValidH = targetHeightCm && targetHeightCm.trim() !== "" && !isNaN(h) && h > 0
     
     // Auto-calcular solo si tenemos exactamente un campo válido
+    // NO sobreescribir si el usuario está actualmente editando el campo objetivo
     if (hasValidW && !hasValidH) {
+      if (editingDimension === 'height') return
       const aspect = imageDimensions.height / imageDimensions.width
       const calculatedHeight = (w * aspect).toFixed(2)
       if (targetHeightCm !== calculatedHeight) {
         setTargetHeightCm(calculatedHeight)
       }
     } else if (!hasValidW && hasValidH) {
+      if (editingDimension === 'width') return
       const aspect = imageDimensions.width / imageDimensions.height
       const calculatedWidth = (h * aspect).toFixed(2)
       if (targetWidthCm !== calculatedWidth) {
         setTargetWidthCm(calculatedWidth)
       }
     }
-  }, [keepAspectRatio, imageDimensions.width, imageDimensions.height, targetWidthCm, targetHeightCm])
+  }, [keepAspectRatio, imageDimensions.width, imageDimensions.height, targetWidthCm, targetHeightCm, editingDimension])
 
   // Fallback para re-establecer dimensiones si hay imagen pero dimensiones en 0 (problema de hidratación)
   useEffect(() => {
@@ -1050,6 +1054,8 @@ export function PosterGenerator({
                               inputMode="decimal"
                               value={targetWidthCm}
                               onChange={(e) => handleDimensionChange(e.target.value, 'width')}
+                              onFocus={() => setEditingDimension('width')}
+                              onBlur={() => setEditingDimension(null)}
                               placeholder="Ej: 100"
                             />
                           </div>
@@ -1061,6 +1067,8 @@ export function PosterGenerator({
                               inputMode="decimal"
                               value={targetHeightCm}
                               onChange={(e) => handleDimensionChange(e.target.value, 'height')}
+                              onFocus={() => setEditingDimension('height')}
+                              onBlur={() => setEditingDimension(null)}
                               placeholder="Ej: 70"
                             />
                           </div>
