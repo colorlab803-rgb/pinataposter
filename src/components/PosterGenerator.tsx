@@ -774,29 +774,37 @@ export function PosterGenerator({
 
   const generateZip = async (fileName: string) => {
     if (!validateInputs() || !grid || !processedImageSrc) return
-    
+
     setIsProcessing(true)
     const finalFileName = fileName ? `${fileName}.zip` : `${templateTitle || 'poster'}-imagenes.zip`
 
     try {
-        const JSZip = (await import('jszip')).default
-        const { saveAs } = await import('file-saver')
-        const image = new window.Image()
-        image.crossOrigin = "Anonymous"
-        await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error('Error al cargar la imagen')); image.src = processedImageSrc! })
-        
-        const allSlices = await generateSlices(image, grid, 0.92)
-        const zip = new JSZip()
+      const jszipModule = await import('jszip')
+      const JSZip = (jszipModule as any)?.default ?? (jszipModule as any)?.JSZip
+      if (typeof JSZip !== 'function') {
+        console.error('generateZip: jszip import shape ->', Object.keys(jszipModule as any))
+        throw new Error('JSZip no disponible (módulo inesperado)')
+      }
 
-        const pagesToInclude = Array.from(selectedPages).sort((a,b) => a - b)
-        
-        pagesToInclude.forEach(index => {
-            const dataUrl = allSlices[index]
-            const row = Math.floor(index / grid.cols)
-            const col = index % grid.cols
-            const coord = `${String.fromCharCode(65 + col)}${row + 1}`
-            zip.file(`hoja_${coord}.jpg`, dataUrl.split(',')[1], { base64: true })
-        })
+      const fileSaverModule = await import('file-saver')
+      const saveAs = fileSaverModule?.saveAs ?? fileSaverModule?.default
+
+      const image = new window.Image()
+      image.crossOrigin = 'Anonymous'
+      await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error('Error al cargar la imagen')); image.src = processedImageSrc! })
+
+      const allSlices = await generateSlices(image, grid, 0.92)
+      const zip = new JSZip()
+
+      const pagesToInclude = Array.from(selectedPages).sort((a, b) => a - b)
+
+      pagesToInclude.forEach(index => {
+        const dataUrl = allSlices[index]
+        const row = Math.floor(index / grid.cols)
+        const col = index % grid.cols
+        const coord = `${String.fromCharCode(65 + col)}${row + 1}`
+        zip.file(`hoja_${coord}.jpg`, dataUrl.split(',')[1], { base64: true })
+      })
 
         const zipBlob = await zip.generateAsync({ type: 'blob' })
         
