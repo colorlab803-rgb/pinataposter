@@ -8,3 +8,19 @@ healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
+
+[variables]
+# NextAuth
+NEXTAUTH_URL = ""
+NEXTAUTH_SECRET = ""
+# Google OAuth
+GOOGLE_CLIENT_ID = ""
+GOOGLE_CLIENT_SECRET = ""
+# Stripe
+STRIPE_SECRET_KEY = ""
+STRIPE_WEBHOOK_SECRET = ""
+STRIPE_PRICE_PACK_5 = ""
+STRIPE_PRICE_PACK_15 = ""
+STRIPE_PRICE_PACK_50 = ""
+# Replicate (AI Upscale)
+REPLICATE_API_TOKEN = ""
