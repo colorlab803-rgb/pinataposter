@@ -124,8 +124,6 @@
   .text-fluid-3xl { font-size: clamp(1.75rem, 6vw, 2.5rem); }
   .text-fluid-4xl { font-size: clamp(2rem, 8vw, 3rem); }
 
-  /* Responsive container padding */
-  .container-responsive { @apply mx-auto w-full px-3 sm:px-4 md:px-6 lg:px-8; }
 
   /* Subtle glass effect */
   .glass { 
