@@ -191,23 +191,36 @@ export function PosterGenerator({
     return { printableWidth, printableHeight }
   }, [paperSize, orientation])
 
+  const normalizeDimensionInput = (value: string) => {
+    const trimmed = value.trim()
+
+    // Permite borrar el campo sin forzar valores temporales.
+    if (trimmed === '') return ''
+
+    // Acepta coma o punto decimal para teclado ES.
+    const normalized = trimmed.replace(',', '.')
+    if (!/^\d*(\.\d*)?$/.test(normalized)) return null
+
+    return normalized
+  }
+
   const handleDimensionChange = (value: string, dimension: 'width' | 'height') => {
-    const numValue = parseFloat(value)
-    if (isNaN(numValue) || numValue <= 0) {
-      if (dimension === 'width') setTargetWidthCm('')
-      else setTargetHeightCm('')
-      return
-    }
+    const normalizedValue = normalizeDimensionInput(value)
+    if (normalizedValue === null) return
+
+    if (dimension === 'width') setTargetWidthCm(normalizedValue)
+    else setTargetHeightCm(normalizedValue)
+
+    const numValue = parseFloat(normalizedValue)
+    if (normalizedValue === '' || isNaN(numValue) || numValue <= 0) return
   
     if (dimension === 'width') {
-      setTargetWidthCm(value)
       if (keepAspectRatio && imageDimensions.width > 0) {
         const aspectRatio = imageDimensions.height / imageDimensions.width
         const newHeight = numValue * aspectRatio
         setTargetHeightCm(newHeight.toFixed(2))
       }
     } else {
-      setTargetHeightCm(value)
       if (keepAspectRatio && imageDimensions.height > 0) {
         const aspectRatio = imageDimensions.width / imageDimensions.height
         const newWidth = numValue * aspectRatio
@@ -1033,7 +1046,8 @@ export function PosterGenerator({
                             <Label htmlFor="width">Ancho (cm)</Label>
                             <Input
                               id="width"
-                              type="number"
+                              type="text"
+                              inputMode="decimal"
                               value={targetWidthCm}
                               onChange={(e) => handleDimensionChange(e.target.value, 'width')}
                               placeholder="Ej: 100"
@@ -1043,7 +1057,8 @@ export function PosterGenerator({
                             <Label htmlFor="height">Alto (cm)</Label>
                             <Input
                               id="height"
-                              type="number"
+                              type="text"
+                              inputMode="decimal"
                               value={targetHeightCm}
                               onChange={(e) => handleDimensionChange(e.target.value, 'height')}
                               placeholder="Ej: 70"
