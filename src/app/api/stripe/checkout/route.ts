@@ -5,9 +5,9 @@ import { getUser, upsertUser } from '@/lib/db'
 
 /**
  * POST /api/stripe/checkout
- * Body: { priceId: string, mode: 'subscription' | 'payment' }
+ * Body: { priceId: string }
  *
- * Crea una sesión de Stripe Checkout para suscripciones o packs.
+ * Crea una sesión de Stripe Checkout para packs de diseños.
  */
 export async function POST(request: NextRequest) {
   const session = await getServerSession()
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { priceId, mode } = body as { priceId?: string; mode?: string }
+    const { priceId } = body as { priceId?: string }
 
     if (!priceId) {
       return NextResponse.json(
@@ -30,10 +30,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const checkoutMode = mode === 'payment' ? 'payment' : 'subscription'
-
     // Obtener o crear Stripe Customer
-    let user = getUser(session.user.email)
+    const user = getUser(session.user.email)
     let customerId = user?.stripeCustomerId
 
     if (!customerId) {
@@ -44,25 +42,11 @@ export async function POST(request: NextRequest) {
       })
       customerId = customer.id
       upsertUser(session.user.email, { stripeCustomerId: customerId })
-      user = getUser(session.user.email)
-    }
-
-    // Si ya tiene suscripción activa y quiere otra suscripción, redirigir al portal
-    if (
-      checkoutMode === 'subscription' &&
-      user?.subscriptionId &&
-      user.subscriptionStatus === 'active'
-    ) {
-      const portalSession = await getStripe().billingPortal.sessions.create({
-        customer: customerId,
-        return_url: `${process.env.NEXTAUTH_URL || request.nextUrl.origin}/generator`,
-      })
-      return NextResponse.json({ url: portalSession.url })
     }
 
     const checkoutSession = await getStripe().checkout.sessions.create({
       customer: customerId,
-      mode: checkoutMode as 'subscription' | 'payment',
+      mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${process.env.NEXTAUTH_URL || request.nextUrl.origin}/generator?payment=success`,
       cancel_url: `${process.env.NEXTAUTH_URL || request.nextUrl.origin}/generator?payment=cancel`,

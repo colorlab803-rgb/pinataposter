@@ -14,15 +14,13 @@ import { useSession } from 'next-auth/react'
 export default function GeneratorPage() {
   const { data: session } = useSession()
   const [isPricingOpen, setIsPricingOpen] = useState(false)
-  const [userTier, setUserTier] = useState<string>('Gratis')
+  const [designCredits, setDesignCredits] = useState(0)
 
   const fetchUserData = useCallback(async () => {
     try {
       const res = await fetch('/api/user')
       const data = await res.json()
-      if (data.tierName) {
-        setUserTier(data.tierName)
-      }
+      setDesignCredits(data.designCredits ?? 0)
     } catch {
       // silently fail
     }
@@ -66,7 +64,7 @@ export default function GeneratorPage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <AuthButton onOpenPricing={() => setIsPricingOpen(true)} tierName={userTier} />
+                <AuthButton onOpenPricing={() => setIsPricingOpen(true)} designCredits={designCredits} />
                 <ThemeToggle />
               </div>
             </div>
@@ -91,7 +89,7 @@ export default function GeneratorPage() {
       <PricingDialog
         open={isPricingOpen}
         onOpenChange={setIsPricingOpen}
-        currentTier={userTier}
+        currentCredits={designCredits}
       />
     </div>
   )

@@ -1,31 +1,24 @@
 /**
  * Base de datos en archivo JSON persistente.
  * Usa /data en Railway (volumen) o .app-data/ en dev local.
+ * 
+ * Sistema de packs de diseños:
+ * - Gratis: 1 diseño/día con marca de agua, sin upscale
+ * - Con créditos: sin marca de agua, con upscale incluido
  */
 
 import fs from 'fs'
 import path from 'path'
-import type { UserTier } from './tiers'
 
 // ── Tipos ───────────────────────────────────────────────
-
-export interface UpscaleUsage {
-  hourly: { count: number; resetAt: number }
-  daily: { count: number; resetAt: number }
-  monthly: { count: number; resetAt: number }
-}
 
 export interface UserRecord {
   email: string
   name: string
   image: string
-  tier: UserTier
   stripeCustomerId: string | null
-  subscriptionId: string | null
-  subscriptionStatus: string | null
-  upscaleCredits: number          // créditos de packs (compra única)
-  upscaleUsage: UpscaleUsage
-  downloadsToday: { count: number; resetAt: number }
+  designCredits: number               // créditos de packs comprados
+  freeDownloadsToday: { count: number; resetAt: number }  // descargas gratis del día
   createdAt: number
   updatedAt: number
 }
@@ -95,17 +88,9 @@ export function upsertUser(email: string, data: Partial<UserRecord>): UserRecord
     email,
     name: data.name || existing?.name || '',
     image: data.image || existing?.image || '',
-    tier: data.tier || existing?.tier || 'free',
     stripeCustomerId: data.stripeCustomerId ?? existing?.stripeCustomerId ?? null,
-    subscriptionId: data.subscriptionId ?? existing?.subscriptionId ?? null,
-    subscriptionStatus: data.subscriptionStatus ?? existing?.subscriptionStatus ?? null,
-    upscaleCredits: data.upscaleCredits ?? existing?.upscaleCredits ?? 0,
-    upscaleUsage: data.upscaleUsage || existing?.upscaleUsage || {
-      hourly: { count: 0, resetAt: now + 3600000 },
-      daily: { count: 0, resetAt: now + 86400000 },
-      monthly: { count: 0, resetAt: now + 2592000000 },
-    },
-    downloadsToday: data.downloadsToday || existing?.downloadsToday || {
+    designCredits: data.designCredits ?? existing?.designCredits ?? 0,
+    freeDownloadsToday: data.freeDownloadsToday || existing?.freeDownloadsToday || {
       count: 0,
       resetAt: now + 86400000,
     },
@@ -118,85 +103,98 @@ export function upsertUser(email: string, data: Partial<UserRecord>): UserRecord
   return user
 }
 
-export function addUpscaleCredits(email: string, credits: number): UserRecord | null {
+export function addDesignCredits(email: string, credits: number): UserRecord | null {
   const user = getUser(email)
   if (!user) return null
   return upsertUser(email, {
-    upscaleCredits: user.upscaleCredits + credits,
+    designCredits: user.designCredits + credits,
   })
 }
 
-export function recordUpscaleUsage(email: string): { allowed: boolean; reason?: string } {
+/**
+ * Intenta usar un crédito de diseño.
+ * Si tiene créditos → descuenta 1, sin marca de agua, con upscale.
+ * Si no tiene créditos → usa descarga gratuita (con marca de agua, sin upscale).
+ */
+export function useDesignCredit(email: string): { allowed: boolean; usedCredit: boolean; watermark: boolean; reason?: string } {
+  const user = getUser(email)
+  if (!user) return { allowed: false, usedCredit: false, watermark: true, reason: 'Usuario no encontrado.' }
+
+  // Si tiene créditos de packs, descontar uno
+  if (user.designCredits > 0) {
+    upsertUser(email, { designCredits: user.designCredits - 1 })
+    return { allowed: true, usedCredit: true, watermark: false }
+  }
+
+  // Sin créditos → usar descarga gratuita (1/día)
+  const now = Date.now()
+  const freeDownloads = { ...user.freeDownloadsToday }
+
+  if (now >= freeDownloads.resetAt) {
+    freeDownloads.count = 0
+    freeDownloads.resetAt = now + 86400000
+  }
+
+  const { FREE_DAILY_LIMIT } = require('./tiers')
+
+  if (freeDownloads.count >= FREE_DAILY_LIMIT) {
+    return {
+      allowed: false,
+      usedCredit: false,
+      watermark: true,
+      reason: 'Ya usaste tu diseño gratis de hoy. Compra un pack para seguir creando.',
+    }
+  }
+
+  freeDownloads.count++
+  upsertUser(email, { freeDownloadsToday: freeDownloads })
+  return { allowed: true, usedCredit: false, watermark: true }
+}
+
+/**
+ * Verificar si el usuario puede descargar y cuáles son sus condiciones.
+ */
+export function checkUserDownload(email: string): { allowed: boolean; watermark: boolean; hasCredits: boolean; remainingCredits: number; message?: string } {
+  const user = getUser(email)
+  if (!user) return { allowed: false, watermark: true, hasCredits: false, remainingCredits: 0, message: 'Usuario no encontrado.' }
+
+  // Si tiene créditos → puede descargar sin marca de agua
+  if (user.designCredits > 0) {
+    return { allowed: true, watermark: false, hasCredits: true, remainingCredits: user.designCredits }
+  }
+
+  // Sin créditos → verificar si ya usó la descarga gratis de hoy
+  const now = Date.now()
+  const freeDownloads = { ...user.freeDownloadsToday }
+  if (now >= freeDownloads.resetAt) freeDownloads.count = 0
+
+  const { FREE_DAILY_LIMIT } = require('./tiers')
+
+  if (freeDownloads.count >= FREE_DAILY_LIMIT) {
+    return {
+      allowed: false,
+      watermark: true,
+      hasCredits: false,
+      remainingCredits: 0,
+      message: 'Ya usaste tu diseño gratis de hoy. Compra un pack para seguir creando.',
+    }
+  }
+
+  return { allowed: true, watermark: true, hasCredits: false, remainingCredits: 0 }
+}
+
+/**
+ * Verificar si el usuario puede usar upscale (solo con créditos).
+ */
+export function checkUpscaleAccess(email: string): { allowed: boolean; reason?: string } {
   const user = getUser(email)
   if (!user) return { allowed: false, reason: 'Usuario no encontrado.' }
 
-  const now = Date.now()
-  const usage = { ...user.upscaleUsage }
-  const { TIER_LIMITS } = require('./tiers')
-  const limits = TIER_LIMITS[user.tier]
-
-  // Si tiene créditos de packs, usarlos primero (sin importar tier)
-  if (user.upscaleCredits > 0) {
-    upsertUser(email, { upscaleCredits: user.upscaleCredits - 1 })
+  if (user.designCredits > 0) {
     return { allowed: true }
   }
 
-  // Si es free sin login, no tiene upscales
-  // (este chequeo se hace en la API, aquí asumimos que está logueado)
-
-  // Reset contadores si expiró el periodo
-  if (now >= usage.hourly.resetAt) {
-    usage.hourly = { count: 0, resetAt: now + 3600000 }
-  }
-  if (now >= usage.daily.resetAt) {
-    usage.daily = { count: 0, resetAt: now + 86400000 }
-  }
-  if (now >= usage.monthly.resetAt) {
-    usage.monthly = { count: 0, resetAt: now + 2592000000 }
-  }
-
-  // Verificar límites
-  if (usage.hourly.count >= limits.upscalesPerHour) {
-    return { allowed: false, reason: 'Has alcanzado el límite por hora. Espera unos minutos.' }
-  }
-  if (usage.daily.count >= limits.upscalesPerDay) {
-    return { allowed: false, reason: 'Has alcanzado el máximo diario. Podrás continuar mañana.' }
-  }
-  if (usage.monthly.count >= limits.upscalesPerMonth) {
-    return { allowed: false, reason: 'Has alcanzado el uso justo del mes. Tu límite se renueva pronto.' }
-  }
-
-  // Incrementar contadores
-  usage.hourly.count++
-  usage.daily.count++
-  usage.monthly.count++
-
-  upsertUser(email, { upscaleUsage: usage })
-  return { allowed: true }
-}
-
-export function recordDownload(email: string): { allowed: boolean; reason?: string } {
-  const user = getUser(email)
-  if (!user) return { allowed: false, reason: 'Usuario no encontrado.' }
-
-  const now = Date.now()
-  const downloads = { ...user.downloadsToday }
-  const { TIER_LIMITS } = require('./tiers')
-  const limits = TIER_LIMITS[user.tier]
-
-  // Reset si expiró
-  if (now >= downloads.resetAt) {
-    downloads.count = 0
-    downloads.resetAt = now + 86400000
-  }
-
-  if (downloads.count >= limits.downloadsPerDay) {
-    return { allowed: false, reason: 'Ya descargaste tu límite de hoy. Podrás descargar más mañana.' }
-  }
-
-  downloads.count++
-  upsertUser(email, { downloadsToday: downloads })
-  return { allowed: true }
+  return { allowed: false, reason: 'Necesitas créditos de diseño para mejorar imágenes. Compra un pack.' }
 }
 
 // ── Rate Limit por IP (anónimos) ────────────────────────
@@ -221,7 +219,7 @@ export function checkIpRateLimit(ip: string): { allowed: boolean; remainingHours
     return {
       allowed: false,
       remainingHours,
-      message: `Ya descargaste un póster hoy. Podrás descargar otro en aproximadamente ${remainingHours} hora(s).`,
+      message: `Ya descargaste un póster hoy. Podrás descargar otro en aproximadamente ${remainingHours} hora(s). Crea una cuenta o compra un pack para más.`,
     }
   }
 

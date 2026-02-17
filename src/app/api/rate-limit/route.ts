@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { getUser, recordDownload, checkIpRateLimit, recordIpDownload } from '@/lib/db'
-import { TIER_LIMITS } from '@/lib/tiers'
+import { checkUserDownload, useDesignCredit, checkIpRateLimit, recordIpDownload } from '@/lib/db'
 
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for')
@@ -12,44 +11,28 @@ function getClientIp(request: NextRequest): string {
 }
 
 /**
- * GET  → Consulta si puede descargar hoy (por email o IP)
- * POST → Registra una descarga
+ * GET  → Consulta si puede descargar (por email o IP)
+ * POST → Registra una descarga (gasta crédito o descarga gratis)
  */
 export async function GET(request: NextRequest) {
   const session = await getServerSession()
 
   // Usuario logueado: verificar por email
   if (session?.user?.email) {
-    const user = getUser(session.user.email)
-    if (user) {
-      const limits = TIER_LIMITS[user.tier]
-
-      // Premium/Pro: ilimitado
-      if (limits.downloadsPerDay === Infinity) {
-        return NextResponse.json({ allowed: true, watermark: limits.watermark })
-      }
-
-      // Free logueado: verificar conteo
-      const now = Date.now()
-      const downloads = { ...user.downloadsToday }
-      if (now >= downloads.resetAt) downloads.count = 0
-
-      if (downloads.count >= limits.downloadsPerDay) {
-        return NextResponse.json({
-          allowed: false,
-          watermark: limits.watermark,
-          message: 'Ya descargaste tu límite de hoy. Hazte Premium para descargas ilimitadas.',
-        })
-      }
-
-      return NextResponse.json({ allowed: true, watermark: limits.watermark })
-    }
+    const result = checkUserDownload(session.user.email)
+    return NextResponse.json({
+      allowed: result.allowed,
+      watermark: result.watermark,
+      hasCredits: result.hasCredits,
+      remainingCredits: result.remainingCredits,
+      message: result.message,
+    })
   }
 
   // Anónimo: verificar por IP
   const ip = getClientIp(request)
   const result = checkIpRateLimit(ip)
-  return NextResponse.json({ ...result, watermark: true })
+  return NextResponse.json({ ...result, watermark: true, hasCredits: false, remainingCredits: 0 })
 }
 
 export async function POST(request: NextRequest) {
@@ -57,25 +40,18 @@ export async function POST(request: NextRequest) {
 
   // Usuario logueado
   if (session?.user?.email) {
-    const user = getUser(session.user.email)
-    if (user) {
-      const limits = TIER_LIMITS[user.tier]
-
-      // Premium/Pro: ilimitado, solo registrar
-      if (limits.downloadsPerDay === Infinity) {
-        return NextResponse.json({ allowed: true, watermark: limits.watermark })
-      }
-
-      // Free logueado
-      const result = recordDownload(session.user.email)
-      if (!result.allowed) {
-        return NextResponse.json(
-          { allowed: false, watermark: true, message: result.reason },
-          { status: 429 }
-        )
-      }
-      return NextResponse.json({ allowed: true, watermark: limits.watermark })
+    const result = useDesignCredit(session.user.email)
+    if (!result.allowed) {
+      return NextResponse.json(
+        { allowed: false, watermark: true, message: result.reason },
+        { status: 429 }
+      )
     }
+    return NextResponse.json({
+      allowed: true,
+      watermark: result.watermark,
+      usedCredit: result.usedCredit,
+    })
   }
 
   // Anónimo: IP

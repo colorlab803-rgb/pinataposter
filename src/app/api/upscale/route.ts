@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { recordUpscaleUsage } from '@/lib/db'
+import { checkUpscaleAccess } from '@/lib/db'
 
 const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN
 
@@ -51,11 +51,11 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Verificar límite de upscale según tier
-  const usageCheck = recordUpscaleUsage(session.user.email)
+  // Verificar límite de upscale — solo con créditos de diseño
+  const usageCheck = checkUpscaleAccess(session.user.email)
   if (!usageCheck.allowed) {
     return NextResponse.json(
-      { error: usageCheck.reason || 'Límite de upscale alcanzado.' },
+      { error: usageCheck.reason || 'Necesitas créditos para usar upscale.' },
       { status: 429 }
     )
   }

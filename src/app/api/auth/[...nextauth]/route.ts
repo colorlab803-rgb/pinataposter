@@ -22,13 +22,12 @@ const handler = NextAuth({
       return true
     },
     async session({ session }) {
-      // Inyectar tier del usuario en la sesión
+      // Inyectar créditos del usuario en la sesión
       if (session.user?.email) {
         const { getUser } = await import('@/lib/db')
         const dbUser = getUser(session.user.email)
         if (dbUser) {
-          (session.user as Record<string, unknown>).tier = dbUser.tier
-          ;(session.user as Record<string, unknown>).upscaleCredits = dbUser.upscaleCredits
+          (session.user as Record<string, unknown>).designCredits = dbUser.designCredits
         }
       }
       return session

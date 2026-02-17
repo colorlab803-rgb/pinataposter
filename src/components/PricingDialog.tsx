@@ -11,90 +11,46 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Crown, Zap, Check, Loader2, Package } from 'lucide-react'
+import { Check, Loader2, Package, Sparkles } from 'lucide-react'
 
 interface PricingDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  currentTier?: string
+  currentCredits?: number
 }
-
-interface PlanCard {
-  id: string
-  name: string
-  price: string
-  period: string
-  features: string[]
-  priceEnvKey: string
-  mode: 'subscription' | 'payment'
-  popular?: boolean
-  icon: React.ReactNode
-}
-
-const plans: PlanCard[] = [
-  {
-    id: 'premium',
-    name: 'Premium',
-    price: '$50',
-    period: '/mes',
-    features: [
-      'Descargas ilimitadas',
-      'Sin marca de agua',
-      '5 upscales por día',
-      'Soporte prioritario',
-    ],
-    priceEnvKey: 'premium',
-    mode: 'subscription',
-    icon: <Crown className="h-5 w-5" />,
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: '$99',
-    period: '/mes',
-    features: [
-      'Todo de Premium',
-      'Upscales ilimitados*',
-      'Prioridad en procesamiento',
-      '*Uso justo: 50/día, 500/mes',
-    ],
-    priceEnvKey: 'pro',
-    mode: 'subscription',
-    popular: true,
-    icon: <Zap className="h-5 w-5" />,
-  },
-]
 
 interface PackOption {
   id: string
   name: string
   credits: number
   price: string
+  perDesign: string
   priceEnvKey: string
+  popular?: boolean
 }
 
 const packs: PackOption[] = [
-  { id: 'pack_25', name: '25 upscales', credits: 25, price: '$19', priceEnvKey: 'pack_25' },
-  { id: 'pack_50', name: '50 upscales', credits: 50, price: '$35', priceEnvKey: 'pack_50' },
-  { id: 'pack_200', name: '200 upscales', credits: 200, price: '$99', priceEnvKey: 'pack_200' },
+  { id: 'pack_5', name: '5 diseños', credits: 5, price: '$25', perDesign: '$5.00/diseño', priceEnvKey: 'pack_5' },
+  { id: 'pack_15', name: '15 diseños', credits: 15, price: '$65', perDesign: '$4.33/diseño', priceEnvKey: 'pack_15', popular: true },
+  { id: 'pack_50', name: '50 diseños', credits: 50, price: '$199', perDesign: '$3.98/diseño', priceEnvKey: 'pack_50' },
 ]
 
-export function PricingDialog({ open, onOpenChange, currentTier }: PricingDialogProps) {
+export function PricingDialog({ open, onOpenChange, currentCredits = 0 }: PricingDialogProps) {
   const { data: session } = useSession()
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
+  const [loadingPack, setLoadingPack] = useState<string | null>(null)
 
-  const handleCheckout = async (priceEnvKey: string, mode: 'subscription' | 'payment') => {
+  const handleCheckout = async (priceEnvKey: string) => {
     if (!session) {
       signIn('google')
       return
     }
 
-    setLoadingPlan(priceEnvKey)
+    setLoadingPack(priceEnvKey)
     try {
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId: priceEnvKey, mode }),
+        body: JSON.stringify({ priceId: priceEnvKey }),
       })
 
       const data = await res.json()
@@ -110,132 +66,102 @@ export function PricingDialog({ open, onOpenChange, currentTier }: PricingDialog
     } catch {
       toast.error('Error', { description: 'No se pudo iniciar el pago.' })
     } finally {
-      setLoadingPlan(null)
-    }
-  }
-
-  const handleManageSubscription = async () => {
-    setLoadingPlan('manage')
-    try {
-      const res = await fetch('/api/stripe/portal', { method: 'POST' })
-      const data = await res.json()
-      if (data.url) {
-        window.location.href = data.url
-      }
-    } catch {
-      toast.error('Error', { description: 'No se pudo abrir el portal.' })
-    } finally {
-      setLoadingPlan(null)
+      setLoadingPack(null)
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center">Elige tu plan</DialogTitle>
+          <DialogTitle className="text-2xl text-center">Packs de Diseños</DialogTitle>
           <DialogDescription className="text-center">
-            Desbloquea todas las funciones de PiñataPoster
+            Compra créditos para descargar sin marca de agua y con upscale incluido
           </DialogDescription>
         </DialogHeader>
 
-        {/* Plans */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          {plans.map((plan) => {
-            const isCurrentPlan = currentTier?.toLowerCase() === plan.id
-            return (
-              <div
-                key={plan.id}
-                className={`relative rounded-xl border-2 p-6 transition-all ${
-                  plan.popular
-                    ? 'border-purple-500 bg-purple-500/5 shadow-lg shadow-purple-500/10'
-                    : 'border-border'
-                } ${isCurrentPlan ? 'ring-2 ring-green-500' : ''}`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-purple-500 text-white text-xs font-medium rounded-full">
-                    Popular
-                  </div>
-                )}
+        {/* Créditos actuales */}
+        {session && (
+          <div className="flex items-center justify-center gap-2 py-2 px-4 bg-muted/50 rounded-lg mx-auto">
+            <Package className="h-4 w-4 text-purple-500" />
+            <span className="text-sm">
+              Tienes <strong className="text-purple-500">{currentCredits}</strong> crédito{currentCredits !== 1 ? 's' : ''} disponible{currentCredits !== 1 ? 's' : ''}
+            </span>
+          </div>
+        )}
 
-                <div className="flex items-center gap-2 mb-3">
-                  <div className={`p-2 rounded-lg ${plan.popular ? 'bg-purple-500/20 text-purple-500' : 'bg-muted text-muted-foreground'}`}>
-                    {plan.icon}
-                  </div>
-                  <h3 className="text-lg font-semibold">{plan.name}</h3>
-                </div>
-
-                <div className="mb-4">
-                  <span className="text-3xl font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground text-sm"> MXN{plan.period}</span>
-                </div>
-
-                <ul className="space-y-2 mb-6">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {isCurrentPlan ? (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleManageSubscription}
-                    disabled={loadingPlan === 'manage'}
-                  >
-                    {loadingPlan === 'manage' ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    ) : null}
-                    Gestionar suscripción
-                  </Button>
-                ) : (
-                  <Button
-                    className={`w-full ${plan.popular ? 'bg-purple-500 hover:bg-purple-600' : ''}`}
-                    onClick={() => handleCheckout(plan.priceEnvKey, plan.mode)}
-                    disabled={loadingPlan === plan.priceEnvKey}
-                  >
-                    {loadingPlan === plan.priceEnvKey ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    ) : null}
-                    {session ? 'Suscribirme' : 'Iniciar sesión para suscribirme'}
-                  </Button>
-                )}
-              </div>
-            )
-          })}
+        {/* Comparación Gratis vs Pack */}
+        <div className="grid grid-cols-2 gap-3 mt-2">
+          <div className="rounded-lg border p-4">
+            <h4 className="font-semibold text-sm mb-2 text-muted-foreground">Gratis</h4>
+            <ul className="space-y-1.5 text-xs text-muted-foreground">
+              <li>• 1 diseño por día</li>
+              <li>• Con marca de agua</li>
+              <li>• Sin mejora de calidad</li>
+            </ul>
+          </div>
+          <div className="rounded-lg border border-purple-500/30 bg-purple-500/5 p-4">
+            <h4 className="font-semibold text-sm mb-2 text-purple-500 flex items-center gap-1">
+              <Sparkles className="h-3.5 w-3.5" /> Con créditos
+            </h4>
+            <ul className="space-y-1.5 text-xs">
+              <li className="flex items-start gap-1.5">
+                <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                Sin marca de agua
+              </li>
+              <li className="flex items-start gap-1.5">
+                <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                Mejora de calidad (upscale)
+              </li>
+              <li className="flex items-start gap-1.5">
+                <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
+                No expiran
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Packs */}
-        <div className="mt-6 pt-6 border-t">
-          <div className="flex items-center gap-2 mb-4">
-            <Package className="h-5 w-5 text-muted-foreground" />
-            <h3 className="font-semibold">Packs de Upscale (compra única)</h3>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {packs.map((pack) => (
-              <button
-                key={pack.id}
-                onClick={() => handleCheckout(pack.priceEnvKey, 'payment')}
-                disabled={loadingPlan === pack.priceEnvKey}
-                className="p-4 rounded-lg border hover:border-purple-500/50 hover:bg-purple-500/5 transition-all text-center disabled:opacity-50"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          {packs.map((pack) => (
+            <div
+              key={pack.id}
+              className={`relative rounded-xl border-2 p-5 text-center transition-all hover:shadow-md ${
+                pack.popular
+                  ? 'border-purple-500 bg-purple-500/5 shadow-lg shadow-purple-500/10'
+                  : 'border-border'
+              }`}
+            >
+              {pack.popular && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-purple-500 text-white text-xs font-medium rounded-full">
+                  Más popular
+                </div>
+              )}
+
+              <div className="text-3xl font-bold mt-1">{pack.credits}</div>
+              <div className="text-sm text-muted-foreground mb-3">diseños</div>
+
+              <div className="text-2xl font-bold">{pack.price}</div>
+              <div className="text-xs text-muted-foreground mb-1">MXN</div>
+              <div className="text-xs text-purple-500 font-medium mb-4">{pack.perDesign}</div>
+
+              <Button
+                className={`w-full ${pack.popular ? 'bg-purple-500 hover:bg-purple-600' : ''}`}
+                onClick={() => handleCheckout(pack.priceEnvKey)}
+                disabled={loadingPack === pack.priceEnvKey}
               >
-                {loadingPlan === pack.priceEnvKey ? (
-                  <Loader2 className="h-5 w-5 animate-spin mx-auto mb-1" />
-                ) : (
-                  <span className="text-2xl font-bold block">{pack.credits}</span>
-                )}
-                <span className="text-xs text-muted-foreground block">upscales</span>
-                <span className="text-sm font-semibold text-purple-500 mt-1 block">{pack.price} MXN</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-muted-foreground mt-2 text-center">
-            Los créditos de packs no expiran y se suman a tu límite del plan.
-          </p>
+                {loadingPack === pack.priceEnvKey ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : null}
+                {session ? 'Comprar' : 'Iniciar sesión'}
+              </Button>
+            </div>
+          ))}
         </div>
+
+        <p className="text-xs text-muted-foreground mt-2 text-center">
+          Los créditos no expiran. Cada crédito = 1 descarga sin marca de agua + 1 mejora de calidad.
+        </p>
       </DialogContent>
     </Dialog>
   )

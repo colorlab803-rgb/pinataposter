@@ -2,14 +2,14 @@
 
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
-import { LogIn, LogOut, User, Crown, Loader2 } from 'lucide-react'
+import { LogIn, LogOut, User, Package, Loader2 } from 'lucide-react'
 
 interface AuthButtonProps {
   onOpenPricing?: () => void
-  tierName?: string
+  designCredits?: number
 }
 
-export function AuthButton({ onOpenPricing, tierName }: AuthButtonProps) {
+export function AuthButton({ onOpenPricing, designCredits = 0 }: AuthButtonProps) {
   const { data: session, status } = useSession()
 
   if (status === 'loading') {
@@ -34,15 +34,13 @@ export function AuthButton({ onOpenPricing, tierName }: AuthButtonProps) {
     )
   }
 
-  const isPremium = tierName === 'Premium' || tierName === 'Pro'
-
   return (
     <div className="flex items-center gap-2">
-      {/* Badge de tier */}
-      {isPremium ? (
-        <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-yellow-500/20 backdrop-blur-sm rounded-full border border-yellow-500/30">
-          <Crown className="h-3.5 w-3.5 text-yellow-400" />
-          <span className="text-xs font-medium text-yellow-100">{tierName}</span>
+      {/* Badge de créditos */}
+      {designCredits > 0 ? (
+        <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-purple-500/20 backdrop-blur-sm rounded-full border border-purple-500/30">
+          <Package className="h-3.5 w-3.5 text-purple-400" />
+          <span className="text-xs font-medium text-purple-100">{designCredits} crédito{designCredits !== 1 ? 's' : ''}</span>
         </div>
       ) : (
         <Button
@@ -51,8 +49,8 @@ export function AuthButton({ onOpenPricing, tierName }: AuthButtonProps) {
           onClick={onOpenPricing}
           className="hidden md:flex text-purple-300 hover:text-purple-100 hover:bg-white/10 text-xs"
         >
-          <Crown className="h-3.5 w-3.5 mr-1" />
-          Mejorar plan
+          <Package className="h-3.5 w-3.5 mr-1" />
+          Comprar créditos
         </Button>
       )}
 
