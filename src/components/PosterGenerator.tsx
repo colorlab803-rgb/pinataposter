@@ -200,7 +200,7 @@ export function PosterGenerator({
   useEffect(() => {
     const checkRateLimit = async () => {
       try {
-        const res = await fetch('/api/rate-limit')
+        const res = await fetch('/api/rate-limit', { cache: 'no-store' })
         const data = await res.json()
         if (!data.allowed) {
           setRateLimitBlocked(true)
@@ -668,9 +668,9 @@ export function PosterGenerator({
   const handleDownloadRequest = async (type: DownloadType) => {
     if (!validateInputs()) return
 
-    // Verificar rate-limit por IP antes de permitir la descarga
+    // Verificar rate-limit antes de permitir la descarga
     try {
-      const res = await fetch('/api/rate-limit')
+      const res = await fetch('/api/rate-limit', { cache: 'no-store' })
       const data = await res.json()
       if (!data.allowed) {
         setRateLimitBlocked(true)
@@ -692,7 +692,7 @@ export function PosterGenerator({
   const handleConfirmDownload = async () => {
     // Registrar la descarga en el rate-limiter
     try {
-      const res = await fetch('/api/rate-limit', { method: 'POST' })
+      const res = await fetch('/api/rate-limit', { method: 'POST', cache: 'no-store' })
       const data = await res.json()
       if (!data.allowed) {
         setRateLimitBlocked(true)
@@ -708,6 +708,11 @@ export function PosterGenerator({
       // Actualizar watermark después de registrar descarga
       if (typeof data.watermark === 'boolean') {
         setShowWatermark(data.watermark)
+      }
+      // Bloquear descargas adicionales si no tiene créditos
+      if (!data.usedCredit) {
+        setRateLimitBlocked(true)
+        setRateLimitMessage('Ya usaste tu diseño gratis de hoy. Compra un pack para seguir creando.')
       }
     } catch {
       console.warn('No se pudo registrar el rate-limit, continuando descarga.')
