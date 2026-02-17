@@ -677,6 +677,7 @@ export function PosterGenerator({
         setRateLimitMessage(data.message)
         toast.error('Límite diario alcanzado', {
           description: data.message,
+          action: onOpenPricing ? { label: 'Ver packs', onClick: onOpenPricing } : undefined,
         })
         return
       }
@@ -712,7 +713,11 @@ export function PosterGenerator({
       // Bloquear descargas adicionales si no tiene créditos
       if (!data.usedCredit) {
         setRateLimitBlocked(true)
-        setRateLimitMessage('Ya usaste tu diseño gratis de hoy. Compra un pack para seguir creando.')
+        setRateLimitMessage('Ya usaste tu diseño gratis de hoy. Compra un pack para seguir creando sin marca de agua.')
+        // Abrir pricing automáticamente para facilitar la conversión
+        if (onOpenPricing) {
+          setTimeout(() => onOpenPricing(), 1500)
+        }
       }
     } catch {
       console.warn('No se pudo registrar el rate-limit, continuando descarga.')
@@ -1611,9 +1616,24 @@ export function PosterGenerator({
                       </Button>
                     </div>
                     {rateLimitBlocked && rateLimitMessage && (
-                      <div className="mt-4 p-3 rounded-md bg-destructive/10 border border-destructive/30 text-destructive text-sm flex items-start gap-2">
-                        <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>{rateLimitMessage}</span>
+                      <div className="mt-4 p-4 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 text-sm space-y-3">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0 text-purple-400" />
+                          <div>
+                            <p className="font-medium text-foreground mb-1">Ya usaste tu diseño gratis de hoy</p>
+                            <p className="text-muted-foreground text-xs">{rateLimitMessage}</p>
+                          </div>
+                        </div>
+                        {onOpenPricing && (
+                          <Button 
+                            size="sm" 
+                            className="w-full bg-purple-500 hover:bg-purple-600"
+                            onClick={onOpenPricing}
+                          >
+                            <Package className="h-4 w-4 mr-2" />
+                            Ver packs de diseños — desde $25 MXN
+                          </Button>
+                        )}
                       </div>
                     )}
                     </div>

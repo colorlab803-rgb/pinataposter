@@ -5,14 +5,24 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { SessionProvider } from '@/components/SessionProvider';
 
 const siteUrl = 'https://pinataposter.com';
-const title = 'PiñataPoster - Imprime Imágenes Grandes en Varias Hojas';
-const description = 'Divide cualquier imagen para imprimirla a gran escala. Ideal para pósters, piñatas, patrones y manualidades. Sube tu imagen, define el tamaño y descarga el PDF listo para imprimir en hojas tamaño carta, oficio, tabloide y más.';
+const title = 'PiñataPoster - Imprime Moldes y Diseños de Piñatas en Tamaño Real';
+const description = 'Herramienta para piñateros: sube tu diseño, elige el tamaño real de tu piñata y descarga un PDF dividido en hojas carta, oficio o tabloide listo para imprimir, recortar y armar. Ideal para moldes de piñatas, patrones a escala y pósters grandes.';
 const ogImageUrl = `${siteUrl}/screenshots/desktop.png`;
 
 export const metadata: Metadata = {
-  title: title,
+  title: {
+    default: title,
+    template: '%s | PiñataPoster',
+  },
   description: description,
-  keywords: ['imprimir poster', 'dividir imagen', 'imagen gigante', 'piñata', 'manualidades', 'poster en varias hojas', 'imprimir imagen grande', 'posterizar', 'piñata poster', 'seccionar imagen'],
+  keywords: [
+    'moldes de piñatas', 'patrones para piñatas', 'imprimir piñata tamaño real',
+    'diseño de piñatas', 'plantillas piñatas', 'piñata poster', 'hacer piñatas',
+    'imprimir imagen grande', 'dividir imagen en hojas', 'poster en varias hojas',
+    'imprimir molde grande', 'piñatas personalizadas', 'manualidades piñatas',
+    'como hacer una piñata', 'molde piñata carta', 'patron piñata PDF',
+    'posterizar imagen', 'imprimir poster casero', 'piñatero', 'piñatería',
+  ],
   authors: [{ name: 'Ricardo Hernández' }],
   creator: 'Ricardo Hernández',
   publisher: 'Ricardo Hernández',
@@ -31,12 +41,13 @@ export const metadata: Metadata = {
     title: title,
     description: description,
     siteName: 'PiñataPoster',
+    locale: 'es_MX',
     images: [
       {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: 'Vista previa de la aplicación PiñataPoster',
+        alt: 'PiñataPoster - Imprime moldes de piñatas en tamaño real',
       },
     ],
   },
@@ -46,6 +57,18 @@ export const metadata: Metadata = {
     description: description,
     images: [ogImageUrl],
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  category: 'tools',
 };
 
 export default function RootLayout({

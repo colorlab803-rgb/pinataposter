@@ -11,7 +11,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Check, Loader2, Package, Sparkles } from 'lucide-react'
+import { Check, Loader2, Package, Sparkles, Shield, Star } from 'lucide-react'
 
 interface PricingDialogProps {
   open: boolean
@@ -27,12 +27,13 @@ interface PackOption {
   perDesign: string
   priceEnvKey: string
   popular?: boolean
+  savings?: string
 }
 
 const packs: PackOption[] = [
   { id: 'pack_5', name: '5 diseños', credits: 5, price: '$25', perDesign: '$5.00/diseño', priceEnvKey: 'pack_5' },
-  { id: 'pack_15', name: '15 diseños', credits: 15, price: '$65', perDesign: '$4.33/diseño', priceEnvKey: 'pack_15', popular: true },
-  { id: 'pack_50', name: '50 diseños', credits: 50, price: '$199', perDesign: '$3.98/diseño', priceEnvKey: 'pack_50' },
+  { id: 'pack_15', name: '15 diseños', credits: 15, price: '$65', perDesign: '$4.33/diseño', priceEnvKey: 'pack_15', popular: true, savings: 'Ahorra 13%' },
+  { id: 'pack_50', name: '50 diseños', credits: 50, price: '$199', perDesign: '$3.98/diseño', priceEnvKey: 'pack_50', savings: 'Ahorra 20%' },
 ]
 
 export function PricingDialog({ open, onOpenChange, currentCredits = 0 }: PricingDialogProps) {
@@ -74,9 +75,9 @@ export function PricingDialog({ open, onOpenChange, currentCredits = 0 }: Pricin
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center">Packs de Diseños</DialogTitle>
+          <DialogTitle className="text-2xl text-center">Desbloquea tus diseños sin límites</DialogTitle>
           <DialogDescription className="text-center">
-            Compra créditos para descargar sin marca de agua y con upscale incluido
+            Descarga sin marca de agua, con mejora de calidad incluida. Los créditos nunca expiran.
           </DialogDescription>
         </DialogHeader>
 
@@ -111,11 +112,11 @@ export function PricingDialog({ open, onOpenChange, currentCredits = 0 }: Pricin
               </li>
               <li className="flex items-start gap-1.5">
                 <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
-                Mejora de calidad (upscale)
+                Mejora de calidad (upscale AI)
               </li>
               <li className="flex items-start gap-1.5">
                 <Check className="h-3 w-3 text-green-500 mt-0.5 flex-shrink-0" />
-                No expiran
+                No expiran nunca
               </li>
             </ul>
           </div>
@@ -133,8 +134,8 @@ export function PricingDialog({ open, onOpenChange, currentCredits = 0 }: Pricin
               }`}
             >
               {pack.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-purple-500 text-white text-xs font-medium rounded-full">
-                  Más popular
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-purple-500 text-white text-xs font-medium rounded-full flex items-center gap-1">
+                  <Star className="h-3 w-3" /> Más popular
                 </div>
               )}
 
@@ -143,7 +144,11 @@ export function PricingDialog({ open, onOpenChange, currentCredits = 0 }: Pricin
 
               <div className="text-2xl font-bold">{pack.price}</div>
               <div className="text-xs text-muted-foreground mb-1">MXN</div>
-              <div className="text-xs text-purple-500 font-medium mb-4">{pack.perDesign}</div>
+              <div className="text-xs text-purple-500 font-medium">{pack.perDesign}</div>
+              {pack.savings && (
+                <div className="text-[10px] text-green-500 font-medium mt-0.5">{pack.savings}</div>
+              )}
+              <div className="mb-4" />
 
               <Button
                 className={`w-full ${pack.popular ? 'bg-purple-500 hover:bg-purple-600' : ''}`}
@@ -159,9 +164,21 @@ export function PricingDialog({ open, onOpenChange, currentCredits = 0 }: Pricin
           ))}
         </div>
 
-        <p className="text-xs text-muted-foreground mt-2 text-center">
-          Los créditos no expiran. Cada crédito = 1 descarga sin marca de agua + 1 mejora de calidad.
-        </p>
+        {/* Confianza */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 mt-3 pt-3 border-t">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Shield className="h-3.5 w-3.5 text-green-500" />
+            Pago seguro con Stripe
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Package className="h-3.5 w-3.5 text-purple-500" />
+            Créditos que nunca expiran
+          </div>
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Sparkles className="h-3.5 w-3.5 text-yellow-500" />
+            Sin suscripciones
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   )
