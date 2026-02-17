@@ -6,7 +6,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 const siteUrl = 'https://pinataposter.com';
 const title = 'PiñataPoster - Imprime Imágenes Grandes en Varias Hojas';
 const description = 'Divide cualquier imagen para imprimirla a gran escala. Ideal para pósters, piñatas, patrones y manualidades. Sube tu imagen, define el tamaño y descarga el PDF listo para imprimir en hojas tamaño carta, oficio, tabloide y más.';
-const ogImageUrl = `${siteUrl}/og-image.png`;
+const ogImageUrl = `${siteUrl}/screenshots/desktop.png`;
 
 export const metadata: Metadata = {
   title: title,

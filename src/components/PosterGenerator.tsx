@@ -1,24 +1,18 @@
 'use client'
 
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react'
-import jsPDF from 'jspdf'
-import JSZip from 'jszip'
-import { saveAs } from 'file-saver'
-import NextImage from 'next/image'
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
-import Link from 'next/link'
+import { toast } from 'sonner'
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useToast } from "@/hooks/use-toast"
 
-import { Upload, Ruler, FileDown, Loader2, Image as ImageIcon, AlertTriangle, Scissors, Eye, Trash2, Layers, Crop as CropIcon, RotateCcw, RefreshCw, CheckCircle2, CheckSquare, Ban, Package, Move, Download, Info, ArrowRight, ArrowLeft, Share } from "lucide-react"
+import { Upload, Ruler, FileDown, Loader2, Image as ImageIcon, AlertTriangle, Layers, Crop as CropIcon, CheckCircle2, CheckSquare, Ban, Package, Download, ArrowRight, ArrowLeft, Share } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -28,17 +22,10 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import {
-  Tooltip,
-  TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Stepper } from '@/components/ui/stepper'
 import getCroppedImg from '@/lib/cropImage'
-import { useIsMobile } from '@/hooks/use-mobile'
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const paperSizes = {
   Letter: { width: 21.59, height: 27.94 },
@@ -53,7 +40,9 @@ const BLEED_CM = 0.5
 type PaperSize = keyof typeof paperSizes
 type Orientation = 'portrait' | 'landscape'
 type DownloadType = 'pdf' | 'zip'
-type SizingMode = 'cm' | 'sheets'
+
+const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
+const MAX_IMAGE_DIMENSION = 16000 // px
 
 const steps = [
   { id: 'Step 1', name: 'Subir Imagen' },
@@ -81,10 +70,6 @@ export function PosterGenerator({
   const [processedImageSrc, setProcessedImageSrc] = useState<string | null>(initialImageSrc || null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imageDimensions, setImageDimensions] = useState<{ width: number, height: number }>({ width: 0, height: 0 })
-  
-  const [sizingMode, setSizingMode] = useState<SizingMode>('cm')
-  const [sheetsWide, setSheetsWide] = useState<string>("1")
-  const [sheetsHigh, setSheetsHigh] = useState<string>("1")
 
   const [targetWidthCm, setTargetWidthCm] = useState<string>("")
   const [targetHeightCm, setTargetHeightCm] = useState<string>("")
@@ -94,7 +79,6 @@ export function PosterGenerator({
   const [includeCutGuides, setIncludeCutGuides] = useState<boolean>(true)
   const [includeBleed, setIncludeBleed] = useState<boolean>(true)
   const [includeAssemblyPlan, setIncludeAssemblyPlan] = useState<boolean>(true)
-  const [isSimpleMode, setIsSimpleMode] = useState<boolean>(false)
   
   const [grid, setGrid] = useState<{ cols: number, rows: number } | null>(null)
   const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set())
@@ -107,7 +91,6 @@ export function PosterGenerator({
 
   // Crop state
   const [isCropModalOpen, setIsCropModalOpen] = useState(false)
-  const [upscaledInfo, setUpscaledInfo] = useState<{imageUrl:string;width:number;height:number}|null>(null)
   const [crop, setCrop] = useState<Crop>()
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>()
   const cropImgRef = useRef<HTMLImageElement>(null)
@@ -124,16 +107,12 @@ export function PosterGenerator({
   const [downloadType, setDownloadType] = useState<DownloadType | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { toast } = useToast()
 
   const isIOS = () => {
     return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
   }
 
-  const isSafari = () => {
-    return /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-  }
   const handleDownloadComplete = (fileName: string, fileType: 'pdf' | 'zip', blob: Blob) => {
     setDownloadCompleteInfo({ fileName, fileType, blob })
     setIsDownloadCompleteModalOpen(true)
@@ -154,8 +133,7 @@ export function PosterGenerator({
             text: `¡Mira mi diseño creado con PiñataPoster!`,
             files: [file]
           })
-          toast({
-            title: "¡Compartido!",
+          toast.success("¡Compartido!", {
             description: "Tu archivo se ha compartido exitosamente."
           })
         } else {
@@ -169,26 +147,23 @@ export function PosterGenerator({
       } else {
         // Fallback para navegadores que no soportan Web Share API
         navigator.clipboard.writeText(`${window.location.href}\n\n¡Mira mi diseño creado con PiñataPoster! Archivo: ${downloadCompleteInfo.fileName}`)
-        toast({
-          title: "Enlace copiado",
+        toast.success("Enlace copiado", {
           description: "El enlace de la página se copió al portapapeles. Puedes compartirlo manualmente."
         })
       }
     } catch (error) {
       console.error('Error sharing:', error)
-      toast({
-        variant: "destructive",
-        title: "Error al compartir",
+      toast.error("Error al compartir", {
         description: "No se pudo compartir el archivo. Inténtalo de nuevo."
       })
     }
   }
 
-  const handleDownloadAgain = () => {
+  const handleDownloadAgain = async () => {
     if (!downloadCompleteInfo) return
+    const { saveAs } = await import('file-saver')
     saveAs(downloadCompleteInfo.blob, downloadCompleteInfo.fileName)
-    toast({
-      title: "Descargado nuevamente",
+    toast.success("Descargado nuevamente", {
       description: `Se descargó ${downloadCompleteInfo.fileName} otra vez.`
     })
   }
@@ -241,35 +216,6 @@ export function PosterGenerator({
     }
   }
 
-  const handleSheetChange = (value: string) => {
-    const numValue = parseInt(value, 10)
-    if (isNaN(numValue) || numValue <= 0) {
-        setSheetsWide("")
-        setSheetsHigh("")
-        setTargetWidthCm("")
-        setTargetHeightCm("")
-        return
-    }
-
-    setSheetsWide(value)
-
-    if (imageDimensions.width > 0) {
-        const { printableWidth, printableHeight } = getPrintableArea()
-        const newSheetsWide = numValue
-        let newSheetsHigh = 1
-
-        const aspectRatio = imageDimensions.height / imageDimensions.width
-        const newWidthCm = newSheetsWide * printableWidth
-        const newHeightCm = newWidthCm * aspectRatio
-        
-        newSheetsHigh = Math.max(1, Math.round(newHeightCm / printableHeight))
-        
-        setSheetsHigh(newSheetsHigh.toString())
-        setTargetWidthCm(newWidthCm.toFixed(2))
-        setTargetHeightCm(newHeightCm.toFixed(2))
-    }
-  }
-  
   const getGrid = useCallback((targetW: number, targetH: number): { cols: number, rows: number } => {
     const { printableWidth, printableHeight } = getPrintableArea()
     const cols = Math.ceil(targetW / printableWidth)
@@ -302,14 +248,12 @@ export function PosterGenerator({
     } else {
       setGrid(null)
       if (newGrid.cols * newGrid.rows > 100) {
-        toast({
-          variant: "destructive",
-          title: "Diseño demasiado grande",
+        toast.error("Diseño demasiado grande", {
           description: "La imagen resultante requiere demasiadas hojas. Por favor, reduce el tamaño.",
         })
       }
     }
-  }, [processedImageSrc, targetWidthCm, targetHeightCm, getGrid, toast])
+  }, [processedImageSrc, targetWidthCm, targetHeightCm, getGrid])
 
   const handleSelectImageClick = () => {
     setIsImageLoading(true)
@@ -322,12 +266,22 @@ export function PosterGenerator({
     
     const file = e.target.files?.[0]
     if (!file || !(file.type === 'image/jpeg' || file.type === 'image/png')) {
-      toast({
-        variant: "destructive",
-        title: "Tipo de archivo no válido",
+      toast.error("Tipo de archivo no válido", {
         description: "Solo puedes subir fotos en formato JPG o PNG.",
       })
       return
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("Archivo demasiado grande", {
+        description: `El archivo pesa ${(file.size / (1024 * 1024)).toFixed(1)} MB. El máximo permitido es 50 MB.`,
+      })
+      return
+    }
+
+    // Reset del input para permitir re-seleccionar el mismo archivo
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
 
   setIsProcessing(true)
@@ -350,11 +304,16 @@ export function PosterGenerator({
       const img = new window.Image()
       img.src = imgSrc
       img.onload = () => {
+        if (img.width > MAX_IMAGE_DIMENSION || img.height > MAX_IMAGE_DIMENSION) {
+          toast.error("Imagen demasiado grande", {
+            description: `La imagen tiene ${img.width}×${img.height} px. El máximo es ${MAX_IMAGE_DIMENSION}×${MAX_IMAGE_DIMENSION} px.`,
+          })
+          setIsProcessing(false)
+          return
+        }
         setImageDimensions({ width: img.width, height: img.height })
         setIsProcessing(false)
-        // Notificar que la imagen fue cargada exitosamente
-        toast({
-          title: "✅ Imagen cargada",
+        toast.success("✅ Imagen cargada", {
           description: "Tu imagen está lista. Configura el tamaño y genera tu póster.",
         })
       }
@@ -381,9 +340,7 @@ export function PosterGenerator({
 
   const showCroppedImage = useCallback(async () => {
     if (!completedCrop || !cropImgRef.current) {
-        toast({
-            variant: "destructive",
-            title: "Error de recorte",
+        toast.error("Error de recorte", {
             description: "No se pudo obtener el área de recorte."
         })
         return
@@ -400,15 +357,13 @@ export function PosterGenerator({
         img.src = croppedImageSrc
     } catch (e) {
         console.error(e)
-        toast({
-            variant: "destructive",
-            title: "Error al recortar",
+        toast.error("Error al recortar", {
             description: "No se pudo procesar el recorte de la imagen."
         })
     } finally {
         setIsCropModalOpen(false)
     }
-  }, [completedCrop, toast])
+  }, [completedCrop])
 
   const handleSkipCrop = () => {
       if (!originalImageSrc) return
@@ -432,9 +387,7 @@ export function PosterGenerator({
     }
 
     if (missingParams.length > 0) {
-        toast({
-            variant: "destructive",
-            title: "Faltan Parámetros",
+        toast.error("Faltan Parámetros", {
             description: (
                 <div className="flex flex-col gap-1">
                     {missingParams.map((param, i) => <p key={i}>{param}</p>)}
@@ -517,18 +470,17 @@ export function PosterGenerator({
   // Generar miniaturas de vista previa cuando haya grid y medidas listas
   useEffect(() => {
     let cancelled = false
-    const run = async () => {
-      if (!processedImageSrc || !grid || !targetWidthCm || !targetHeightCm) {
-        setPreviewSlices(null)
-        return
-      }
+    if (!processedImageSrc || !grid || !targetWidthCm || !targetHeightCm) {
+      setPreviewSlices(null)
+      return
+    }
+    const timer = setTimeout(async () => {
       try {
         setIsGeneratingPreview(true)
         setPreviewError(null)
         const img = new window.Image()
         img.crossOrigin = 'Anonymous'
-        await new Promise(resolve => { img.onload = resolve; img.src = processedImageSrc })
-        // Calidad menor para rapidez en preview
+        await new Promise<void>((resolve, reject) => { img.onload = () => resolve(); img.onerror = () => reject(new Error('Error al cargar imagen')); img.src = processedImageSrc! })
         const slices = await generateSlices(img, grid, 0.6)
         if (!cancelled) setPreviewSlices(slices)
       } catch (e) {
@@ -537,9 +489,8 @@ export function PosterGenerator({
       } finally {
         if (!cancelled) setIsGeneratingPreview(false)
       }
-    }
-    run()
-    return () => { cancelled = true }
+    }, 300)
+    return () => { cancelled = true; clearTimeout(timer) }
   }, [processedImageSrc, grid, includeBleed, targetWidthCm, targetHeightCm, generateSlices])
 
   const handleDownloadRequest = async (type: DownloadType) => {
@@ -610,9 +561,11 @@ export function PosterGenerator({
     const finalFileName = fileName ? `${fileName}.pdf` : `${templateTitle || 'poster'}.pdf`
 
     try {
+      const { default: jsPDF } = await import('jspdf')
+      const { saveAs } = await import('file-saver')
       const image = new window.Image()
       image.crossOrigin = "Anonymous"
-      await new Promise(resolve => { image.onload = resolve; image.src = processedImageSrc })
+      await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error('Error al cargar la imagen')); image.src = processedImageSrc! })
       
       const allSlices = await generateSlices(image, grid, 0.92)
 
@@ -751,12 +704,18 @@ export function PosterGenerator({
       
       // Abrir el PDF en una nueva pestaña automáticamente
       const pdfUrl = URL.createObjectURL(pdfBlob)
-      window.open(pdfUrl, '_blank')
+      const newWindow = window.open(pdfUrl, '_blank')
+      
+      if (!newWindow) {
+        toast.warning("Vista previa bloqueada", {
+          description: "Tu navegador bloqueó la vista previa del PDF. El archivo ya se descargó.",
+        })
+      }
       
       // Limpiar la URL después de un tiempo para liberar memoria
       setTimeout(() => {
         URL.revokeObjectURL(pdfUrl)
-      }, 100)
+      }, 60000)
       
       // Mostrar modal de opciones post-descarga
       handleDownloadComplete(finalFileName, 'pdf', pdfBlob)
@@ -772,8 +731,7 @@ export function PosterGenerator({
         </div>
       ) : null
 
-      toast({
-          title: "✅ ¡PDF Descargado exitosamente!",
+      toast.success("✅ ¡PDF Descargado exitosamente!", {
           description: iosInstructions || (
             <div className="space-y-2">
               <p className="font-medium">📁 Archivo guardado: <code className="bg-muted px-1 py-0.5 rounded text-sm">{finalFileName}</code></p>
@@ -789,9 +747,7 @@ export function PosterGenerator({
 
     } catch (error) {
       console.error(error)
-      toast({
-        variant: "destructive",
-        title: "Error al generar PDF",
+      toast.error("Error al generar PDF", {
         description: "Hubo un problema al crear el archivo. Inténtalo de nuevo.",
       })
     } finally {
@@ -806,9 +762,11 @@ export function PosterGenerator({
     const finalFileName = fileName ? `${fileName}.zip` : `${templateTitle || 'poster'}-imagenes.zip`
 
     try {
+        const JSZip = (await import('jszip')).default
+        const { saveAs } = await import('file-saver')
         const image = new window.Image()
         image.crossOrigin = "Anonymous"
-        await new Promise(resolve => { image.onload = resolve; image.src = processedImageSrc })
+        await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error('Error al cargar la imagen')); image.src = processedImageSrc! })
         
         const allSlices = await generateSlices(image, grid, 0.92)
         const zip = new JSZip()
@@ -841,8 +799,7 @@ export function PosterGenerator({
           </div>
         ) : null
 
-        toast({
-          title: "✅ ¡ZIP Descargado exitosamente!",
+        toast.success("✅ ¡ZIP Descargado exitosamente!", {
           description: iosInstructions || (
             <div className="space-y-2">
               <p className="font-medium">📁 Archivo guardado: <code className="bg-muted px-1 py-0.5 rounded text-sm">{finalFileName}</code></p>
@@ -858,9 +815,7 @@ export function PosterGenerator({
 
     } catch (error) {
         console.error(error)
-        toast({
-            variant: "destructive",
-            title: "Error al generar ZIP",
+        toast.error("Error al generar ZIP", {
             description: "Hubo un problema al crear el archivo. Inténtalo de nuevo.",
         })
     } finally {
@@ -1018,23 +973,6 @@ export function PosterGenerator({
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">📐 Configuración de Tamaño</h3>
                     
-                    {isSimpleMode ? (
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="sheets-wide">🗒️ ¿Cuántas hojas de ancho?</Label>
-                          <Select value={sheetsWide} onValueChange={handleSheetChange}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecciona hojas de ancho" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {[1,2,3,4,5,6,7,8,9,10].map(n => (
-                                <SelectItem key={n} value={n.toString()}>{n} hoja{n > 1 ? 's' : ''}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    ) : (
                       <div className="space-y-4">
                         <div className="flex items-center space-x-2">
                           <Checkbox 
@@ -1113,7 +1051,6 @@ export function PosterGenerator({
                           </div>
                         </div>
                       </div>
-                    )}
 
                     {/* Paper Settings */}
                     <div className="grid grid-cols-2 gap-4">
@@ -1236,12 +1173,16 @@ export function PosterGenerator({
                                     return (
                                       <div 
                                         key={i} 
+                                        role="button"
+                                        tabIndex={0}
+                                        aria-label={`Hoja ${coord}, ${isSelected ? 'seleccionada' : 'no seleccionada'}`}
                                         className="relative flex items-center justify-center group transition-colors border-dashed border-black/30 dark:border-white/20 cursor-pointer"
                                         style={{
                                           borderRightWidth: (col === grid.cols - 1) ? 0 : '2px',
                                           borderBottomWidth: (row === grid.rows - 1) ? 0 : '2px',
                                         }}
                                         onClick={() => togglePageSelection(i)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePageSelection(i) } }}
                                       >
                                         {/* Overlay para hojas NO seleccionadas */}
                                         <div className={`absolute inset-0 transition-colors ${isSelected ? 'bg-transparent' : 'bg-red-500/70'}`} />
