@@ -162,7 +162,8 @@ export function PosterGenerator({
 
   const handleDownloadAgain = async () => {
     if (!downloadCompleteInfo) return
-    const { saveAs } = await import('file-saver')
+    const fileSaverModule = await import('file-saver')
+    const saveAs = (fileSaverModule as any)?.saveAs ?? (fileSaverModule as any)?.default?.saveAs ?? (fileSaverModule as any)?.default
     saveAs(downloadCompleteInfo.blob, downloadCompleteInfo.fileName)
     toast.success("Descargado nuevamente", {
       description: `Se descargó ${downloadCompleteInfo.fileName} otra vez.`
@@ -431,7 +432,10 @@ export function PosterGenerator({
         
         const canvas = document.createElement('canvas')
         const ctx = canvas.getContext('2d')
-        if (!ctx) continue
+        if (!ctx) {
+          slices.push('')
+          continue
+        }
         
         const bleedL = (c > 0) ? bleedXPx : 0
         const bleedR = (c < grid.cols - 1) ? bleedXPx : 0
@@ -578,8 +582,20 @@ export function PosterGenerator({
     const finalFileName = fileName ? `${fileName}.pdf` : `${templateTitle || 'poster'}.pdf`
 
     try {
-      const { default: jsPDF } = await import('jspdf')
-      const { saveAs } = await import('file-saver')
+      const jspdfModule = await import('jspdf')
+      const jsPDF = (jspdfModule as any)?.default?.default ?? (jspdfModule as any)?.default ?? (jspdfModule as any)?.jsPDF
+      if (typeof jsPDF !== 'function') {
+        console.error('generatePdf: jspdf import shape ->', Object.keys(jspdfModule as any))
+        throw new Error('jsPDF no disponible (módulo inesperado)')
+      }
+
+      const fileSaverModule = await import('file-saver')
+      const saveAs = (fileSaverModule as any)?.saveAs ?? (fileSaverModule as any)?.default?.saveAs ?? (fileSaverModule as any)?.default
+      if (typeof saveAs !== 'function') {
+        console.error('generatePdf: file-saver import shape ->', Object.keys(fileSaverModule as any))
+        throw new Error('saveAs no disponible (módulo inesperado)')
+      }
+
       const image = new window.Image()
       image.crossOrigin = "Anonymous"
       await new Promise<void>((resolve, reject) => { image.onload = () => resolve(); image.onerror = () => reject(new Error('Error al cargar la imagen')); image.src = processedImageSrc! })
@@ -616,6 +632,10 @@ export function PosterGenerator({
       pagesToInclude.forEach((index) => {
         pageCounter++
         const dataUrl = allSlices[index]
+        if (!dataUrl) {
+          console.warn(`generatePdf: slice ${index} es undefined, saltando`)
+          return
+        }
         doc.addPage(paperSize.toLowerCase(), orientation)
         
         const row = Math.floor(index / grid.cols)
@@ -763,9 +783,10 @@ export function PosterGenerator({
       })
 
     } catch (error) {
-      console.error(error)
+      console.error('Error generando PDF:', error)
+      const errorMsg = error instanceof Error ? error.message : 'Error desconocido'
       toast.error("Error al generar PDF", {
-        description: "Hubo un problema al crear el archivo. Inténtalo de nuevo.",
+        description: `Hubo un problema al crear el archivo: ${errorMsg}`,
       })
     } finally {
       setIsProcessing(false)
