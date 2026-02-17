@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { Upload, Ruler, FileDown, Loader2, Image as ImageIcon, AlertTriangle, Layers, Crop as CropIcon, CheckCircle2, CheckSquare, Ban, Package, Download, ArrowRight, ArrowLeft, Share } from "lucide-react"
+import { Upload, Ruler, FileDown, Loader2, Image as ImageIcon, AlertTriangle, Layers, Crop as CropIcon, CheckCircle2, CheckSquare, Ban, Package, Download, ArrowRight, ArrowLeft, Share, Wand2, ScanSearch } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/tooltip"
 import { Stepper } from '@/components/ui/stepper'
 import getCroppedImg from '@/lib/cropImage'
+import autoCrop from '@/lib/autoCrop'
 
 const paperSizes = {
   Letter: { width: 21.59, height: 27.94 },
@@ -107,6 +108,17 @@ export function PosterGenerator({
   const [projectName, setProjectName] = useState("")
   const [downloadType, setDownloadType] = useState<DownloadType | null>(null)
 
+  // Rate limit state
+  const [rateLimitBlocked, setRateLimitBlocked] = useState(false)
+  const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null)
+
+  // Upscale state
+  const [isUpscaling, setIsUpscaling] = useState(false)
+  const [isUpscaled, setIsUpscaled] = useState(false)
+
+  // Auto-crop state
+  const [isAutoCropping, setIsAutoCropping] = useState(false)
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const isIOS = () => {
@@ -178,6 +190,23 @@ export function PosterGenerator({
       preload.src = initialImageSrc
     }
   }, [initialImageSrc, processedImageSrc])
+
+  // Verificar rate-limit al montar el componente
+  useEffect(() => {
+    const checkRateLimit = async () => {
+      try {
+        const res = await fetch('/api/rate-limit')
+        const data = await res.json()
+        if (!data.allowed) {
+          setRateLimitBlocked(true)
+          setRateLimitMessage(data.message)
+        }
+      } catch {
+        // Si falla, no bloquear
+      }
+    }
+    checkRateLimit()
+  }, [])
 
   const getPrintableArea = useCallback(() => {
     const paperDim = paperSizes[paperSize]
@@ -304,6 +333,7 @@ export function PosterGenerator({
   setTargetWidthCm("")
   setTargetHeightCm("")
     setImageFile(file)
+    setIsUpscaled(false)
     
     // Notify parent component about image change
     if (onImageChange) {
@@ -384,6 +414,108 @@ export function PosterGenerator({
       if (!originalImageSrc) return
       setProcessedImageSrc(originalImageSrc)
       setIsCropModalOpen(false)
+  }
+
+  const handleAutoCrop = async () => {
+    if (!processedImageSrc) return
+    setIsAutoCropping(true)
+
+    try {
+      const cropped = await autoCrop(processedImageSrc)
+
+      if (!cropped) {
+        toast.info('Sin cambios', {
+          description: 'No se detectaron zonas vacías para eliminar.',
+        })
+        return
+      }
+
+      setProcessedImageSrc(cropped)
+
+      // Actualizar dimensiones
+      const img = new window.Image()
+      img.onload = () => {
+        setImageDimensions({ width: img.width, height: img.height })
+        toast.success('✂️ Autorecorte aplicado', {
+          description: `Imagen recortada a ${img.width} × ${img.height} px (sin zonas vacías).`,
+        })
+      }
+      img.src = cropped
+    } catch {
+      toast.error('Error al autorecortar', {
+        description: 'No se pudo procesar la imagen. Inténtalo de nuevo.',
+      })
+    } finally {
+      setIsAutoCropping(false)
+    }
+  }
+
+  const handleUpscale = async () => {
+    if (!processedImageSrc) return
+    setIsUpscaling(true)
+
+    try {
+      // Convertir la imagen a base64 data URI para enviar a la API
+      let imageData = processedImageSrc
+
+      // Si es un blob URL, convertir a base64
+      if (processedImageSrc.startsWith('blob:')) {
+        const response = await fetch(processedImageSrc)
+        const blob = await response.blob()
+        imageData = await new Promise<string>((resolve) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(blob)
+        })
+      }
+
+      const res = await fetch('/api/upscale', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: imageData, scale: 4 }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error('Error al mejorar imagen', {
+          description: data.error || 'No se pudo procesar la imagen.',
+        })
+        return
+      }
+
+      // data.output es la URL de la imagen mejorada de Replicate
+      const upscaledUrl = data.output
+
+      // Descargar la imagen mejorada y convertir a data URL
+      const imgRes = await fetch(upscaledUrl)
+      const imgBlob = await imgRes.blob()
+      const upscaledDataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader()
+        reader.onloadend = () => resolve(reader.result as string)
+        reader.readAsDataURL(imgBlob)
+      })
+
+      setProcessedImageSrc(upscaledDataUrl)
+      setIsUpscaled(true)
+
+      // Actualizar dimensiones
+      const img = new window.Image()
+      img.onload = () => {
+        setImageDimensions({ width: img.width, height: img.height })
+      }
+      img.src = upscaledDataUrl
+
+      toast.success('✨ Imagen mejorada', {
+        description: `Resolución aumentada 4x con Real-ESRGAN.`,
+      })
+    } catch {
+      toast.error('Error al mejorar imagen', {
+        description: 'Hubo un problema de conexión. Inténtalo de nuevo.',
+      })
+    } finally {
+      setIsUpscaling(false)
+    }
   }
 
   const validateInputs = () => {
@@ -513,11 +645,48 @@ export function PosterGenerator({
 
   const handleDownloadRequest = async (type: DownloadType) => {
     if (!validateInputs()) return
+
+    // Verificar rate-limit por IP antes de permitir la descarga
+    try {
+      const res = await fetch('/api/rate-limit')
+      const data = await res.json()
+      if (!data.allowed) {
+        setRateLimitBlocked(true)
+        setRateLimitMessage(data.message)
+        toast.error('Límite diario alcanzado', {
+          description: data.message,
+        })
+        return
+      }
+    } catch {
+      // Si la API falla, permitir la descarga para no bloquear al usuario
+      console.warn('No se pudo verificar el rate-limit, permitiendo descarga.')
+    }
+
     setDownloadType(type)
     setIsFileNameDialogOpen(true)
   }
 
-  const handleConfirmDownload = () => {
+  const handleConfirmDownload = async () => {
+    // Registrar la descarga en el rate-limiter
+    try {
+      const res = await fetch('/api/rate-limit', { method: 'POST' })
+      const data = await res.json()
+      if (!data.allowed) {
+        setRateLimitBlocked(true)
+        setRateLimitMessage(data.message)
+        toast.error('Límite diario alcanzado', {
+          description: data.message,
+        })
+        setIsFileNameDialogOpen(false)
+        setProjectName("")
+        setDownloadType(null)
+        return
+      }
+    } catch {
+      console.warn('No se pudo registrar el rate-limit, continuando descarga.')
+    }
+
     if (downloadType === 'pdf') {
       generatePdf(projectName)
     } else if (downloadType === 'zip') {
@@ -676,6 +845,18 @@ export function PosterGenerator({
 
         const coordText = `Fila ${row + 1}, Columna ${col + 1} (${String.fromCharCode(65 + col)}${row + 1})`
         doc.text(coordText, MARGIN_CM, pageH - 0.5)
+
+        // Marca de agua diagonal
+        doc.saveGraphicsState()
+        doc.setGState(new (doc as any).GState({ opacity: 0.08 }))
+        doc.setFontSize(40)
+        doc.setTextColor(128, 128, 128)
+        const wmText = 'PiñataPoster'
+        const angleDeg = -45
+        const centerX = pageW / 2
+        const centerY = pageH / 2
+        doc.text(wmText, centerX, centerY, { align: 'center', baseline: 'middle', angle: angleDeg })
+        doc.restoreGraphicsState()
       })
 
       // Add assembly plan if enabled and multiple pages
@@ -734,6 +915,14 @@ export function PosterGenerator({
                 doc.text(coord, cellX + cellW/2, cellY + cellH/2, { align: 'center', baseline: 'middle' })
             }
         }
+
+        // Marca de agua en la página del plano de armado
+        doc.saveGraphicsState()
+        doc.setGState(new (doc as any).GState({ opacity: 0.08 }))
+        doc.setFontSize(40)
+        doc.setTextColor(128, 128, 128)
+        doc.text('PiñataPoster', planPageW / 2, planPageH / 2, { align: 'center', baseline: 'middle', angle: -45 })
+        doc.restoreGraphicsState()
       }
 
       const pdfBlob = doc.output('blob')
@@ -961,6 +1150,47 @@ export function PosterGenerator({
                           ) : null}
                         </div>
                         <div className="flex gap-2 flex-wrap justify-end">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleAutoCrop}
+                            disabled={isAutoCropping}
+                          >
+                            {isAutoCropping ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Detectando...
+                              </>
+                            ) : (
+                              <>
+                                <ScanSearch className="h-4 w-4 mr-2" />
+                                Autorecorte
+                              </>
+                            )}
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleUpscale}
+                            disabled={isUpscaling || isUpscaled}
+                          >
+                            {isUpscaling ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Mejorando...
+                              </>
+                            ) : isUpscaled ? (
+                              <>
+                                <CheckCircle2 className="h-4 w-4 mr-2" />
+                                Mejorada
+                              </>
+                            ) : (
+                              <>
+                                <Wand2 className="h-4 w-4 mr-2" />
+                                Mejorar calidad
+                              </>
+                            )}
+                          </Button>
                           <Button variant="outline" size="sm" onClick={() => setIsCropModalOpen(true)}>
                             <CropIcon className="h-4 w-4 mr-2" />
                             Recortar
@@ -1307,7 +1537,7 @@ export function PosterGenerator({
                       <Button 
                         size="lg" 
                         onClick={() => handleDownloadRequest('pdf')}
-                        disabled={isProcessing || !grid || selectedPages.size === 0}
+                        disabled={isProcessing || !grid || selectedPages.size === 0 || rateLimitBlocked}
                       >
                         {isProcessing ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -1321,7 +1551,7 @@ export function PosterGenerator({
                         variant="outline" 
                         size="lg" 
                         onClick={() => handleDownloadRequest('zip')}
-                        disabled={isProcessing || !grid || selectedPages.size === 0}
+                        disabled={isProcessing || !grid || selectedPages.size === 0 || rateLimitBlocked}
                       >
                         {isProcessing ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -1331,6 +1561,12 @@ export function PosterGenerator({
                         Descargar ZIP
                       </Button>
                     </div>
+                    {rateLimitBlocked && rateLimitMessage && (
+                      <div className="mt-4 p-3 rounded-md bg-destructive/10 border border-destructive/30 text-destructive text-sm flex items-start gap-2">
+                        <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>{rateLimitMessage}</span>
+                      </div>
+                    )}
                     </div>
                   </>
                 )}
