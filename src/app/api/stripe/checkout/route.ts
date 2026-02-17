@@ -30,6 +30,21 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Resolver el Stripe Price ID real desde las variables de entorno
+    const priceEnvMap: Record<string, string | undefined> = {
+      pack_5: process.env.STRIPE_PRICE_PACK_5,
+      pack_15: process.env.STRIPE_PRICE_PACK_15,
+      pack_50: process.env.STRIPE_PRICE_PACK_50,
+    }
+
+    const stripePriceId = priceEnvMap[priceId]
+    if (!stripePriceId) {
+      return NextResponse.json(
+        { error: 'Pack de diseño no válido.' },
+        { status: 400 }
+      )
+    }
+
     // Obtener o crear Stripe Customer
     const user = getUser(session.user.email)
     let customerId = user?.stripeCustomerId
@@ -47,12 +62,12 @@ export async function POST(request: NextRequest) {
     const checkoutSession = await getStripe().checkout.sessions.create({
       customer: customerId,
       mode: 'payment',
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [{ price: stripePriceId, quantity: 1 }],
       success_url: `${process.env.NEXTAUTH_URL || request.nextUrl.origin}/generator?payment=success`,
       cancel_url: `${process.env.NEXTAUTH_URL || request.nextUrl.origin}/generator?payment=cancel`,
       metadata: {
         email: session.user.email,
-        priceId,
+        priceId: stripePriceId,
       },
     })
 

@@ -9,6 +9,7 @@
 
 import fs from 'fs'
 import path from 'path'
+import { FREE_DAILY_LIMIT } from './tiers'
 
 // ── Tipos ───────────────────────────────────────────────
 
@@ -116,7 +117,7 @@ export function addDesignCredits(email: string, credits: number): UserRecord | n
  * Si tiene créditos → descuenta 1, sin marca de agua, con upscale.
  * Si no tiene créditos → usa descarga gratuita (con marca de agua, sin upscale).
  */
-export function useDesignCredit(email: string): { allowed: boolean; usedCredit: boolean; watermark: boolean; reason?: string } {
+export function consumeDesignCredit(email: string): { allowed: boolean; usedCredit: boolean; watermark: boolean; reason?: string } {
   const user = getUser(email)
   if (!user) return { allowed: false, usedCredit: false, watermark: true, reason: 'Usuario no encontrado.' }
 
@@ -134,8 +135,6 @@ export function useDesignCredit(email: string): { allowed: boolean; usedCredit: 
     freeDownloads.count = 0
     freeDownloads.resetAt = now + 86400000
   }
-
-  const { FREE_DAILY_LIMIT } = require('./tiers')
 
   if (freeDownloads.count >= FREE_DAILY_LIMIT) {
     return {
@@ -167,8 +166,6 @@ export function checkUserDownload(email: string): { allowed: boolean; watermark:
   const now = Date.now()
   const freeDownloads = { ...user.freeDownloadsToday }
   if (now >= freeDownloads.resetAt) freeDownloads.count = 0
-
-  const { FREE_DAILY_LIMIT } = require('./tiers')
 
   if (freeDownloads.count >= FREE_DAILY_LIMIT) {
     return {

@@ -1027,7 +1027,7 @@ export function PosterGenerator({
       }
 
       const fileSaverModule = await import('file-saver')
-      const saveAs = fileSaverModule?.saveAs ?? fileSaverModule?.default
+      const saveAs = (fileSaverModule as any)?.saveAs ?? (fileSaverModule as any)?.default?.saveAs ?? (fileSaverModule as any)?.default
 
       const image = new window.Image()
       image.crossOrigin = 'Anonymous'

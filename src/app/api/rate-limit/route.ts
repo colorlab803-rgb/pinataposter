@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { checkUserDownload, useDesignCredit, checkIpRateLimit, recordIpDownload } from '@/lib/db'
+import { checkUserDownload, consumeDesignCredit, checkIpRateLimit, recordIpDownload } from '@/lib/db'
 
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for')
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
   // Usuario logueado
   if (session?.user?.email) {
-    const result = useDesignCredit(session.user.email)
+    const result = consumeDesignCredit(session.user.email)
     if (!result.allowed) {
       return NextResponse.json(
         { allowed: false, watermark: true, message: result.reason },
