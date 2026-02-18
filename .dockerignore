@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+.env*
+!.env.example
+Dockerfile
+docker-compose*.yml
+nginx/
+*.md
+*.pub
+*.key
+.vscode
+.github
+ssh-key*
