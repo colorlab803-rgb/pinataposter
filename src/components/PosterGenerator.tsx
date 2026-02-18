@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { Upload, Ruler, FileDown, Loader2, Image as ImageIcon, AlertTriangle, Layers, Crop as CropIcon, CheckCircle2, CheckSquare, Ban, Package, Download, ArrowRight, ArrowLeft, Share, Wand2, ScanSearch } from "lucide-react"
+import { Upload, Ruler, FileDown, Loader2, Image as ImageIcon, AlertTriangle, Layers, Crop as CropIcon, CheckCircle2, CheckSquare, Ban, Package, Download, ArrowRight, ArrowLeft, Share, Wand2, ScanSearch, FilePlus2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -1830,6 +1830,32 @@ export function PosterGenerator({
                     Toca "Compartir" para guardar en Archivos, iCloud o enviar por WhatsApp, AirDrop, etc.
                   </p>
                 )}
+
+                <div className="pt-2 border-t">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setIsDownloadCompleteModalOpen(false)
+                      setDownloadCompleteInfo(null)
+                      setOriginalImageSrc(null)
+                      setProcessedImageSrc(null)
+                      setImageFile(null)
+                      setImageDimensions({ width: 0, height: 0 })
+                      setTargetWidthCm("")
+                      setTargetHeightCm("")
+                      setGrid(null)
+                      setSelectedPages(new Set())
+                      setPreviewSlices(null)
+                      setIsUpscaled(false)
+                      setCurrentStep(0)
+                      if (onImageChange) onImageChange(null)
+                    }}
+                    className={isMobile ? "w-full touch-target min-h-[48px]" : "w-full"}
+                  >
+                    <FilePlus2 className="mr-2 h-4 w-4" />
+                    Crear otro póster
+                  </Button>
+                </div>
               </div>
 
               <DialogFooter>
