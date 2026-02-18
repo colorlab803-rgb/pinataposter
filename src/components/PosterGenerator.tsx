@@ -27,6 +27,7 @@ import {
 import { Stepper } from '@/components/ui/stepper'
 import getCroppedImg from '@/lib/cropImage'
 import autoCrop from '@/lib/autoCrop'
+import { useIsMobile } from '@/lib/useIsMobile'
 
 const paperSizes = {
   Letter: { width: 21.59, height: 27.94 },
@@ -125,10 +126,38 @@ export function PosterGenerator({
   const [showWatermark, setShowWatermark] = useState(true)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const isMobile = useIsMobile()
 
   const isIOS = () => {
     return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  }
+
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  }
+
+  /** En móvil, intenta compartir el archivo con la Web Share API nativa */
+  const shareFileNative = async (blob: Blob, fileName: string, fileType: 'pdf' | 'zip'): Promise<boolean> => {
+    try {
+      if (navigator.share && navigator.canShare) {
+        const mimeType = fileType === 'pdf' ? 'application/pdf' : 'application/zip'
+        const file = new File([blob], fileName, { type: mimeType })
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: `Mi ${fileType.toUpperCase()} de PiñataPoster`,
+            files: [file]
+          })
+          return true
+        }
+      }
+    } catch (err: unknown) {
+      // Si el usuario cancela el share, no es un error real
+      if (err instanceof Error && err.name === 'AbortError') return true
+      console.warn('Web Share API no disponible o falló:', err)
+    }
+    return false
   }
 
   const handleDownloadComplete = (fileName: string, fileType: 'pdf' | 'zip', blob: Blob) => {
@@ -966,50 +995,48 @@ export function PosterGenerator({
       }
 
       const pdfBlob = doc.output('blob')
-      saveAs(pdfBlob, finalFileName)
-      
-      // Abrir el PDF en una nueva pestaña automáticamente
-      const pdfUrl = URL.createObjectURL(pdfBlob)
-      const newWindow = window.open(pdfUrl, '_blank')
-      
-      if (!newWindow) {
-        toast.warning("Vista previa bloqueada", {
-          description: "Tu navegador bloqueó la vista previa del PDF. El archivo ya se descargó.",
+
+      if (isMobileDevice()) {
+        // En móvil: usar Web Share API nativa para mejor experiencia
+        const shared = await shareFileNative(pdfBlob, finalFileName, 'pdf')
+        if (!shared) {
+          // Fallback: descargar con saveAs si Share API no está disponible
+          saveAs(pdfBlob, finalFileName)
+        }
+        // Mostrar modal de opciones post-descarga
+        handleDownloadComplete(finalFileName, 'pdf', pdfBlob)
+        toast.success("¡PDF listo!", {
+          description: shared ? "Tu archivo se compartió exitosamente." : `Archivo: ${finalFileName}`,
+          duration: 4000,
         })
-      }
-      
-      // Limpiar la URL después de un tiempo para liberar memoria
-      setTimeout(() => {
-        URL.revokeObjectURL(pdfUrl)
-      }, 60000)
-      
-      // Mostrar modal de opciones post-descarga
-      handleDownloadComplete(finalFileName, 'pdf', pdfBlob)
-
-      // También mostrar toast con información específica para iOS
-      const iosInstructions = isIOS() ? (
-        <div className="space-y-2">
-          <p className="font-medium">📱 <strong>En iPhone/iPad:</strong></p>
-          <p className="text-xs">1. Toca el botón de compartir (cuadrado con flecha) en la parte inferior</p>
-          <p className="text-xs">2. Selecciona "Guardar en Archivos" o "Guardar en iCloud Drive"</p>
-          <p className="text-xs">3. Elige la ubicación donde quieres guardar tu archivo</p>
-          <p className="text-xs font-medium text-primary">💡 También puedes compartir directamente con otras apps</p>
-        </div>
-      ) : null
-
-      toast.success("✅ ¡PDF Descargado exitosamente!", {
-          description: iosInstructions || (
-            <div className="space-y-2">
-              <p className="font-medium">📁 Archivo guardado: <code className="bg-muted px-1 py-0.5 rounded text-sm">{finalFileName}</code></p>
-              <p className="text-sm text-muted-foreground">
-                Revisa tu carpeta de "Descargas" o la ubicación predeterminada de tu navegador.
-                <br />
-                <strong>💡 Tip:</strong> Si no lo encuentras, busca por "{finalFileName}" en tu explorador de archivos.
-              </p>
+      } else {
+        // En escritorio: descargar + abrir vista previa
+        saveAs(pdfBlob, finalFileName)
+        
+        const pdfUrl = URL.createObjectURL(pdfBlob)
+        const newWindow = window.open(pdfUrl, '_blank')
+        
+        if (!newWindow) {
+          toast.warning("Vista previa bloqueada", {
+            description: "Tu navegador bloqueó la vista previa del PDF. El archivo ya se descargó.",
+          })
+        }
+        
+        setTimeout(() => {
+          URL.revokeObjectURL(pdfUrl)
+        }, 60000)
+        
+        handleDownloadComplete(finalFileName, 'pdf', pdfBlob)
+        toast.success("¡PDF Descargado!", {
+          description: (
+            <div className="space-y-1">
+              <p className="font-medium">Archivo: <code className="bg-muted px-1 py-0.5 rounded text-sm">{finalFileName}</code></p>
+              <p className="text-xs text-muted-foreground">Revisa tu carpeta de Descargas.</p>
             </div>
           ),
-          duration: 10000,
-      })
+          duration: 6000,
+        })
+      }
 
     } catch (error) {
       console.error('Error generando PDF:', error)
@@ -1057,36 +1084,34 @@ export function PosterGenerator({
       })
 
         const zipBlob = await zip.generateAsync({ type: 'blob' })
-        
-        saveAs(zipBlob, finalFileName)
-        
-        // Mostrar modal de opciones post-descarga
-        handleDownloadComplete(finalFileName, 'zip', zipBlob)
 
-        // Toast con información específica para iOS
-        const iosInstructions = isIOS() ? (
-          <div className="space-y-2">
-            <p className="font-medium">📱 <strong>En iPhone/iPad:</strong></p>
-            <p className="text-xs">1. Toca el botón de compartir (cuadrado con flecha) en la parte inferior</p>
-            <p className="text-xs">2. Selecciona "Guardar en Archivos" o "Guardar en iCloud Drive"</p>
-            <p className="text-xs">3. Elige la ubicación donde quieres guardar tu archivo</p>
-            <p className="text-xs font-medium text-primary">💡 También puedes compartir directamente con otras apps</p>
-          </div>
-        ) : null
-
-        toast.success("✅ ¡ZIP Descargado exitosamente!", {
-          description: iosInstructions || (
-            <div className="space-y-2">
-              <p className="font-medium">📁 Archivo guardado: <code className="bg-muted px-1 py-0.5 rounded text-sm">{finalFileName}</code></p>
-              <p className="text-sm text-muted-foreground">
-                Revisa tu carpeta de "Descargas" o la ubicación predeterminada de tu navegador.
-                <br />
-                <strong>💡 Tip:</strong> El ZIP contiene {pagesToInclude.length} imagen{pagesToInclude.length > 1 ? 'es' : ''} lista{pagesToInclude.length > 1 ? 's' : ''} para imprimir.
-              </p>
-            </div>
-          ),
-          duration: 10000,
-        })
+        if (isMobileDevice()) {
+          const shared = await shareFileNative(zipBlob, finalFileName, 'zip')
+          if (!shared) {
+            saveAs(zipBlob, finalFileName)
+          }
+          handleDownloadComplete(finalFileName, 'zip', zipBlob)
+          toast.success("¡ZIP listo!", {
+            description: shared 
+              ? `Archivo con ${pagesToInclude.length} imagen${pagesToInclude.length > 1 ? 'es' : ''} compartido.`
+              : `Archivo: ${finalFileName}`,
+            duration: 4000,
+          })
+        } else {
+          saveAs(zipBlob, finalFileName)
+          handleDownloadComplete(finalFileName, 'zip', zipBlob)
+          toast.success("¡ZIP Descargado!", {
+            description: (
+              <div className="space-y-1">
+                <p className="font-medium">Archivo: <code className="bg-muted px-1 py-0.5 rounded text-sm">{finalFileName}</code></p>
+                <p className="text-xs text-muted-foreground">
+                  Contiene {pagesToInclude.length} imagen{pagesToInclude.length > 1 ? 'es' : ''} para imprimir.
+                </p>
+              </div>
+            ),
+            duration: 6000,
+          })
+        }
 
     } catch (error) {
         console.error(error)
@@ -1584,20 +1609,31 @@ export function PosterGenerator({
                       </Button>
                     </div>
                     <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t">
-                      <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">📥 Descargar</h3>
+                      <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
+                        {isMobile ? '📲 Obtener archivo' : '📥 Descargar'}
+                      </h3>
+                      {isProcessing && isMobile && (
+                        <div className="mb-3 p-3 bg-muted/50 rounded-lg flex items-center gap-3">
+                          <Loader2 className="h-5 w-5 animate-spin text-primary flex-shrink-0" />
+                          <div>
+                            <p className="text-sm font-medium">Generando tu archivo...</p>
+                            <p className="text-xs text-muted-foreground">Esto puede tardar unos segundos</p>
+                          </div>
+                        </div>
+                      )}
                       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                       <Button 
                         size="lg" 
                         onClick={() => handleDownloadRequest('pdf')}
                         disabled={isProcessing || !grid || selectedPages.size === 0 || rateLimitBlocked}
-                        className="w-full sm:w-auto touch-target"
+                        className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
-                        {isProcessing ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {isProcessing && downloadType === 'pdf' ? (
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         ) : (
-                          <FileDown className="mr-2 h-4 w-4" />
+                          <FileDown className="mr-2 h-5 w-5" />
                         )}
-                        Descargar PDF
+                        {isMobile ? 'Obtener PDF' : 'Descargar PDF'}
                       </Button>
                       
                       <Button 
@@ -1605,14 +1641,14 @@ export function PosterGenerator({
                         size="lg" 
                         onClick={() => handleDownloadRequest('zip')}
                         disabled={isProcessing || !grid || selectedPages.size === 0 || rateLimitBlocked}
-                        className="w-full sm:w-auto touch-target"
+                        className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
-                        {isProcessing ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {isProcessing && downloadType === 'zip' ? (
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         ) : (
-                          <Package className="mr-2 h-4 w-4" />
+                          <Package className="mr-2 h-5 w-5" />
                         )}
-                        Descargar ZIP
+                        {isMobile ? 'Obtener ZIP' : 'Descargar ZIP'}
                       </Button>
                     </div>
                     {rateLimitBlocked && rateLimitMessage && (
@@ -1727,61 +1763,77 @@ export function PosterGenerator({
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
                   <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  ¡Descarga completada!
+                  ¡Listo!
                 </DialogTitle>
                 <DialogDescription>
-                  Tu {downloadCompleteInfo.fileType.toUpperCase()} se ha generado correctamente.
+                  Tu {downloadCompleteInfo.fileType.toUpperCase()} se generó correctamente.
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-4">
-                <div className="p-4 bg-muted/50 rounded-lg">
-                  <p className="font-medium">📁 Archivo: <code className="bg-background px-2 py-1 rounded text-sm">{downloadCompleteInfo.fileName}</code></p>
+              <div className="space-y-3">
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="font-medium text-sm break-all">📁 {downloadCompleteInfo.fileName}</p>
                   {downloadCompleteInfo.fileType === 'zip' && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Contiene {selectedPages.size} imagen{selectedPages.size > 1 ? 'es' : ''} lista{selectedPages.size > 1 ? 's' : ''} para imprimir
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {selectedPages.size} imagen{selectedPages.size > 1 ? 'es' : ''} para imprimir
                     </p>
                   )}
                 </div>
 
-                {isIOS() && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <h4 className="font-medium text-blue-900 mb-2">📱 Instrucciones para iPhone/iPad:</h4>
-                    <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                      <li>Toca el botón de compartir (cuadrado con flecha) en la parte inferior</li>
-                      <li>Selecciona "Guardar en Archivos" o "Guardar en iCloud Drive"</li>
-                      <li>Elige la ubicación donde quieres guardar tu archivo</li>
-                    </ol>
-                    <p className="text-sm text-blue-700 mt-2 font-medium">
-                      💡 También puedes compartir directamente con otras apps
-                    </p>
+                {/* En móvil: Compartir es la acción principal */}
+                {isMobile ? (
+                  <div className="flex flex-col gap-2">
+                    {typeof navigator !== 'undefined' && 'share' in navigator && typeof navigator.share === 'function' && downloadCompleteInfo.blob && (
+                      <Button 
+                        onClick={handleShareFile}
+                        size="lg"
+                        className="w-full touch-target"
+                      >
+                        <Share className="mr-2 h-5 w-5" />
+                        Compartir / Guardar en Archivos
+                      </Button>
+                    )}
+                    <Button 
+                      variant="outline" 
+                      onClick={handleDownloadAgain}
+                      className="w-full touch-target"
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Descargar de nuevo
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleDownloadAgain}
+                      className="flex-1"
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Descargar de nuevo
+                    </Button>
+                    
+                    {typeof navigator !== 'undefined' && 'share' in navigator && typeof navigator.share === 'function' && downloadCompleteInfo.blob && (
+                      <Button 
+                        onClick={handleShareFile}
+                        className="flex-1"
+                      >
+                        <Share className="mr-2 h-4 w-4" />
+                        Compartir
+                      </Button>
+                    )}
                   </div>
                 )}
 
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={handleDownloadAgain}
-                    className="flex-1"
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Descargar de nuevo
-                  </Button>
-                  
-                  {typeof navigator !== 'undefined' && 'share' in navigator && typeof navigator.share === 'function' && downloadCompleteInfo.blob && (
-                    <Button 
-                      onClick={handleShareFile}
-                      className="flex-1"
-                    >
-                      <Share className="mr-2 h-4 w-4" />
-                      Compartir archivo
-                    </Button>
-                  )}
-                </div>
+                {isMobile && isIOS() && (
+                  <p className="text-xs text-muted-foreground text-center">
+                    Toca "Compartir" para guardar en Archivos, iCloud o enviar por WhatsApp, AirDrop, etc.
+                  </p>
+                )}
               </div>
 
               <DialogFooter>
-                <Button onClick={() => setIsDownloadCompleteModalOpen(false)}>
+                <Button variant={isMobile ? "ghost" : "default"} onClick={() => setIsDownloadCompleteModalOpen(false)} className={isMobile ? "w-full" : ""}>
                   Cerrar
                 </Button>
               </DialogFooter>
