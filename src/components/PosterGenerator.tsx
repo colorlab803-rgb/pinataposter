@@ -493,7 +493,26 @@ export function PosterGenerator({
     setIsUpscaling(true)
 
     try {
-      // Convertir la imagen a base64 data URI para enviar a la API
+      // 0) Pre-verificar créditos ANTES de enviar la imagen (evita enviar payload grande para nada)
+      const checkRes = await fetch('/api/user')
+      const checkData = await checkRes.json()
+
+      if (!checkData.loggedIn) {
+        toast.error('Inicia sesión para mejorar imágenes', {
+          description: 'Necesitas una cuenta para usar esta función.',
+        })
+        return
+      }
+
+      if (!checkData.hasCredits) {
+        toast.error('Necesitas créditos de diseño', {
+          description: 'Compra un pack para usar la mejora de calidad AI.',
+          action: onOpenPricing ? { label: 'Ver planes', onClick: onOpenPricing } : undefined,
+        })
+        return
+      }
+
+      // 1) Preparar imagen: convertir a base64 y comprimir para reducir tamaño del payload
       let imageData = processedImageSrc
 
       // Si es un blob URL, convertir a base64
@@ -507,7 +526,28 @@ export function PosterGenerator({
         })
       }
 
-      // 1) Iniciar la predicción (retorna inmediatamente con el ID)
+      // Comprimir imagen si es muy grande (máximo ~2048px por lado, JPEG 0.85)
+      imageData = await new Promise<string>((resolve) => {
+        const img = new window.Image()
+        img.onload = () => {
+          const MAX_DIM = 2048
+          let { width, height } = img
+          if (width > MAX_DIM || height > MAX_DIM) {
+            const ratio = Math.min(MAX_DIM / width, MAX_DIM / height)
+            width = Math.round(width * ratio)
+            height = Math.round(height * ratio)
+          }
+          const canvas = document.createElement('canvas')
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')!
+          ctx.drawImage(img, 0, 0, width, height)
+          resolve(canvas.toDataURL('image/jpeg', 0.85))
+        }
+        img.src = imageData
+      })
+
+      // 2) Iniciar la predicción (retorna inmediatamente con el ID)
       const startRes = await fetch('/api/upscale', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -524,8 +564,8 @@ export function PosterGenerator({
           return
         }
         if (startRes.status === 429) {
-          toast.error('Límite de mejoras alcanzado', {
-            description: startData.error || 'Mejora tu plan para más usos.',
+          toast.error('Necesitas créditos de diseño', {
+            description: startData.error || 'Compra un pack para usar esta función.',
             action: onOpenPricing ? { label: 'Ver planes', onClick: onOpenPricing } : undefined,
           })
           return
@@ -538,7 +578,7 @@ export function PosterGenerator({
 
       const { predictionId } = startData as { predictionId: string }
 
-      // 2) Polling: consultar estado cada 3 segundos hasta que termine
+      // 3) Polling: consultar estado cada 3 segundos hasta que termine
       const maxPolls = 60 // máximo ~3 minutos
       for (let i = 0; i < maxPolls; i++) {
         await new Promise((resolve) => setTimeout(resolve, 3000))
