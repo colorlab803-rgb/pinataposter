@@ -17,7 +17,7 @@ export async function GET() {
     })
   }
 
-  const user = getUser(session.user.email)
+  const user = await getUser(session.user.email)
 
   if (!user) {
     return NextResponse.json({

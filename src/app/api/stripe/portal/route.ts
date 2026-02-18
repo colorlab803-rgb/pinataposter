@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const user = getUser(session.user.email)
+  const user = await getUser(session.user.email)
 
   if (!user?.stripeCustomerId) {
     return NextResponse.json(

@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const usageCheck = checkUpscaleAccess(session.user.email)
+  const usageCheck = await checkUpscaleAccess(session.user.email)
   if (!usageCheck.allowed) {
     return NextResponse.json(
       { error: usageCheck.reason || 'Necesitas créditos para usar upscale.' },

@@ -42,12 +42,12 @@ export async function POST(request: NextRequest) {
           const credits = determinePackCredits(priceId || '')
           if (credits > 0) {
             // Asegurar que el usuario existe
-            const user = getUserByStripeCustomerId(customerId)
+            const user = await getUserByStripeCustomerId(customerId)
             if (user) {
-              addDesignCredits(user.email, credits)
+              await addDesignCredits(user.email, credits)
             } else {
-              upsertUser(email, { stripeCustomerId: customerId })
-              addDesignCredits(email, credits)
+              await upsertUser(email, { stripeCustomerId: customerId })
+              await addDesignCredits(email, credits)
             }
           }
         }

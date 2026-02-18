@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Obtener o crear Stripe Customer
-    const user = getUser(session.user.email)
+    const user = await getUser(session.user.email)
     let customerId = user?.stripeCustomerId
 
     if (!customerId) {
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
         metadata: { source: 'pinataposter' },
       })
       customerId = customer.id
-      upsertUser(session.user.email, { stripeCustomerId: customerId })
+      await upsertUser(session.user.email, { stripeCustomerId: customerId })
     }
 
     const checkoutSession = await getStripe().checkout.sessions.create({

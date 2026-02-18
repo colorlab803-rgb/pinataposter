@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
   // Usuario logueado: verificar por email
   if (session?.user?.email) {
-    const result = checkUserDownload(session.user.email)
+    const result = await checkUserDownload(session.user.email)
     return NextResponse.json({
       allowed: result.allowed,
       watermark: result.watermark,
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
   // Anónimo: verificar por IP
   const ip = getClientIp(request)
-  const result = checkIpRateLimit(ip)
+  const result = await checkIpRateLimit(ip)
   return NextResponse.json({ ...result, watermark: true, hasCredits: false, remainingCredits: 0 }, { headers: NO_CACHE_HEADERS })
 }
 
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
 
   // Usuario logueado
   if (session?.user?.email) {
-    const result = consumeDesignCredit(session.user.email)
+    const result = await consumeDesignCredit(session.user.email)
     if (!result.allowed) {
       return NextResponse.json(
         { allowed: false, watermark: true, message: result.reason },
@@ -65,11 +65,11 @@ export async function POST(request: NextRequest) {
 
   // Anónimo: IP
   const ip = getClientIp(request)
-  const check = checkIpRateLimit(ip)
+  const check = await checkIpRateLimit(ip)
   if (!check.allowed) {
     return NextResponse.json({ ...check, watermark: true }, { status: 429, headers: NO_CACHE_HEADERS })
   }
 
-  recordIpDownload(ip)
+  await recordIpDownload(ip)
   return NextResponse.json({ allowed: true, watermark: true, message: 'Descarga registrada.' }, { headers: NO_CACHE_HEADERS })
 }

@@ -14,7 +14,7 @@ const handler = NextAuth({
     async signIn({ user }) {
       if (user.email) {
         // Crear o actualizar usuario en la DB
-        upsertUser(user.email, {
+        await upsertUser(user.email, {
           name: user.name || '',
           image: user.image || '',
         })
@@ -25,7 +25,7 @@ const handler = NextAuth({
       // Inyectar créditos del usuario en la sesión
       if (session.user?.email) {
         const { getUser } = await import('@/lib/db')
-        const dbUser = getUser(session.user.email)
+        const dbUser = await getUser(session.user.email)
         if (dbUser) {
           (session.user as Record<string, unknown>).designCredits = dbUser.designCredits
         }
