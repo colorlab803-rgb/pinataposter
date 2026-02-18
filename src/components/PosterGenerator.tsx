@@ -507,49 +507,84 @@ export function PosterGenerator({
         })
       }
 
-      const res = await fetch('/api/upscale', {
+      // 1) Iniciar la predicción (retorna inmediatamente con el ID)
+      const startRes = await fetch('/api/upscale', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: imageData, scale: 4 }),
       })
 
-      const data = await res.json()
+      const startData = await startRes.json()
 
-      if (!res.ok) {
-        if (res.status === 401) {
+      if (!startRes.ok) {
+        if (startRes.status === 401) {
           toast.error('Inicia sesión para mejorar imágenes', {
             description: 'Necesitas una cuenta para usar esta función.',
           })
           return
         }
-        if (res.status === 429) {
+        if (startRes.status === 429) {
           toast.error('Límite de mejoras alcanzado', {
-            description: data.error || 'Mejora tu plan para más usos.',
+            description: startData.error || 'Mejora tu plan para más usos.',
             action: onOpenPricing ? { label: 'Ver planes', onClick: onOpenPricing } : undefined,
           })
           return
         }
         toast.error('Error al mejorar imagen', {
-          description: data.error || 'No se pudo procesar la imagen.',
+          description: startData.error || 'No se pudo iniciar el proceso.',
         })
         return
       }
 
-      // data.output ya es la imagen en base64 (data URI), no necesita fetch externo
-      const upscaledDataUrl = data.output
+      const { predictionId } = startData as { predictionId: string }
 
-      setProcessedImageSrc(upscaledDataUrl)
-      setIsUpscaled(true)
+      // 2) Polling: consultar estado cada 3 segundos hasta que termine
+      const maxPolls = 60 // máximo ~3 minutos
+      for (let i = 0; i < maxPolls; i++) {
+        await new Promise((resolve) => setTimeout(resolve, 3000))
 
-      // Actualizar dimensiones
-      const img = new window.Image()
-      img.onload = () => {
-        setImageDimensions({ width: img.width, height: img.height })
+        const pollRes = await fetch(`/api/upscale?id=${predictionId}`)
+        const pollData = await pollRes.json()
+
+        if (!pollRes.ok) {
+          toast.error('Error al mejorar imagen', {
+            description: pollData.error || 'Error consultando el estado.',
+          })
+          return
+        }
+
+        if (pollData.status === 'failed' || pollData.status === 'canceled') {
+          toast.error('Error al mejorar imagen', {
+            description: pollData.error || 'El proceso falló. Inténtalo con otra imagen.',
+          })
+          return
+        }
+
+        if (pollData.status === 'succeeded') {
+          const upscaledDataUrl = pollData.output as string
+
+          setProcessedImageSrc(upscaledDataUrl)
+          setIsUpscaled(true)
+
+          // Actualizar dimensiones
+          const img = new window.Image()
+          img.onload = () => {
+            setImageDimensions({ width: img.width, height: img.height })
+          }
+          img.src = upscaledDataUrl
+
+          toast.success('✨ Imagen mejorada', {
+            description: `Resolución aumentada 4x con Real-ESRGAN.`,
+          })
+          return
+        }
+
+        // Si sigue en 'starting' o 'processing', continuar polling
       }
-      img.src = upscaledDataUrl
 
-      toast.success('✨ Imagen mejorada', {
-        description: `Resolución aumentada 4x con Real-ESRGAN.`,
+      // Si llegamos aquí, se agotó el tiempo de polling
+      toast.error('Error al mejorar imagen', {
+        description: 'El proceso tardó demasiado. Inténtalo con una imagen más pequeña.',
       })
     } catch {
       toast.error('Error al mejorar imagen', {

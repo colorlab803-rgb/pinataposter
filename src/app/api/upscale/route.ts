@@ -4,7 +4,7 @@ import { checkUpscaleAccess } from '@/lib/db'
 
 const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN
 
-// Real-ESRGAN model en Replicate (usando modelo en vez de version hash)
+// Real-ESRGAN model en Replicate
 const REPLICATE_MODEL = 'nightmareai/real-esrgan'
 
 interface ReplicatePrediction {
@@ -12,49 +12,12 @@ interface ReplicatePrediction {
   status: 'starting' | 'processing' | 'succeeded' | 'failed' | 'canceled'
   output?: string
   error?: string
-  urls?: { get: string }
-}
-
-async function pollPrediction(id: string): Promise<ReplicatePrediction> {
-  const maxAttempts = 90 // máximo ~3 minutos
-  for (let i = 0; i < maxAttempts; i++) {
-    const res = await fetch(`https://api.replicate.com/v1/predictions/${id}`, {
-      headers: { Authorization: `Bearer ${REPLICATE_API_TOKEN}` },
-    })
-
-    if (!res.ok) {
-      console.error('Replicate poll error:', res.status, res.statusText)
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      continue
-    }
-
-    const data: ReplicatePrediction = await res.json()
-
-    if (data.status === 'succeeded' || data.status === 'failed' || data.status === 'canceled') {
-      return data
-    }
-
-    // Esperar 2 segundos entre chequeos
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-  }
-
-  throw new Error('Timeout: el upscale tardó demasiado.')
 }
 
 /**
- * Descarga la imagen desde la URL de Replicate y la devuelve como base64 data URI.
- * Esto evita problemas de CORS en el cliente.
+ * POST /api/upscale — Inicia una predicción de upscale y retorna el ID inmediatamente.
+ * No bloquea esperando el resultado (evita timeout de Cloudflare ~100s).
  */
-async function downloadImageAsBase64(url: string): Promise<string> {
-  const res = await fetch(url)
-  if (!res.ok) {
-    throw new Error(`Error descargando imagen upscaled: ${res.status}`)
-  }
-  const buffer = Buffer.from(await res.arrayBuffer())
-  const contentType = res.headers.get('content-type') || 'image/png'
-  return `data:${contentType};base64,${buffer.toString('base64')}`
-}
-
 export async function POST(request: NextRequest) {
   if (!REPLICATE_API_TOKEN) {
     return NextResponse.json(
@@ -63,7 +26,6 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Verificar autenticación
   const session = await getServerSession()
   if (!session?.user?.email) {
     return NextResponse.json(
@@ -72,7 +34,6 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  // Verificar límite de upscale — solo con créditos de diseño
   const usageCheck = checkUpscaleAccess(session.user.email)
   if (!usageCheck.allowed) {
     return NextResponse.json(
@@ -94,7 +55,7 @@ export async function POST(request: NextRequest) {
 
     const upscaleScale = scale && [2, 4].includes(scale) ? scale : 4
 
-    // Crear prediction en Replicate usando el modelo (sin version hash hardcodeado)
+    // Crear prediction en Replicate — retorna inmediatamente sin esperar resultado
     const createRes = await fetch(
       `https://api.replicate.com/v1/models/${REPLICATE_MODEL}/predictions`,
       {
@@ -102,7 +63,6 @@ export async function POST(request: NextRequest) {
         headers: {
           Authorization: `Bearer ${REPLICATE_API_TOKEN}`,
           'Content-Type': 'application/json',
-          Prefer: 'wait',
         },
         body: JSON.stringify({
           input: {
@@ -123,47 +83,118 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    let prediction: ReplicatePrediction = await createRes.json()
+    const prediction: ReplicatePrediction = await createRes.json()
 
-    // Si Replicate no completó con "Prefer: wait", hacer polling
-    if (prediction.status !== 'succeeded' && prediction.status !== 'failed' && prediction.status !== 'canceled') {
-      prediction = await pollPrediction(prediction.id)
-    }
-
-    if (prediction.status === 'failed') {
-      console.error('Replicate prediction failed:', prediction.error)
-      return NextResponse.json(
-        { error: prediction.error || 'El upscale falló. Inténtalo con otra imagen.' },
-        { status: 500 }
-      )
-    }
-
-    if (prediction.status === 'canceled') {
-      return NextResponse.json(
-        { error: 'El upscale fue cancelado.' },
-        { status: 500 }
-      )
-    }
-
-    if (!prediction.output) {
-      return NextResponse.json(
-        { error: 'El upscale no generó resultado. Inténtalo con otra imagen.' },
-        { status: 500 }
-      )
-    }
-
-    // Descargar la imagen del CDN de Replicate en el servidor para evitar CORS en el cliente
-    const base64Image = await downloadImageAsBase64(prediction.output)
-
+    // Retornar el ID de la predicción para que el frontend haga polling
     return NextResponse.json({
-      output: base64Image,
-      message: `Imagen escalada ${upscaleScale}x exitosamente.`,
+      predictionId: prediction.id,
+      status: prediction.status,
     })
   } catch (error) {
-    console.error('Upscale error:', error)
+    console.error('Upscale start error:', error)
     const msg = error instanceof Error ? error.message : 'Error interno al procesar el upscale.'
     return NextResponse.json(
       { error: msg },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * GET /api/upscale?id=xxx — Consulta el estado de una predicción.
+ * El frontend llama esto cada ~3 segundos hasta que termine.
+ */
+export async function GET(request: NextRequest) {
+  if (!REPLICATE_API_TOKEN) {
+    return NextResponse.json(
+      { error: 'Servicio no configurado.' },
+      { status: 500 }
+    )
+  }
+
+  const session = await getServerSession()
+  if (!session?.user?.email) {
+    return NextResponse.json(
+      { error: 'No autenticado.' },
+      { status: 401 }
+    )
+  }
+
+  const predictionId = request.nextUrl.searchParams.get('id')
+  if (!predictionId) {
+    return NextResponse.json(
+      { error: 'Falta el ID de predicción.' },
+      { status: 400 }
+    )
+  }
+
+  try {
+    const res = await fetch(
+      `https://api.replicate.com/v1/predictions/${predictionId}`,
+      {
+        headers: { Authorization: `Bearer ${REPLICATE_API_TOKEN}` },
+      }
+    )
+
+    if (!res.ok) {
+      console.error('Replicate poll error:', res.status, res.statusText)
+      return NextResponse.json(
+        { error: 'Error consultando el estado del upscale.' },
+        { status: 502 }
+      )
+    }
+
+    const prediction: ReplicatePrediction = await res.json()
+
+    if (prediction.status === 'failed') {
+      console.error('Replicate prediction failed:', prediction.error)
+      return NextResponse.json({
+        status: 'failed',
+        error: prediction.error || 'El upscale falló. Inténtalo con otra imagen.',
+      })
+    }
+
+    if (prediction.status === 'canceled') {
+      return NextResponse.json({
+        status: 'canceled',
+        error: 'El upscale fue cancelado.',
+      })
+    }
+
+    if (prediction.status === 'succeeded') {
+      if (!prediction.output) {
+        return NextResponse.json({
+          status: 'failed',
+          error: 'El upscale no generó resultado.',
+        })
+      }
+
+      // Descargar la imagen en el servidor para evitar CORS en el cliente
+      const imgRes = await fetch(prediction.output)
+      if (!imgRes.ok) {
+        return NextResponse.json({
+          status: 'failed',
+          error: 'Error descargando la imagen mejorada.',
+        })
+      }
+      const buffer = Buffer.from(await imgRes.arrayBuffer())
+      const contentType = imgRes.headers.get('content-type') || 'image/png'
+      const base64 = `data:${contentType};base64,${buffer.toString('base64')}`
+
+      return NextResponse.json({
+        status: 'succeeded',
+        output: base64,
+      })
+    }
+
+    // Todavía procesando
+    return NextResponse.json({
+      status: prediction.status, // 'starting' | 'processing'
+    })
+  } catch (error) {
+    console.error('Upscale poll error:', error)
+    return NextResponse.json(
+      { error: 'Error consultando el estado del upscale.' },
       { status: 500 }
     )
   }
