@@ -535,17 +535,8 @@ export function PosterGenerator({
         return
       }
 
-      // data.output es la URL de la imagen mejorada de Replicate
-      const upscaledUrl = data.output
-
-      // Descargar la imagen mejorada y convertir a data URL
-      const imgRes = await fetch(upscaledUrl)
-      const imgBlob = await imgRes.blob()
-      const upscaledDataUrl = await new Promise<string>((resolve) => {
-        const reader = new FileReader()
-        reader.onloadend = () => resolve(reader.result as string)
-        reader.readAsDataURL(imgBlob)
-      })
+      // data.output ya es la imagen en base64 (data URI), no necesita fetch externo
+      const upscaledDataUrl = data.output
 
       setProcessedImageSrc(upscaledDataUrl)
       setIsUpscaled(true)
