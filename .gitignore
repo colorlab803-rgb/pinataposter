@@ -42,3 +42,19 @@ next-env.d.ts
 
 # rate-limit data (local dev)
 .rate-limit-data/
+# SSH keys (nunca commitear)
+*.key
+ssh-key*
+
+# Logs
+server.log
+
+# IDX / Firebase Studio
+.idx/
+.modified
+
+# Railway (ya no se usa)
+railway.toml
+
+# Deploy scripts con IPs hardcodeadas
+deploy.sh
