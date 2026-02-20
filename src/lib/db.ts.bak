@@ -115,38 +115,26 @@ export async function upsertUser(email: string, data: Partial<UserRecord>): Prom
 }
 
 export async function addDesignCredits(email: string, credits: number): Promise<UserRecord | null> {
-  await ensureTables()
-  const { rows } = await pool.query(
-    `UPDATE users SET design_credits = design_credits + $2, updated_at = $3
-     WHERE email = $1 RETURNING *`,
-    [email, credits, Date.now()]
-  )
-  if (rows.length === 0) return null
-  return rowToUser(rows[0])
+  const user = await getUser(email)
+  if (!user) return null
+  return upsertUser(email, {
+    designCredits: user.designCredits + credits,
+  })
 }
 
 /**
  * Intenta usar un crédito de diseño.
  */
 export async function consumeDesignCredit(email: string): Promise<{ allowed: boolean; usedCredit: boolean; watermark: boolean; reason?: string }> {
-  await ensureTables()
-  const now = Date.now()
-
-  // Intento atómico: restar 1 crédito solo si hay > 0
-  const { rows: creditRows } = await pool.query(
-    `UPDATE users SET design_credits = design_credits - 1, updated_at = $2
-     WHERE email = $1 AND design_credits > 0 RETURNING *`,
-    [email, now]
-  )
-
-  if (creditRows.length > 0) {
-    return { allowed: true, usedCredit: true, watermark: false }
-  }
-
-  // Sin créditos — verificar free download
   const user = await getUser(email)
   if (!user) return { allowed: false, usedCredit: false, watermark: true, reason: 'Usuario no encontrado.' }
 
+  if (user.designCredits > 0) {
+    await upsertUser(email, { designCredits: user.designCredits - 1 })
+    return { allowed: true, usedCredit: true, watermark: false }
+  }
+
+  const now = Date.now()
   const freeDownloads = { ...user.freeDownloadsToday }
 
   if (now >= freeDownloads.resetAt) {
@@ -197,29 +185,17 @@ export async function checkUserDownload(email: string): Promise<{ allowed: boole
 }
 
 /**
- * Verificar si el usuario puede usar upscale.
- * Usuarios registrados: 1 upscale/día (parte de su diseño gratis).
- * Usuarios con créditos: siempre permitido.
+ * Verificar si el usuario puede usar upscale (solo con créditos).
  */
 export async function checkUpscaleAccess(email: string): Promise<{ allowed: boolean; reason?: string }> {
   const user = await getUser(email)
   if (!user) return { allowed: false, reason: 'Usuario no encontrado.' }
 
-  // Con créditos: siempre permitido
   if (user.designCredits > 0) {
     return { allowed: true }
   }
 
-  // Registrado sin créditos: 1 upscale/día (ligado al diseño gratis diario)
-  const now = Date.now()
-  const freeDownloads = { ...user.freeDownloadsToday }
-  if (now >= freeDownloads.resetAt) freeDownloads.count = 0
-
-  if (freeDownloads.count >= FREE_DAILY_LIMIT) {
-    return { allowed: false, reason: 'Ya usaste tu mejora gratis de hoy. Compra un pack para más.' }
-  }
-
-  return { allowed: true }
+  return { allowed: false, reason: 'Necesitas créditos de diseño para mejorar imágenes. Compra un pack.' }
 }
 
 // ── Rate Limit por IP (anónimos) ────────────────────────
@@ -256,27 +232,6 @@ export async function recordIpDownload(ip: string): Promise<void> {
     `INSERT INTO ip_rate_limit (ip, last_download) VALUES ($1, $2)
      ON CONFLICT (ip) DO UPDATE SET last_download = $2`,
     [ip, Date.now()]
-  )
-}
-
-
-// ── Idempotencia de Webhooks ─────────────────────────────
-
-export async function isCheckoutProcessed(sessionId: string): Promise<boolean> {
-  await ensureTables()
-  const { rows } = await pool.query(
-    'SELECT 1 FROM processed_checkout_sessions WHERE session_id = $1',
-    [sessionId]
-  )
-  return rows.length > 0
-}
-
-export async function markCheckoutProcessed(sessionId: string): Promise<void> {
-  await ensureTables()
-  await pool.query(
-    `INSERT INTO processed_checkout_sessions (session_id, processed_at) VALUES ($1, $2)
-     ON CONFLICT (session_id) DO NOTHING`,
-    [sessionId, Date.now()]
   )
 }
 

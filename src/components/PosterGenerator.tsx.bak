@@ -27,7 +27,6 @@ import {
 import { Stepper } from '@/components/ui/stepper'
 import getCroppedImg from '@/lib/cropImage'
 import autoCrop from '@/lib/autoCrop'
-import { DownloadInfo } from '@/components/DownloadInfo'
 import { useIsMobile } from '@/lib/useIsMobile'
 
 const paperSizes = {
@@ -60,14 +59,6 @@ interface PosterGeneratorProps {
   showImageUpload?: boolean
   showTitle?: boolean
   onOpenPricing?: () => void
-  usageInfo?: {
-    loggedIn: boolean
-    hasCredits: boolean
-    watermark: boolean
-    designCredits: number
-    freeDownloadsUsed: number
-    freeDownloadsLimit: number
-  }
 }
 
 export function PosterGenerator({ 
@@ -76,8 +67,7 @@ export function PosterGenerator({
   onImageChange,
   showImageUpload = true,
   showTitle = true,
-  onOpenPricing,
-  usageInfo
+  onOpenPricing
 }: PosterGeneratorProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [originalImageSrc, setOriginalImageSrc] = useState<string | null>(initialImageSrc || null)
@@ -1319,7 +1309,6 @@ export function PosterGenerator({
                             size="sm" 
                             onClick={handleUpscale}
                             disabled={isUpscaling || isUpscaled}
-                            title="Mejora con AI (usa 1 crédito o tu mejora gratis del día)"
                             className="text-xs sm:text-sm touch-target"
                           >
                             {isUpscaling ? (
@@ -1689,16 +1678,6 @@ export function PosterGenerator({
                       <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                         {isMobile ? '📲 Obtener archivo' : '📥 Descargar'}
                       </h3>
-                      {usageInfo && (
-                        <DownloadInfo
-                          hasCredits={usageInfo.hasCredits}
-                          watermark={usageInfo.watermark}
-                          loggedIn={usageInfo.loggedIn}
-                          designCredits={usageInfo.designCredits}
-                          freeDownloadsUsed={usageInfo.freeDownloadsUsed}
-                          freeDownloadsLimit={usageInfo.freeDownloadsLimit}
-                        />
-                      )}
                       {isProcessing && isMobile && (
                         <div className="mb-3 p-3 bg-muted/50 rounded-lg flex items-center gap-3">
                           <Loader2 className="h-5 w-5 animate-spin text-primary flex-shrink-0" />

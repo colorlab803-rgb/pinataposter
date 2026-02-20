@@ -8,19 +8,30 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { AuthButton } from '@/components/AuthButton'
 import { PricingDialog } from '@/components/PricingDialog'
+import { UsageBanner } from '@/components/UsageBanner'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
+import { useSession, signIn } from 'next-auth/react'
 
 export default function GeneratorPage() {
   const { data: session } = useSession()
   const [isPricingOpen, setIsPricingOpen] = useState(false)
   const [designCredits, setDesignCredits] = useState(0)
+  const [freeDownloadsUsed, setFreeDownloadsUsed] = useState(0)
+  const [freeDownloadsLimit, setFreeDownloadsLimit] = useState(1)
+  const [hasCredits, setHasCredits] = useState(false)
+  const [watermark, setWatermark] = useState(true)
+  const [loggedIn, setLoggedIn] = useState(false)
 
   const fetchUserData = useCallback(async () => {
     try {
       const res = await fetch('/api/user')
       const data = await res.json()
       setDesignCredits(data.designCredits ?? 0)
+      setFreeDownloadsUsed(data.freeDownloadsUsed ?? 0)
+      setFreeDownloadsLimit(data.freeDownloadsLimit ?? 1)
+      setHasCredits(data.hasCredits ?? false)
+      setWatermark(data.watermark ?? true)
+      setLoggedIn(data.loggedIn ?? false)
     } catch {
       // silently fail
     }
@@ -29,6 +40,22 @@ export default function GeneratorPage() {
   useEffect(() => {
     fetchUserData()
   }, [session, fetchUserData])
+
+  const handleUsageUpdate = useCallback((data: {
+    designCredits: number
+    freeDownloadsUsed: number
+    freeDownloadsLimit: number
+    hasCredits: boolean
+    watermark: boolean
+    loggedIn: boolean
+  }) => {
+    setDesignCredits(data.designCredits)
+    setFreeDownloadsUsed(data.freeDownloadsUsed)
+    setFreeDownloadsLimit(data.freeDownloadsLimit)
+    setHasCredits(data.hasCredits)
+    setWatermark(data.watermark)
+    setLoggedIn(data.loggedIn)
+  }, [])
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -64,7 +91,12 @@ export default function GeneratorPage() {
               </div>
 
               <div className="flex items-center gap-1.5 sm:gap-3">
-                <AuthButton onOpenPricing={() => setIsPricingOpen(true)} designCredits={designCredits} />
+                <AuthButton
+                  onOpenPricing={() => setIsPricingOpen(true)}
+                  designCredits={designCredits}
+                  freeDownloadsUsed={freeDownloadsUsed}
+                  freeDownloadsLimit={freeDownloadsLimit}
+                />
                 <ThemeToggle />
               </div>
             </div>
@@ -72,15 +104,30 @@ export default function GeneratorPage() {
         </header>
 
         <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+          {/* Banner de uso */}
+          <UsageBanner
+            onOpenPricing={() => setIsPricingOpen(true)}
+            onSignIn={() => signIn('google')}
+            onUsageUpdate={handleUsageUpdate}
+          />
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <PosterGenerator 
+            <PosterGenerator
               showImageUpload={true}
               showTitle={false}
               onOpenPricing={() => setIsPricingOpen(true)}
+              usageInfo={{
+                loggedIn,
+                hasCredits,
+                watermark,
+                designCredits,
+                freeDownloadsUsed,
+                freeDownloadsLimit,
+              }}
             />
           </motion.div>
         </main>

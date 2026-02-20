@@ -14,6 +14,8 @@ export async function GET() {
       watermark: true,
       freeDownloadsUsed: 0,
       freeDownloadsLimit: FREE_DAILY_LIMIT,
+      freeDownloadsResetAt: null,
+      planLabel: 'anonymous',
     })
   }
 
@@ -27,14 +29,18 @@ export async function GET() {
       watermark: true,
       freeDownloadsUsed: 0,
       freeDownloadsLimit: FREE_DAILY_LIMIT,
+      freeDownloadsResetAt: null,
+      planLabel: 'free',
     })
   }
 
   const now = Date.now()
   const freeDownloads = { ...user.freeDownloadsToday }
-  if (now >= freeDownloads.resetAt) freeDownloads.count = 0
+  const isResetExpired = now >= freeDownloads.resetAt
+  if (isResetExpired) freeDownloads.count = 0
 
   const hasCredits = user.designCredits > 0
+  const planLabel = hasCredits ? 'credits' : 'free'
 
   return NextResponse.json({
     loggedIn: true,
@@ -43,5 +49,7 @@ export async function GET() {
     watermark: !hasCredits,
     freeDownloadsUsed: freeDownloads.count,
     freeDownloadsLimit: FREE_DAILY_LIMIT,
+    freeDownloadsResetAt: isResetExpired ? null : freeDownloads.resetAt,
+    planLabel,
   })
 }
