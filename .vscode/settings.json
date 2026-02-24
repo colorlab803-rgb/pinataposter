@@ -1,0 +1,7 @@
+{
+  "chat.agent.autoApprove": true,
+  "github.copilot.chat.agent.autoApprove": true,
+  "github.copilot.chat.agent.autoApproveTerminalCommands.patterns": {
+    "rm": true
+  }
+}

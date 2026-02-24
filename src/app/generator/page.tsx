@@ -1,143 +1,60 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { PosterGenerator } from '@/components/PosterGenerator'
 import { Scissors, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { AuthButton } from '@/components/AuthButton'
-import { PricingDialog } from '@/components/PricingDialog'
-import { UsageBanner } from '@/components/UsageBanner'
 import Link from 'next/link'
-import { useSession, signIn } from 'next-auth/react'
 
 export default function GeneratorPage() {
-  const { data: session } = useSession()
-  const [isPricingOpen, setIsPricingOpen] = useState(false)
-  const [designCredits, setDesignCredits] = useState(0)
-  const [freeDownloadsUsed, setFreeDownloadsUsed] = useState(0)
-  const [freeDownloadsLimit, setFreeDownloadsLimit] = useState(1)
-  const [hasCredits, setHasCredits] = useState(false)
-  const [watermark, setWatermark] = useState(true)
-  const [loggedIn, setLoggedIn] = useState(false)
-
-  const fetchUserData = useCallback(async () => {
-    try {
-      const res = await fetch('/api/user')
-      const data = await res.json()
-      setDesignCredits(data.designCredits ?? 0)
-      setFreeDownloadsUsed(data.freeDownloadsUsed ?? 0)
-      setFreeDownloadsLimit(data.freeDownloadsLimit ?? 1)
-      setHasCredits(data.hasCredits ?? false)
-      setWatermark(data.watermark ?? true)
-      setLoggedIn(data.loggedIn ?? false)
-    } catch {
-      // silently fail
-    }
-  }, [])
-
-  useEffect(() => {
-    fetchUserData()
-  }, [session, fetchUserData])
-
-  const handleUsageUpdate = useCallback((data: {
-    designCredits: number
-    freeDownloadsUsed: number
-    freeDownloadsLimit: number
-    hasCredits: boolean
-    watermark: boolean
-    loggedIn: boolean
-  }) => {
-    setDesignCredits(data.designCredits)
-    setFreeDownloadsUsed(data.freeDownloadsUsed)
-    setFreeDownloadsLimit(data.freeDownloadsLimit)
-    setHasCredits(data.hasCredits)
-    setWatermark(data.watermark)
-    setLoggedIn(data.loggedIn)
-  }, [])
-
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 relative">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10">
-        <header className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-50">
-          <div className="container mx-auto px-3 sm:px-4 py-2.5 sm:py-4">
+        <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 sm:gap-4">
+              <div className="flex items-center gap-3">
                 <Link href="/">
                   <Button
                     variant="ghost"
-                    size="sm"
-                    className="text-white hover:text-purple-300 hover:bg-white/10 px-2 sm:px-3"
+                    size="icon"
+                    className="rounded-full"
                   >
-                    <ArrowLeft className="h-5 w-5 sm:mr-2" />
-                    <span className="hidden sm:inline">Volver</span>
+                    <ArrowLeft className="h-5 w-5" />
                   </Button>
                 </Link>
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg flex-shrink-0">
-                    <Scissors className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                <motion.div
+                  className="flex items-center gap-2"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Scissors className="h-4 w-4 text-primary" />
                   </div>
-                  <div className="min-w-0">
-                    <h1 className="text-base sm:text-xl font-bold text-white truncate">Dividir Imagen</h1>
-                    <p className="text-[10px] sm:text-xs text-purple-300 hidden sm:block">Convierte imágenes en secciones imprimibles</p>
-                  </div>
-                </div>
+                  <h1 className="text-lg font-bold tracking-tight hidden sm:block">
+                    PinataPoster
+                  </h1>
+                </motion.div>
               </div>
 
-              <div className="flex items-center gap-1.5 sm:gap-3">
-                <AuthButton
-                  onOpenPricing={() => setIsPricingOpen(true)}
-                  designCredits={designCredits}
-                  freeDownloadsUsed={freeDownloadsUsed}
-                  freeDownloadsLimit={freeDownloadsLimit}
-                />
+              <div className="flex items-center gap-2 sm:gap-3">
                 <ThemeToggle />
               </div>
             </div>
           </div>
         </header>
 
-        <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
-          {/* Banner de uso */}
-          <UsageBanner
-            onOpenPricing={() => setIsPricingOpen(true)}
-            onSignIn={() => signIn('google')}
-            onUsageUpdate={handleUsageUpdate}
-          />
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <PosterGenerator
-              showImageUpload={true}
-              showTitle={false}
-              onOpenPricing={() => setIsPricingOpen(true)}
-              usageInfo={{
-                loggedIn,
-                hasCredits,
-                watermark,
-                designCredits,
-                freeDownloadsUsed,
-                freeDownloadsLimit,
-              }}
-            />
-          </motion.div>
+        <main>
+          <PosterGenerator />
         </main>
       </div>
-
-      <PricingDialog
-        open={isPricingOpen}
-        onOpenChange={setIsPricingOpen}
-        currentCredits={designCredits}
-      />
     </div>
   )
 }

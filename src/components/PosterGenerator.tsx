@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { Upload, Ruler, FileDown, Loader2, Image as ImageIcon, AlertTriangle, Layers, Crop as CropIcon, CheckCircle2, CheckSquare, Ban, Package, Download, ArrowRight, ArrowLeft, Share, Wand2, ScanSearch, FilePlus2 } from "lucide-react"
+import { Upload, Ruler, FileDown, Loader2, Image as ImageIcon, AlertTriangle, Layers, Crop as CropIcon, CheckCircle2, CheckSquare, Ban, Package, Download, ArrowRight, ArrowLeft, Share, ScanSearch, FilePlus2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -27,7 +27,6 @@ import {
 import { Stepper } from '@/components/ui/stepper'
 import getCroppedImg from '@/lib/cropImage'
 import autoCrop from '@/lib/autoCrop'
-import { DownloadInfo } from '@/components/DownloadInfo'
 import { useIsMobile } from '@/lib/useIsMobile'
 
 const paperSizes = {
@@ -59,15 +58,6 @@ interface PosterGeneratorProps {
   onImageChange?: (imageFile: File | null) => void
   showImageUpload?: boolean
   showTitle?: boolean
-  onOpenPricing?: () => void
-  usageInfo?: {
-    loggedIn: boolean
-    hasCredits: boolean
-    watermark: boolean
-    designCredits: number
-    freeDownloadsUsed: number
-    freeDownloadsLimit: number
-  }
 }
 
 export function PosterGenerator({ 
@@ -76,8 +66,6 @@ export function PosterGenerator({
   onImageChange,
   showImageUpload = true,
   showTitle = true,
-  onOpenPricing,
-  usageInfo
 }: PosterGeneratorProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [originalImageSrc, setOriginalImageSrc] = useState<string | null>(initialImageSrc || null)
@@ -121,19 +109,8 @@ export function PosterGenerator({
   const [projectName, setProjectName] = useState("")
   const [downloadType, setDownloadType] = useState<DownloadType | null>(null)
 
-  // Rate limit state
-  const [rateLimitBlocked, setRateLimitBlocked] = useState(false)
-  const [rateLimitMessage, setRateLimitMessage] = useState<string | null>(null)
-
-  // Upscale state
-  const [isUpscaling, setIsUpscaling] = useState(false)
-  const [isUpscaled, setIsUpscaled] = useState(false)
-
   // Auto-crop state
   const [isAutoCropping, setIsAutoCropping] = useState(false)
-
-  // Watermark state (from rate-limit API)
-  const [showWatermark, setShowWatermark] = useState(true)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const isMobile = useIsMobile()
@@ -235,26 +212,7 @@ export function PosterGenerator({
     }
   }, [initialImageSrc, processedImageSrc])
 
-  // Verificar rate-limit al montar el componente
-  useEffect(() => {
-    const checkRateLimit = async () => {
-      try {
-        const res = await fetch('/api/rate-limit', { cache: 'no-store' })
-        const data = await res.json()
-        if (!data.allowed) {
-          setRateLimitBlocked(true)
-          setRateLimitMessage(data.message)
-        }
-        // Actualizar estado de marca de agua según tier
-        if (typeof data.watermark === 'boolean') {
-          setShowWatermark(data.watermark)
-        }
-      } catch {
-        // Si falla, no bloquear
-      }
-    }
-    checkRateLimit()
-  }, [])
+  // Verificar rate-limit al montar el componente — deshabilitado (sin auth)
 
   const getPrintableArea = useCallback(() => {
     const paperDim = paperSizes[paperSize]
@@ -381,7 +339,6 @@ export function PosterGenerator({
   setTargetWidthCm("")
   setTargetHeightCm("")
     setImageFile(file)
-    setIsUpscaled(false)
     
     // Notify parent component about image change
     if (onImageChange) {
@@ -495,153 +452,6 @@ export function PosterGenerator({
       })
     } finally {
       setIsAutoCropping(false)
-    }
-  }
-
-  const handleUpscale = async () => {
-    if (!processedImageSrc) return
-    setIsUpscaling(true)
-
-    try {
-      // 0) Pre-verificar créditos ANTES de enviar la imagen (evita enviar payload grande para nada)
-      const checkRes = await fetch('/api/user')
-      const checkData = await checkRes.json()
-
-      if (!checkData.loggedIn) {
-        toast.error('Inicia sesión para mejorar imágenes', {
-          description: 'Necesitas una cuenta para usar esta función.',
-        })
-        return
-      }
-
-      if (!checkData.hasCredits) {
-        toast.error('Necesitas créditos de diseño', {
-          description: 'Compra un pack para usar la mejora de calidad AI.',
-          action: onOpenPricing ? { label: 'Ver planes', onClick: onOpenPricing } : undefined,
-        })
-        return
-      }
-
-      // 1) Preparar imagen: convertir a base64 y comprimir para reducir tamaño del payload
-      let imageData = processedImageSrc
-
-      // Si es un blob URL, convertir a base64
-      if (processedImageSrc.startsWith('blob:')) {
-        const response = await fetch(processedImageSrc)
-        const blob = await response.blob()
-        imageData = await new Promise<string>((resolve) => {
-          const reader = new FileReader()
-          reader.onloadend = () => resolve(reader.result as string)
-          reader.readAsDataURL(blob)
-        })
-      }
-
-      // Comprimir imagen si es muy grande (máximo ~2048px por lado, JPEG 0.85)
-      imageData = await new Promise<string>((resolve) => {
-        const img = new window.Image()
-        img.onload = () => {
-          const MAX_DIM = 2048
-          let { width, height } = img
-          if (width > MAX_DIM || height > MAX_DIM) {
-            const ratio = Math.min(MAX_DIM / width, MAX_DIM / height)
-            width = Math.round(width * ratio)
-            height = Math.round(height * ratio)
-          }
-          const canvas = document.createElement('canvas')
-          canvas.width = width
-          canvas.height = height
-          const ctx = canvas.getContext('2d')!
-          ctx.drawImage(img, 0, 0, width, height)
-          resolve(canvas.toDataURL('image/jpeg', 0.85))
-        }
-        img.src = imageData
-      })
-
-      // 2) Iniciar la predicción (retorna inmediatamente con el ID)
-      const startRes = await fetch('/api/upscale', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageData, scale: 4 }),
-      })
-
-      const startData = await startRes.json()
-
-      if (!startRes.ok) {
-        if (startRes.status === 401) {
-          toast.error('Inicia sesión para mejorar imágenes', {
-            description: 'Necesitas una cuenta para usar esta función.',
-          })
-          return
-        }
-        if (startRes.status === 429) {
-          toast.error('Necesitas créditos de diseño', {
-            description: startData.error || 'Compra un pack para usar esta función.',
-            action: onOpenPricing ? { label: 'Ver planes', onClick: onOpenPricing } : undefined,
-          })
-          return
-        }
-        toast.error('Error al mejorar imagen', {
-          description: startData.error || 'No se pudo iniciar el proceso.',
-        })
-        return
-      }
-
-      const { predictionId } = startData as { predictionId: string }
-
-      // 3) Polling: consultar estado cada 3 segundos hasta que termine
-      const maxPolls = 60 // máximo ~3 minutos
-      for (let i = 0; i < maxPolls; i++) {
-        await new Promise((resolve) => setTimeout(resolve, 3000))
-
-        const pollRes = await fetch(`/api/upscale?id=${predictionId}`)
-        const pollData = await pollRes.json()
-
-        if (!pollRes.ok) {
-          toast.error('Error al mejorar imagen', {
-            description: pollData.error || 'Error consultando el estado.',
-          })
-          return
-        }
-
-        if (pollData.status === 'failed' || pollData.status === 'canceled') {
-          toast.error('Error al mejorar imagen', {
-            description: pollData.error || 'El proceso falló. Inténtalo con otra imagen.',
-          })
-          return
-        }
-
-        if (pollData.status === 'succeeded') {
-          const upscaledDataUrl = pollData.output as string
-
-          setProcessedImageSrc(upscaledDataUrl)
-          setIsUpscaled(true)
-
-          // Actualizar dimensiones
-          const img = new window.Image()
-          img.onload = () => {
-            setImageDimensions({ width: img.width, height: img.height })
-          }
-          img.src = upscaledDataUrl
-
-          toast.success('✨ Imagen mejorada', {
-            description: `Resolución aumentada 4x con Real-ESRGAN.`,
-          })
-          return
-        }
-
-        // Si sigue en 'starting' o 'processing', continuar polling
-      }
-
-      // Si llegamos aquí, se agotó el tiempo de polling
-      toast.error('Error al mejorar imagen', {
-        description: 'El proceso tardó demasiado. Inténtalo con una imagen más pequeña.',
-      })
-    } catch {
-      toast.error('Error al mejorar imagen', {
-        description: 'Hubo un problema de conexión. Inténtalo de nuevo.',
-      })
-    } finally {
-      setIsUpscaling(false)
     }
   }
 
@@ -773,61 +583,11 @@ export function PosterGenerator({
   const handleDownloadRequest = async (type: DownloadType) => {
     if (!validateInputs()) return
 
-    // Verificar rate-limit antes de permitir la descarga
-    try {
-      const res = await fetch('/api/rate-limit', { cache: 'no-store' })
-      const data = await res.json()
-      if (!data.allowed) {
-        setRateLimitBlocked(true)
-        setRateLimitMessage(data.message)
-        toast.error('Límite diario alcanzado', {
-          description: data.message,
-          action: onOpenPricing ? { label: 'Ver packs', onClick: onOpenPricing } : undefined,
-        })
-        return
-      }
-    } catch {
-      // Si la API falla, permitir la descarga para no bloquear al usuario
-      console.warn('No se pudo verificar el rate-limit, permitiendo descarga.')
-    }
-
     setDownloadType(type)
     setIsFileNameDialogOpen(true)
   }
 
   const handleConfirmDownload = async () => {
-    // Registrar la descarga en el rate-limiter
-    try {
-      const res = await fetch('/api/rate-limit', { method: 'POST', cache: 'no-store' })
-      const data = await res.json()
-      if (!data.allowed) {
-        setRateLimitBlocked(true)
-        setRateLimitMessage(data.message)
-        toast.error('Límite diario alcanzado', {
-          description: data.message,
-        })
-        setIsFileNameDialogOpen(false)
-        setProjectName("")
-        setDownloadType(null)
-        return
-      }
-      // Actualizar watermark después de registrar descarga
-      if (typeof data.watermark === 'boolean') {
-        setShowWatermark(data.watermark)
-      }
-      // Bloquear descargas adicionales si no tiene créditos
-      if (!data.usedCredit) {
-        setRateLimitBlocked(true)
-        setRateLimitMessage('Ya usaste tu diseño gratis de hoy. Compra un pack para seguir creando sin marca de agua.')
-        // Abrir pricing automáticamente para facilitar la conversión
-        if (onOpenPricing) {
-          setTimeout(() => onOpenPricing(), 1500)
-        }
-      }
-    } catch {
-      console.warn('No se pudo registrar el rate-limit, continuando descarga.')
-    }
-
     if (downloadType === 'pdf') {
       generatePdf(projectName)
     } else if (downloadType === 'zip') {
@@ -986,20 +746,6 @@ export function PosterGenerator({
 
         const coordText = `Fila ${row + 1}, Columna ${col + 1} (${String.fromCharCode(65 + col)}${row + 1})`
         doc.text(coordText, MARGIN_CM, pageH - 0.5)
-
-        // Marca de agua diagonal (solo para plan gratuito)
-        if (showWatermark) {
-          doc.saveGraphicsState()
-          doc.setGState(new (doc as any).GState({ opacity: 0.08 }))
-          doc.setFontSize(40)
-          doc.setTextColor(128, 128, 128)
-          const wmText = 'PiñataPoster'
-          const angleDeg = -45
-          const centerX = pageW / 2
-          const centerY = pageH / 2
-          doc.text(wmText, centerX, centerY, { align: 'center', baseline: 'middle', angle: angleDeg })
-          doc.restoreGraphicsState()
-        }
       })
 
       // Add assembly plan if enabled and multiple pages
@@ -1057,16 +803,6 @@ export function PosterGenerator({
                 doc.rect(cellX + cellW/2 - textW/2 - 0.1, cellY + cellH/2 - 0.3, textW + 0.2, 0.5, 'F')
                 doc.text(coord, cellX + cellW/2, cellY + cellH/2, { align: 'center', baseline: 'middle' })
             }
-        }
-
-        // Marca de agua en la página del plano de armado (solo para plan gratuito)
-        if (showWatermark) {
-          doc.saveGraphicsState()
-          doc.setGState(new (doc as any).GState({ opacity: 0.08 }))
-          doc.setFontSize(40)
-          doc.setTextColor(128, 128, 128)
-          doc.text('PiñataPoster', planPageW / 2, planPageH / 2, { align: 'center', baseline: 'middle', angle: -45 })
-          doc.restoreGraphicsState()
         }
       }
 
@@ -1311,34 +1047,6 @@ export function PosterGenerator({
                                 <ScanSearch className="h-4 w-4 mr-1 sm:mr-2" />
                                 <span className="hidden sm:inline">Autorecorte</span>
                                 <span className="sm:hidden">Auto</span>
-                              </>
-                            )}
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={handleUpscale}
-                            disabled={isUpscaling || isUpscaled}
-                            title="Mejora con AI (usa 1 crédito o tu mejora gratis del día)"
-                            className="text-xs sm:text-sm touch-target"
-                          >
-                            {isUpscaling ? (
-                              <>
-                                <Loader2 className="h-4 w-4 mr-1 sm:mr-2 animate-spin" />
-                                <span className="hidden sm:inline">Mejorando...</span>
-                                <span className="sm:hidden">...</span>
-                              </>
-                            ) : isUpscaled ? (
-                              <>
-                                <CheckCircle2 className="h-4 w-4 mr-1 sm:mr-2" />
-                                <span className="hidden sm:inline">Mejorada</span>
-                                <span className="sm:hidden">OK</span>
-                              </>
-                            ) : (
-                              <>
-                                <Wand2 className="h-4 w-4 mr-1 sm:mr-2" />
-                                <span className="hidden sm:inline">Mejorar calidad</span>
-                                <span className="sm:hidden">Mejorar</span>
                               </>
                             )}
                           </Button>
@@ -1689,16 +1397,6 @@ export function PosterGenerator({
                       <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">
                         {isMobile ? '📲 Obtener archivo' : '📥 Descargar'}
                       </h3>
-                      {usageInfo && (
-                        <DownloadInfo
-                          hasCredits={usageInfo.hasCredits}
-                          watermark={usageInfo.watermark}
-                          loggedIn={usageInfo.loggedIn}
-                          designCredits={usageInfo.designCredits}
-                          freeDownloadsUsed={usageInfo.freeDownloadsUsed}
-                          freeDownloadsLimit={usageInfo.freeDownloadsLimit}
-                        />
-                      )}
                       {isProcessing && isMobile && (
                         <div className="mb-3 p-3 bg-muted/50 rounded-lg flex items-center gap-3">
                           <Loader2 className="h-5 w-5 animate-spin text-primary flex-shrink-0" />
@@ -1712,7 +1410,7 @@ export function PosterGenerator({
                       <Button 
                         size="lg" 
                         onClick={() => handleDownloadRequest('pdf')}
-                        disabled={isProcessing || !grid || selectedPages.size === 0 || rateLimitBlocked}
+                        disabled={isProcessing || !grid || selectedPages.size === 0}
                         className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
                         {isProcessing && downloadType === 'pdf' ? (
@@ -1727,7 +1425,7 @@ export function PosterGenerator({
                         variant="outline" 
                         size="lg" 
                         onClick={() => handleDownloadRequest('zip')}
-                        disabled={isProcessing || !grid || selectedPages.size === 0 || rateLimitBlocked}
+                        disabled={isProcessing || !grid || selectedPages.size === 0}
                         className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
                         {isProcessing && downloadType === 'zip' ? (
@@ -1738,27 +1436,6 @@ export function PosterGenerator({
                         {isMobile ? 'Obtener ZIP' : 'Descargar ZIP'}
                       </Button>
                     </div>
-                    {rateLimitBlocked && rateLimitMessage && (
-                      <div className="mt-4 p-4 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 text-sm space-y-3">
-                        <div className="flex items-start gap-2">
-                          <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0 text-purple-400" />
-                          <div>
-                            <p className="font-medium text-foreground mb-1">Ya usaste tu diseño gratis de hoy</p>
-                            <p className="text-muted-foreground text-xs">{rateLimitMessage}</p>
-                          </div>
-                        </div>
-                        {onOpenPricing && (
-                          <Button 
-                            size="sm" 
-                            className="w-full bg-purple-500 hover:bg-purple-600"
-                            onClick={onOpenPricing}
-                          >
-                            <Package className="h-4 w-4 mr-2" />
-                            Ver packs de diseños — desde $25 MXN
-                          </Button>
-                        )}
-                      </div>
-                    )}
                     </div>
                   </>
                 )}
@@ -1933,7 +1610,6 @@ export function PosterGenerator({
                       setGrid(null)
                       setSelectedPages(new Set())
                       setPreviewSlices(null)
-                      setIsUpscaled(false)
                       setCurrentStep(0)
                       if (onImageChange) onImageChange(null)
                     }}

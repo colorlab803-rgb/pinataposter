@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { checkUserDownload, consumeDesignCredit, checkIpRateLimit, recordIpDownload } from '@/lib/db'
+import { checkIpRateLimit, recordIpDownload } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -20,56 +19,22 @@ function getClientIp(request: NextRequest): string {
 }
 
 /**
- * GET  → Consulta si puede descargar (por email o IP)
- * POST → Registra una descarga (gasta crédito o descarga gratis)
+ * GET  → Consulta si puede descargar (por IP)
+ * POST → Registra una descarga (por IP)
  */
 export async function GET(request: NextRequest) {
-  const session = await getServerSession()
-
-  // Usuario logueado: verificar por email
-  if (session?.user?.email) {
-    const result = await checkUserDownload(session.user.email)
-    return NextResponse.json({
-      allowed: result.allowed,
-      watermark: result.watermark,
-      hasCredits: result.hasCredits,
-      remainingCredits: result.remainingCredits,
-      message: result.message,
-    }, { headers: NO_CACHE_HEADERS })
-  }
-
-  // Anónimo: verificar por IP
   const ip = getClientIp(request)
   const result = await checkIpRateLimit(ip)
-  return NextResponse.json({ ...result, watermark: true, hasCredits: false, remainingCredits: 0 }, { headers: NO_CACHE_HEADERS })
+  return NextResponse.json(result, { headers: NO_CACHE_HEADERS })
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getServerSession()
-
-  // Usuario logueado
-  if (session?.user?.email) {
-    const result = await consumeDesignCredit(session.user.email)
-    if (!result.allowed) {
-      return NextResponse.json(
-        { allowed: false, watermark: true, message: result.reason },
-        { status: 429, headers: NO_CACHE_HEADERS }
-      )
-    }
-    return NextResponse.json({
-      allowed: true,
-      watermark: result.watermark,
-      usedCredit: result.usedCredit,
-    }, { headers: NO_CACHE_HEADERS })
-  }
-
-  // Anónimo: IP
   const ip = getClientIp(request)
   const check = await checkIpRateLimit(ip)
   if (!check.allowed) {
-    return NextResponse.json({ ...check, watermark: true }, { status: 429, headers: NO_CACHE_HEADERS })
+    return NextResponse.json(check, { status: 429, headers: NO_CACHE_HEADERS })
   }
 
   await recordIpDownload(ip)
-  return NextResponse.json({ allowed: true, watermark: true, message: 'Descarga registrada.' }, { headers: NO_CACHE_HEADERS })
+  return NextResponse.json({ allowed: true, message: 'Descarga registrada.' }, { headers: NO_CACHE_HEADERS })
 }

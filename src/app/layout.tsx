@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { SessionProvider } from '@/components/SessionProvider';
 
 const siteUrl = 'https://pinataposter.com';
 const title = 'PiñataPoster - Imprime Moldes y Diseños de Piñatas en Tamaño Real';
@@ -89,9 +88,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <SessionProvider>
-            {children}
-          </SessionProvider>
+          {children}
           <Toaster 
             theme="dark" 
             position="top-center" 

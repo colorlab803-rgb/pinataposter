@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Scissors, ArrowRight, FileDown, Layers, Ruler, Star, Sparkles, Check, Package, Zap } from 'lucide-react'
+import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function Home() {
@@ -12,11 +12,10 @@ export default function Home() {
     applicationCategory: 'DesignApplication',
     operatingSystem: 'Web',
     offers: {
-      '@type': 'AggregateOffer',
+      '@type': 'Offer',
       priceCurrency: 'MXN',
-      lowPrice: '0',
-      highPrice: '199',
-      offerCount: '4',
+      price: '0',
+      availability: 'https://schema.org/InStock',
     },
     creator: {
       '@type': 'Person',
@@ -41,7 +40,7 @@ export default function Home() {
         name: '¿Puedo usar PiñataPoster gratis?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Sí, puedes crear 1 diseño gratis por día con marca de agua. Para descargar sin marca de agua y con mejora de calidad de imagen, puedes adquirir packs de diseños desde $25 MXN.',
+          text: 'Sí, PiñataPoster es completamente gratis. Puedes usar todas las funciones sin registro, sin pagos y sin marcas de agua.',
         },
       },
       {
@@ -54,10 +53,10 @@ export default function Home() {
       },
       {
         '@type': 'Question',
-        name: '¿Los créditos de diseños expiran?',
+        name: '¿Qué formatos de descarga ofrece?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'No, los créditos que compras nunca expiran. Cada crédito te permite descargar un diseño sin marca de agua con mejora de calidad incluida.',
+          text: 'PiñataPoster permite descargar en PDF (listo para imprimir con guías de corte y plano de armado) o en ZIP (con cada hoja como imagen individual).',
         },
       },
     ],
@@ -145,7 +144,7 @@ export default function Home() {
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <p className="text-xs sm:text-sm text-purple-300/60">
-                1 diseño gratis al día · Sin registro obligatorio para probar
+                100% gratis · Sin registro · Sin marca de agua
               </p>
             </div>
 
@@ -211,71 +210,36 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Precios transparentes */}
-        <section className="relative py-16 sm:py-24 px-4 sm:px-6" id="precios">
+        {/* Beneficios */}
+        <section className="relative py-16 sm:py-24 px-4 sm:px-6" id="beneficios">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-3">
-              Precios simples y transparentes
+              Todo gratis, sin límites
             </h2>
             <p className="text-purple-300 text-center mb-10 sm:mb-14 max-w-lg mx-auto">
-              Prueba gratis. Compra créditos solo cuando los necesites. Sin suscripciones.
+              Todas las funciones disponibles para todos. Sin registro, sin pagos, sin marca de agua.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6">
-              {/* Plan Gratis */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <div className="p-6 rounded-xl bg-white/5 border border-white/10 text-center">
-                <h3 className="font-semibold text-white text-lg mb-1">Gratis</h3>
-                <div className="text-3xl font-bold text-white mb-1">$0</div>
-                <p className="text-xs text-purple-300 mb-4">por siempre</p>
-                <ul className="text-xs text-purple-300 space-y-2 text-left">
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> 1 diseño por día</li>
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> Todas las funciones</li>
-                  <li className="flex items-start gap-2 opacity-50">× Marca de agua</li>
-                  <li className="flex items-start gap-2 opacity-50">× Sin mejora de calidad</li>
-                </ul>
+                <div className="text-2xl mb-2">🎨</div>
+                <h3 className="font-semibold text-white mb-1">Sin marca de agua</h3>
+                <p className="text-xs text-purple-300">Descarga tus diseños limpios, sin logos ni marcas</p>
               </div>
-
-              {/* Pack 5 */}
               <div className="p-6 rounded-xl bg-white/5 border border-white/10 text-center">
-                <h3 className="font-semibold text-white text-lg mb-1">5 diseños</h3>
-                <div className="text-3xl font-bold text-white mb-1">$25</div>
-                <p className="text-xs text-purple-300 mb-1">MXN</p>
-                <p className="text-xs text-purple-400 font-medium mb-4">$5.00/diseño</p>
-                <ul className="text-xs text-purple-300 space-y-2 text-left">
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> Sin marca de agua</li>
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> Mejora de calidad (AI)</li>
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> No expiran</li>
-                </ul>
+                <div className="text-2xl mb-2">📐</div>
+                <h3 className="font-semibold text-white mb-1">Tamaño exacto</h3>
+                <p className="text-xs text-purple-300">Define las medidas reales en centímetros de tu diseño</p>
               </div>
-
-              {/* Pack 15 - Popular */}
-              <div className="relative p-6 rounded-xl bg-purple-500/10 border-2 border-purple-500 text-center shadow-lg shadow-purple-500/10">
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-purple-500 text-white text-xs font-medium rounded-full flex items-center gap-1">
-                  <Star className="h-3 w-3" /> Más popular
-                </div>
-                <h3 className="font-semibold text-white text-lg mb-1">15 diseños</h3>
-                <div className="text-3xl font-bold text-white mb-1">$65</div>
-                <p className="text-xs text-purple-300 mb-1">MXN</p>
-                <p className="text-xs text-purple-400 font-medium mb-4">$4.33/diseño</p>
-                <ul className="text-xs text-purple-300 space-y-2 text-left">
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> Sin marca de agua</li>
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> Mejora de calidad (AI)</li>
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> No expiran</li>
-                </ul>
-              </div>
-
-              {/* Pack 50 */}
               <div className="p-6 rounded-xl bg-white/5 border border-white/10 text-center">
-                <h3 className="font-semibold text-white text-lg mb-1">50 diseños</h3>
-                <div className="text-3xl font-bold text-white mb-1">$199</div>
-                <p className="text-xs text-purple-300 mb-1">MXN</p>
-                <p className="text-xs text-purple-400 font-medium mb-4">$3.98/diseño</p>
-                <ul className="text-xs text-purple-300 space-y-2 text-left">
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> Sin marca de agua</li>
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> Mejora de calidad (AI)</li>
-                  <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-green-400 mt-0.5 flex-shrink-0" /> No expiran</li>
-                  <li className="flex items-start gap-2"><Sparkles className="h-3.5 w-3.5 text-purple-400 mt-0.5 flex-shrink-0" /> Mejor precio</li>
-                </ul>
+                <div className="text-2xl mb-2">📥</div>
+                <h3 className="font-semibold text-white mb-1">PDF y ZIP</h3>
+                <p className="text-xs text-purple-300">Descarga en el formato que prefieras</p>
+              </div>
+              <div className="p-6 rounded-xl bg-white/5 border border-white/10 text-center">
+                <div className="text-2xl mb-2">🆓</div>
+                <h3 className="font-semibold text-white mb-1">100% Gratis</h3>
+                <p className="text-xs text-purple-300">Sin registro, sin pagos, sin límites</p>
               </div>
             </div>
 
@@ -284,12 +248,9 @@ export default function Home() {
                 href="/generator"
                 className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
               >
-                Empezar gratis
+                Empezar ahora
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <p className="text-xs text-purple-300/50 mt-3">
-                Los créditos nunca expiran · Pago seguro con Stripe · Sin suscripciones
-              </p>
             </div>
           </div>
         </section>
@@ -308,20 +269,20 @@ export default function Home() {
                   a: 'Sube tu diseño a PiñataPoster, define el tamaño real en centímetros (por ejemplo 80 cm de alto) y la herramienta divide la imagen automáticamente en hojas tamaño carta u oficio. Descarga el PDF, imprime, recorta por las guías y pega las hojas.',
                 },
                 {
-                  q: '¿Puedo usar PiñataPoster gratis?',
-                  a: 'Sí. Puedes crear 1 diseño gratis por día con acceso a todas las funciones. Las descargas gratuitas incluyen marca de agua. Para descargar sin marca de agua y con mejora de calidad, adquiere un pack de diseños.',
+                  q: '¿PiñataPoster es gratis?',
+                  a: 'Sí, PiñataPoster es completamente gratis. Puedes usar todas las funciones sin registro, sin pagos y sin marcas de agua.',
                 },
                 {
                   q: '¿En qué tamaños de papel puedo imprimir?',
                   a: 'Soportamos Carta, Oficio, Tabloide, A4 y A3 en orientación vertical u horizontal. Cada hoja incluye guías de corte y sangrado para un armado perfecto.',
                 },
                 {
-                  q: '¿Los créditos de diseños expiran?',
-                  a: 'No. Los créditos que compras son permanentes y puedes usarlos cuando quieras. Cada crédito = 1 descarga sin marca de agua + mejora de calidad incluida.',
-                },
-                {
                   q: '¿Qué formatos de imagen acepta?',
                   a: 'PiñataPoster acepta imágenes en formato JPG y PNG de hasta 50 MB. También incluye herramientas de recorte y autorecorte para preparar tu imagen.',
+                },
+                {
+                  q: '¿Qué formatos de descarga ofrece?',
+                  a: 'PiñataPoster permite descargar en PDF (listo para imprimir con guías de corte y plano de armado) o en ZIP (con cada hoja como imagen individual).',
                 },
               ].map((item, i) => (
                 <details key={i} className="group rounded-xl bg-white/5 border border-white/10">
