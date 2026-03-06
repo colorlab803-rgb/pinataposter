@@ -1,6 +1,6 @@
 # ══════════════════════════════════════════════════════════
 # Dockerfile multi-stage para PinataPoster (Next.js 15)
-# Optimizado para producción en Oracle Cloud VM
+# Producción: Contabo VPS + Cloudflare Tunnel
 # ══════════════════════════════════════════════════════════
 
 # ── Stage 1: Dependencias ────────────────────────────────
