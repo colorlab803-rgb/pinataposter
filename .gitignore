@@ -58,3 +58,4 @@ railway.toml
 
 # Deploy scripts con IPs hardcodeadas
 deploy.sh
+*.csv
