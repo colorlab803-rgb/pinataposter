@@ -80,6 +80,11 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#22c55e" />
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9472810873857287"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="font-sans antialiased min-h-screen relative overflow-x-hidden">
         <ThemeProvider

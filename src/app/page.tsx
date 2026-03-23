@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { AdBanner } from '@/components/AdBanner'
 
 export default function Home() {
   const jsonLd = {
@@ -183,6 +184,13 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Ad between sections */}
+        <div className="relative py-4 px-4 sm:px-6">
+          <div className="max-w-4xl mx-auto">
+            <AdBanner slot="1234567890" format="horizontal" className="rounded-xl overflow-hidden" />
+          </div>
+        </div>
+
         {/* Casos de uso */}
         <section className="relative py-16 sm:py-24 px-4 sm:px-6 bg-black/20">
           <div className="max-w-4xl mx-auto">
@@ -254,6 +262,13 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Ad before FAQ */}
+        <div className="relative py-4 px-4 sm:px-6">
+          <div className="max-w-4xl mx-auto">
+            <AdBanner slot="0987654321" format="horizontal" className="rounded-xl overflow-hidden" />
+          </div>
+        </div>
 
         {/* FAQ */}
         <section className="relative py-16 sm:py-24 px-4 sm:px-6 bg-black/20">
