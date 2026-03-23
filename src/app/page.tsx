@@ -148,10 +148,6 @@ export default function Home() {
                 100% gratis · Sin registro · Sin marca de agua
               </p>
             </div>
-
-            <p className="text-xs sm:text-sm text-purple-300/60">
-              Carta · Oficio · Tabloide · A4 · A3
-            </p>
           </div>
         </section>
 
@@ -214,51 +210,6 @@ export default function Home() {
                   <p className="text-xs text-purple-300">{item.desc}</p>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Beneficios */}
-        <section className="relative py-16 sm:py-24 px-4 sm:px-6" id="beneficios">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-3">
-              Todo gratis, sin límites
-            </h2>
-            <p className="text-purple-300 text-center mb-10 sm:mb-14 max-w-lg mx-auto">
-              Todas las funciones disponibles para todos. Sin registro, sin pagos, sin marca de agua.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10 text-center">
-                <div className="text-2xl mb-2">🎨</div>
-                <h3 className="font-semibold text-white mb-1">Sin marca de agua</h3>
-                <p className="text-xs text-purple-300">Descarga tus diseños limpios, sin logos ni marcas</p>
-              </div>
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10 text-center">
-                <div className="text-2xl mb-2">📐</div>
-                <h3 className="font-semibold text-white mb-1">Tamaño exacto</h3>
-                <p className="text-xs text-purple-300">Define las medidas reales en centímetros de tu diseño</p>
-              </div>
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10 text-center">
-                <div className="text-2xl mb-2">📥</div>
-                <h3 className="font-semibold text-white mb-1">PDF y ZIP</h3>
-                <p className="text-xs text-purple-300">Descarga en el formato que prefieras</p>
-              </div>
-              <div className="p-6 rounded-xl bg-white/5 border border-white/10 text-center">
-                <div className="text-2xl mb-2">🆓</div>
-                <h3 className="font-semibold text-white mb-1">100% Gratis</h3>
-                <p className="text-xs text-purple-300">Sin registro, sin pagos, sin límites</p>
-              </div>
-            </div>
-
-            <div className="text-center mt-6">
-              <Link
-                href="/generator"
-                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
-              >
-                Empezar ahora
-                <ArrowRight className="h-4 w-4" />
-              </Link>
             </div>
           </div>
         </section>
@@ -327,7 +278,7 @@ export default function Home() {
               href="/generator"
               className="inline-flex items-center gap-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl shadow-2xl shadow-purple-500/25 transition-all hover:scale-105 active:scale-95"
             >
-              Empezar ahora — es gratis
+              Empezar ahora
               <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
