@@ -63,6 +63,42 @@ export default function Home() {
     ],
   }
 
+  const howToJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'Cómo imprimir un molde de piñata en tamaño real',
+    description: 'Guía paso a paso para imprimir moldes de piñatas, patrones y diseños grandes en hojas normales usando PiñataPoster.',
+    totalTime: 'PT5M',
+    tool: [
+      { '@type': 'HowToTool', name: 'Impresora doméstica' },
+      { '@type': 'HowToTool', name: 'Tijeras' },
+      { '@type': 'HowToTool', name: 'Cinta adhesiva' },
+    ],
+    supply: [
+      { '@type': 'HowToSupply', name: 'Hojas de papel carta, oficio o tabloide' },
+    ],
+    step: [
+      {
+        '@type': 'HowToStep',
+        name: 'Sube tu diseño',
+        text: 'Carga la imagen de tu piñata, personaje o patrón en formato JPG o PNG.',
+        url: 'https://pinataposter.com/generator',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Define el tamaño real',
+        text: 'Establece las medidas reales en centímetros. Por ejemplo, 80 cm de alto para una piñata mediana.',
+        url: 'https://pinataposter.com/generator',
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Descarga, imprime y arma',
+        text: 'Descarga el PDF con guías de corte, imprime en hojas normales, recorta por las líneas y pega las hojas para obtener tu molde a escala real.',
+        url: 'https://pinataposter.com/generator',
+      },
+    ],
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
       {/* JSON-LD Structured Data */}
@@ -73,6 +109,10 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
       />
 
       {/* Background effects */}
