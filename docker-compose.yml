@@ -12,7 +12,5 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:3010:3000"
-    volumes:
-      - ./data:/app/data
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-PinataPoster2026!}

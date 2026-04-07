@@ -1,17 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDb } from '@/lib/db'
+import { getFirestore } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { type, page, action } = body
 
-    const db = getDb()
+    const db = getFirestore()
 
     if (type === 'visit' && page) {
-      db.prepare('INSERT INTO page_visits (page) VALUES (?)').run(page)
+      await db.collection('page_visits').add({
+        page,
+        created_at: new Date(),
+      })
     } else if (type === 'generator' && action) {
-      db.prepare('INSERT INTO generator_uses (action) VALUES (?)').run(action)
+      await db.collection('generator_uses').add({
+        action,
+        created_at: new Date(),
+      })
     } else {
       return NextResponse.json({ error: 'Tipo inválido' }, { status: 400 })
     }

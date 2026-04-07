@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDb } from '@/lib/db'
+import { getFirestore } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,11 +10,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'likesApp es requerido' }, { status: 400 })
     }
 
-    const db = getDb()
-    db.prepare('INSERT INTO survey_responses (likes_app, feedback) VALUES (?, ?)').run(
-      likesApp ? 1 : 0,
-      feedback || null
-    )
+    const db = getFirestore()
+    await db.collection('survey_responses').add({
+      likes_app: likesApp,
+      feedback: feedback || null,
+      created_at: new Date(),
+    })
 
     return NextResponse.json({ success: true })
   } catch {
@@ -29,21 +30,32 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const db = getDb()
+    const db = getFirestore()
+    const snapshot = await db.collection('survey_responses').orderBy('created_at', 'desc').get()
 
-    const total = db.prepare('SELECT COUNT(*) as count FROM survey_responses').get() as { count: number }
-    const positive = db.prepare('SELECT COUNT(*) as count FROM survey_responses WHERE likes_app = 1').get() as { count: number }
-    const negative = db.prepare('SELECT COUNT(*) as count FROM survey_responses WHERE likes_app = 0').get() as { count: number }
-    const feedbacks = db.prepare(
-      'SELECT id, feedback, created_at FROM survey_responses WHERE likes_app = 0 AND feedback IS NOT NULL ORDER BY created_at DESC'
-    ).all()
+    let total = 0
+    let positive = 0
+    let negative = 0
+    const feedbacks: Array<{ id: string; feedback: string; created_at: string }> = []
 
-    return NextResponse.json({
-      total: total.count,
-      positive: positive.count,
-      negative: negative.count,
-      feedbacks,
+    snapshot.forEach((doc) => {
+      const data = doc.data()
+      total++
+      if (data.likes_app) {
+        positive++
+      } else {
+        negative++
+        if (data.feedback) {
+          feedbacks.push({
+            id: doc.id,
+            feedback: data.feedback,
+            created_at: data.created_at.toDate().toISOString(),
+          })
+        }
+      }
     })
+
+    return NextResponse.json({ total, positive, negative, feedbacks })
   } catch {
     return NextResponse.json({ error: 'Error al obtener datos' }, { status: 500 })
   }
