@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import {
   Dialog,
   DialogContent,
@@ -20,14 +21,16 @@ export function SurveyModal() {
   const [step, setStep] = useState<Step>('question')
   const [feedback, setFeedback] = useState('')
   const [sending, setSending] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
+    if (pathname.startsWith('/admin')) return
     const completed = localStorage.getItem(SURVEY_KEY)
     if (!completed) {
       const timer = setTimeout(() => setOpen(true), 2000)
       return () => clearTimeout(timer)
     }
-  }, [])
+  }, [pathname])
 
   async function submitSurvey(likesApp: boolean, feedbackText?: string) {
     try {
