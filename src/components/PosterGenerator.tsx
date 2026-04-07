@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useLayoutEffect, useCallback } from 'react
 import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import { toast } from 'sonner'
+import { trackGeneratorUse } from '@/components/TrackVisit'
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -148,6 +149,7 @@ export function PosterGenerator({
   }
 
   const handleDownloadComplete = (fileName: string, fileType: 'pdf' | 'zip', blob: Blob) => {
+    trackGeneratorUse('download')
     setDownloadCompleteInfo({ fileName, fileType, blob })
     setIsDownloadCompleteModalOpen(true)
   }
@@ -363,6 +365,7 @@ export function PosterGenerator({
         }
         setImageDimensions({ width: img.width, height: img.height })
         setIsProcessing(false)
+        trackGeneratorUse('upload')
         toast.success("✅ Imagen cargada", {
           description: "Tu imagen está lista. Configura el tamaño y genera tu póster.",
         })

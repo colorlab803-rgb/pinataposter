@@ -42,6 +42,12 @@ next-env.d.ts
 
 # rate-limit data (local dev)
 .rate-limit-data/
+
+# SQLite database files
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
 # SSH keys (nunca commitear)
 *.key
 ssh-key*
