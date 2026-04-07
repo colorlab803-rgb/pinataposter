@@ -6,7 +6,8 @@ Responde siempre en español latino.
 ## Proyecto
 App Next.js 15 que divide imágenes para impresión a gran escala en múltiples hojas.
 - **Stack:** Next.js 15 / React 18 / TypeScript / Tailwind CSS / shadcn/ui
-- **Deploy:** Docker en Contabo VPS (`212.28.191.156:3010`)
+- **Deploy:** Google Cloud Run (proyecto `rutas-488705`, región `us-central1`)
+- **URL:** `https://pinataposter-58669055557.us-central1.run.app`
 
 ## Git — Commits
 - Usar conventional commits en español:
@@ -24,12 +25,24 @@ App Next.js 15 que divide imágenes para impresión a gran escala en múltiples 
 - Siempre hacer push a `origin main` después de cada commit
 - No usar force push salvo indicación explícita
 
-## Deploy en VPS
-- SSH: `ssh -i /home/trefactory/Desktop/PROYECTOS/claves/keys/produccion/contabo-key root@212.28.191.156`
-- Directorio: `/opt/pinataposter`
-- Contenedor: `pinataposter-app-1` (puerto 3010)
-- Para desplegar: `git pull` en el VPS + `docker compose up -d --build`
-- Verificar con: `curl -s -o /dev/null -w "%{http_code}" http://localhost:3010`
+## Deploy en Cloud Run
+- Proyecto GCP: `rutas-488705`
+- Región: `us-central1`
+- Servicio: `pinataposter`
+- Para desplegar:
+  ```bash
+  gcloud run deploy pinataposter \
+    --project=rutas-488705 \
+    --region=us-central1 \
+    --source=. \
+    --set-env-vars="NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1,HOSTNAME=0.0.0.0,ADMIN_PASSWORD=PinataPoster2026!" \
+    --max-instances=3 \
+    --memory=512Mi \
+    --cpu=1 \
+    --allow-unauthenticated \
+    --cpu-boost
+  ```
+- Verificar con: `curl -s -o /dev/null -w "%{http_code}" https://pinataposter-58669055557.us-central1.run.app`
 
 ## Archivos clave
 - `src/` — código fuente Next.js
