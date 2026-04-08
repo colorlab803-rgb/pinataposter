@@ -1,4 +1,4 @@
-import { Sparkles, Settings2, ArrowDownToLine, Wand2, CheckCircle2 } from 'lucide-react'
+import { Sparkles, Settings2, ArrowDownToLine, Wand2, CheckCircle2, ImageIcon } from 'lucide-react'
 
 interface AgentActionProps {
   name: string
@@ -11,6 +11,11 @@ const actionConfig: Record<string, {
   label: string
   formatArgs: (args: Record<string, unknown>) => string
 }> = {
+  analizarImagen: {
+    icon: <ImageIcon className="h-3.5 w-3.5" />,
+    label: 'Analizando imagen',
+    formatArgs: () => 'Identificando diseño de piñata…',
+  },
   configurarTamano: {
     icon: <Settings2 className="h-3.5 w-3.5" />,
     label: 'Configurando tamaño',
@@ -28,7 +33,7 @@ const actionConfig: Record<string, {
   },
   descargarMolde: {
     icon: <ArrowDownToLine className="h-3.5 w-3.5" />,
-    label: 'Descargando molde',
+    label: 'Generando molde',
     formatArgs: (a) => `Formato ${String(a.formato).toUpperCase()}`,
   },
 }

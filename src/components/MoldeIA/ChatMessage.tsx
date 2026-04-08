@@ -1,5 +1,6 @@
 import { Bot, User } from 'lucide-react'
 import { AgentAction } from './AgentAction'
+import Image from 'next/image'
 
 interface ToolCall {
   name: string
@@ -10,7 +11,9 @@ export interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
+  imageUrl?: string
   toolCalls?: ToolCall[]
+  toolCallsStatus?: 'running' | 'done'
 }
 
 interface ChatMessageProps {
@@ -22,7 +25,6 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return (
     <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-      {/* Avatar */}
       <div
         className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center ${
           isUser
@@ -33,8 +35,34 @@ export function ChatMessage({ message }: ChatMessageProps) {
         {isUser ? <User className="h-3.5 w-3.5" /> : <Bot className="h-3.5 w-3.5" />}
       </div>
 
-      {/* Contenido */}
-      <div className={`flex flex-col gap-1.5 max-w-[80%] ${isUser ? 'items-end' : 'items-start'}`}>
+      <div className={`flex flex-col gap-1.5 max-w-[85%] ${isUser ? 'items-end' : 'items-start'}`}>
+        {/* Imagen adjunta */}
+        {message.imageUrl && (
+          <div className="relative w-48 h-48 rounded-xl overflow-hidden border border-white/10 shadow-lg">
+            <Image
+              src={message.imageUrl}
+              alt="Imagen enviada"
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        )}
+
+        {/* Tool calls */}
+        {message.toolCalls && message.toolCalls.length > 0 && (
+          <div className="flex flex-col gap-1.5">
+            {message.toolCalls.map((tc, i) => (
+              <AgentAction
+                key={i}
+                name={tc.name}
+                args={tc.args}
+                status={message.toolCallsStatus ?? 'done'}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Texto */}
         {message.content && (
           <div
@@ -45,15 +73,6 @@ export function ChatMessage({ message }: ChatMessageProps) {
             }`}
           >
             {message.content}
-          </div>
-        )}
-
-        {/* Tool calls */}
-        {message.toolCalls && message.toolCalls.length > 0 && (
-          <div className="flex flex-col gap-1.5">
-            {message.toolCalls.map((tc, i) => (
-              <AgentAction key={i} name={tc.name} args={tc.args} status="done" />
-            ))}
           </div>
         )}
       </div>

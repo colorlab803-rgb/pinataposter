@@ -66,7 +66,7 @@ interface PosterGeneratorProps {
   controlledOrientation?: Orientation
   externalProcessedImageSrc?: string | null
   onProcessedImageChange?: (src: string | null) => void
-  triggerDownload?: { format: 'pdf' | 'zip' } | null
+  triggerDownload?: { format: 'pdf' | 'zip'; projectName?: string } | null
 }
 
 export function PosterGenerator({ 
@@ -264,7 +264,23 @@ export function PosterGenerator({
 
   useEffect(() => {
     if (triggerDownload?.format) {
-      handleDownloadRequest(triggerDownload.format)
+      if (triggerDownload.projectName) {
+        // Auto-descarga (MoldeIA) — reintentar si el generador no está listo
+        let attempts = 0
+        const maxAttempts = 10
+        const attempt = () => {
+          attempts++
+          if (processedImageSrc && grid && targetWidthCm && targetHeightCm && selectedPages.size > 0) {
+            if (triggerDownload.format === 'pdf') generatePdf(triggerDownload.projectName!)
+            else generateZip(triggerDownload.projectName!)
+          } else if (attempts < maxAttempts) {
+            setTimeout(attempt, 500)
+          }
+        }
+        attempt()
+      } else {
+        handleDownloadRequest(triggerDownload.format)
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerDownload])

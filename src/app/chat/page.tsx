@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Scissors, Wand2, SplitSquareHorizontal } from 'lucide-react'
+import { ArrowLeft, Wand2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -12,56 +12,51 @@ import { ChatInterface } from '@/components/MoldeIA/ChatInterface'
 type PaperSize = 'Letter' | 'Legal' | 'Tabloid' | 'A4' | 'A3'
 type Orientation = 'portrait' | 'landscape'
 
-interface GeneratorConfig {
-  targetWidth?: string
-  targetHeight?: string
-  paperSize?: string
-  orientation?: string
-  hasImage?: boolean
-  imageSrc?: string | null
-}
-
-type ActivePanel = 'chat' | 'generator'
-
 export default function ChatPage() {
-  const [config, setConfig] = useState<GeneratorConfig>({})
-  const [currentImageSrc, setCurrentImageSrc] = useState<string | null>(null)
+  const [config, setConfig] = useState<{
+    targetWidth?: string
+    targetHeight?: string
+    paperSize?: string
+    orientation?: string
+  }>({})
   const [externalProcessedImage, setExternalProcessedImage] = useState<string | null | undefined>(undefined)
-  const [triggerDownload, setTriggerDownload] = useState<{ format: 'pdf' | 'zip' } | null>(null)
-  const [isUpscaling, setIsUpscaling] = useState(false)
-  const [activePanel, setActivePanel] = useState<ActivePanel>('chat')
-  const triggerRef = useRef<{ format: 'pdf' | 'zip' } | null>(null)
+  const [triggerDownload, setTriggerDownload] = useState<{ format: 'pdf' | 'zip'; projectName?: string } | null>(null)
+  const [generatorReady, setGeneratorReady] = useState(false)
+  const currentImageRef = useRef<string | null>(null)
 
-  const handleConfigChange = useCallback((updates: Partial<GeneratorConfig>) => {
+  const handleConfigChange = useCallback((updates: { targetWidth?: string; targetHeight?: string; paperSize?: string; orientation?: string }) => {
     setConfig((prev) => ({ ...prev, ...updates }))
   }, [])
 
+  const handleImageLoad = useCallback((dataUrl: string) => {
+    setExternalProcessedImage(dataUrl)
+    currentImageRef.current = dataUrl
+  }, [])
+
   const handleProcessedImageChange = useCallback((src: string | null) => {
-    setCurrentImageSrc(src)
-    setConfig((prev) => ({ ...prev, hasImage: !!src, imageSrc: src }))
+    currentImageRef.current = src
+    setGeneratorReady(!!src)
   }, [])
 
   const handleUpscaleRequest = useCallback(async () => {
-    if (!currentImageSrc) {
-      toast.error('Sin imagen', { description: 'Primero sube una imagen en el generador.' })
+    if (!currentImageRef.current) {
+      toast.error('Sin imagen', { description: 'Primero envía una imagen en el chat.' })
       return
     }
 
-    setIsUpscaling(true)
     toast.loading('Mejorando imagen con IA…', { id: 'upscale' })
 
     try {
-      // Convertir src a base64 si es data URL
       let imageBase64: string
       let mimeType: string
 
-      if (currentImageSrc.startsWith('data:')) {
-        const [header, data] = currentImageSrc.split(',')
+      const src = currentImageRef.current
+      if (src.startsWith('data:')) {
+        const [header, data] = src.split(',')
         imageBase64 = data
         mimeType = header.match(/data:(.*);/)?.[1] ?? 'image/png'
       } else {
-        // Es una URL, necesitamos obtenerla como base64
-        const res = await fetch(currentImageSrc)
+        const res = await fetch(src)
         const blob = await res.blob()
         mimeType = blob.type || 'image/png'
         const buffer = await blob.arrayBuffer()
@@ -87,28 +82,20 @@ export default function ChatPage() {
       const data = await response.json()
       const newSrc = `data:${data.mimeType};base64,${data.imageBase64}`
       setExternalProcessedImage(newSrc)
-      toast.success('¡Imagen mejorada!', {
-        id: 'upscale',
-        description: 'La calidad de la imagen ha sido mejorada con IA.',
-      })
+      toast.success('¡Imagen mejorada!', { id: 'upscale' })
     } catch (error) {
       console.error('Upscale error:', error)
       toast.error('Error al mejorar imagen', {
         id: 'upscale',
         description: error instanceof Error ? error.message : 'Intenta de nuevo.',
       })
-    } finally {
-      setIsUpscaling(false)
     }
-  }, [currentImageSrc])
+  }, [])
 
   const handleDownloadRequest = useCallback((format: 'pdf' | 'zip') => {
-    // Usar un objeto nuevo cada vez para que el useEffect del generador se dispare
-    const trigger = { format }
-    triggerRef.current = trigger
+    const trigger = { format, projectName: 'MoldeIA-Piñata' }
     setTriggerDownload(trigger)
-    // Resetear después para permitir múltiples descargas
-    setTimeout(() => setTriggerDownload(null), 500)
+    setTimeout(() => setTriggerDownload(null), 8000)
   }, [])
 
   return (
@@ -129,92 +116,43 @@ export default function ChatPage() {
               <div>
                 <span className="text-sm font-bold text-white">MoldeIA</span>
                 <span className="text-white/40 mx-1.5 hidden sm:inline">·</span>
-                <span className="text-xs text-white/40 hidden sm:inline">Chat agéntico · PiñataPoster</span>
+                <span className="text-xs text-white/40 hidden sm:inline">Agente de piñatas</span>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Tab switcher para móvil */}
-            <div className="flex sm:hidden bg-white/10 rounded-lg p-0.5 gap-0.5">
-              <button
-                onClick={() => setActivePanel('chat')}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                  activePanel === 'chat' ? 'bg-purple-600 text-white' : 'text-white/50'
-                }`}
-              >
-                Chat
-              </button>
-              <button
-                onClick={() => setActivePanel('generator')}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
-                  activePanel === 'generator' ? 'bg-purple-600 text-white' : 'text-white/50'
-                }`}
-              >
-                Molde
-              </button>
-            </div>
-            <div className="hidden sm:flex items-center gap-1.5 text-xs text-white/40">
-              <SplitSquareHorizontal className="h-3.5 w-3.5" />
-              <span>Vista dividida</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+              <span className="text-xs text-green-400">En línea</span>
             </div>
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      {/* Indicador de upscale */}
-      {isUpscaling && (
-        <div className="absolute top-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-purple-700 text-white text-sm rounded-full shadow-lg flex items-center gap-2 animate-pulse">
-          <Wand2 className="h-3.5 w-3.5" />
-          Mejorando imagen con IA…
-        </div>
-      )}
+      {/* Chat — pantalla completa */}
+      <div className="flex-1 overflow-hidden">
+        <ChatInterface
+          onConfigChange={handleConfigChange}
+          onImageLoad={handleImageLoad}
+          onUpscaleRequest={handleUpscaleRequest}
+          onDownloadRequest={handleDownloadRequest}
+          generatorReady={generatorReady}
+        />
+      </div>
 
-      {/* Contenido principal - split layout */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Panel Chat - izquierda */}
-        <div
-          className={`
-            w-full sm:w-2/5 lg:w-1/3 flex-shrink-0 overflow-hidden
-            ${activePanel === 'chat' ? 'flex' : 'hidden sm:flex'}
-          `}
-        >
-          <div className="w-full h-full">
-            <ChatInterface
-              generatorConfig={{
-                targetWidth: config.targetWidth,
-                targetHeight: config.targetHeight,
-                paperSize: config.paperSize,
-                orientation: config.orientation,
-                hasImage: config.hasImage,
-              }}
-              onConfigChange={handleConfigChange}
-              onUpscaleRequest={handleUpscaleRequest}
-              onDownloadRequest={handleDownloadRequest}
-            />
-          </div>
-        </div>
-
-        {/* Panel Generador - derecha */}
-        <div
-          className={`
-            flex-1 overflow-y-auto bg-gradient-to-br from-background via-background to-background/95
-            ${activePanel === 'generator' ? 'flex flex-col' : 'hidden sm:flex sm:flex-col'}
-          `}
-        >
-          <div className="p-2 sm:p-0">
-            <PosterGenerator
-              controlledWidth={config.targetWidth}
-              controlledHeight={config.targetHeight}
-              controlledPaperSize={config.paperSize as PaperSize | undefined}
-              controlledOrientation={config.orientation as Orientation | undefined}
-              externalProcessedImageSrc={externalProcessedImage}
-              onProcessedImageChange={handleProcessedImageChange}
-              triggerDownload={triggerDownload}
-            />
-          </div>
-        </div>
+      {/* PosterGenerator OCULTO — montado para que ejecute la lógica */}
+      <div className="hidden">
+        <PosterGenerator
+          controlledWidth={config.targetWidth}
+          controlledHeight={config.targetHeight}
+          controlledPaperSize={config.paperSize as PaperSize | undefined}
+          controlledOrientation={config.orientation as Orientation | undefined}
+          externalProcessedImageSrc={externalProcessedImage}
+          onProcessedImageChange={handleProcessedImageChange}
+          triggerDownload={triggerDownload}
+        />
       </div>
     </div>
   )
