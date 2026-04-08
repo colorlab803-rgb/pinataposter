@@ -5,7 +5,6 @@ import { PosterGenerator } from '@/components/PosterGenerator'
 import { Scissors, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { AdBanner } from '@/components/AdBanner'
 import Link from 'next/link'
 
 export default function GeneratorPage() {
@@ -51,11 +50,6 @@ export default function GeneratorPage() {
             </div>
           </div>
         </header>
-
-        {/* Ad banner below header */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-3">
-          <AdBanner slot="1122334455" format="horizontal" className="rounded-xl overflow-hidden" />
-        </div>
 
         <main>
           <PosterGenerator />
