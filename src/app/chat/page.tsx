@@ -1,11 +1,8 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import Link from 'next/link'
-import { ArrowLeft, Wand2, Menu, Settings2 } from 'lucide-react'
+import { PanelLeft, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { ThemeToggle } from '@/components/ThemeToggle'
 import { PosterGenerator } from '@/components/PosterGenerator'
 import { ChatInterface } from '@/components/MoldeIA/ChatInterface'
 import { ChatSidebar } from '@/components/MoldeIA/ChatSidebar'
@@ -42,21 +39,20 @@ export default function ChatPage() {
   const [generatorReady, setGeneratorReady] = useState(false)
   const currentImageRef = useRef<string | null>(null)
 
-  // Estado del historial y sidebar
   const [conversations, setConversations] = useState<ConversationMeta[]>([])
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null)
   const [activeMessages, setActiveMessages] = useState<Message[]>([WELCOME_MESSAGE])
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true) // abierto por defecto en desktop
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null)
 
-  // Cargar conversaciones al montar
   useEffect(() => {
     setConversations(chatStorage.getConversations())
     setUserSettings(chatStorage.getSettings())
+    // En móvil, cerrar sidebar por defecto
+    if (window.innerWidth < 768) setSidebarOpen(false)
   }, [])
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'N') {
@@ -92,6 +88,8 @@ export default function ChatPage() {
       setActiveConversationId(id)
       setActiveMessages(conv.messages.length > 0 ? conv.messages : [WELCOME_MESSAGE])
     }
+    // En móvil, cerrar sidebar al seleccionar
+    if (window.innerWidth < 768) setSidebarOpen(false)
   }, [])
 
   const handleDeleteConversation = useCallback((id: string) => {
@@ -109,7 +107,6 @@ export default function ChatPage() {
   }, [refreshConversations, handleNewConversation])
 
   const handleMessagesChange = useCallback((messages: Message[]) => {
-    // Ignorar si solo tiene el welcome message
     const realMessages = messages.filter((m) => m.id !== 'welcome')
     if (realMessages.length === 0) return
 
@@ -210,7 +207,7 @@ export default function ChatPage() {
   }, [])
 
   return (
-    <div className="h-screen flex bg-slate-950 overflow-hidden">
+    <div className="h-screen flex bg-[#212121] overflow-hidden">
       {/* Sidebar */}
       <ChatSidebar
         conversations={conversations}
@@ -220,58 +217,25 @@ export default function ChatPage() {
         onNewConversation={handleNewConversation}
         onSelectConversation={handleSelectConversation}
         onDeleteConversation={handleDeleteConversation}
+        onOpenSettings={() => setSettingsOpen(true)}
       />
 
       {/* Contenido principal */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <header className="border-b border-white/10 bg-black/30 backdrop-blur-xl flex-shrink-0 z-20">
-          <div className="px-3 sm:px-6 py-2.5 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Botón sidebar */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSidebarOpen(true)}
-                className="rounded-full h-8 w-8 text-white/60 hover:text-white"
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-
-              <Link href="/">
-                <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 text-white/60 hover:text-white">
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-              </Link>
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                  <Wand2 className="h-3.5 w-3.5 text-white" />
-                </div>
-                <div>
-                  <span className="text-sm font-bold text-white">MoldeIA</span>
-                  <span className="text-white/40 mx-1.5 hidden sm:inline">·</span>
-                  <span className="text-xs text-white/40 hidden sm:inline">Agente de piñatas</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                <span className="text-xs text-green-400">En línea</span>
-              </div>
-              {/* Botón settings */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSettingsOpen(true)}
-                className="rounded-full h-8 w-8 text-white/60 hover:text-white"
-              >
-                <Settings2 className="h-4 w-4" />
-              </Button>
-              <ThemeToggle />
-            </div>
-          </div>
+        {/* Header minimal */}
+        <header className="flex-shrink-0 z-20 h-11 flex items-center px-3 gap-2">
+          {!sidebarOpen && (
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <PanelLeft className="h-5 w-5" />
+            </button>
+          )}
+          <button className="flex items-center gap-1 text-white/80 hover:text-white transition-colors ml-1">
+            <span className="text-sm font-semibold">MoldeIA</span>
+            <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+          </button>
         </header>
 
         {/* Chat */}
@@ -289,7 +253,7 @@ export default function ChatPage() {
           />
         </div>
 
-        {/* PosterGenerator OCULTO */}
+        {/* PosterGenerator oculto */}
         <div className="hidden">
           <PosterGenerator
             controlledWidth={config.targetWidth}

@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Plus, Search, Trash2, MessageSquare, X, Clock } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { SquarePen, Search, Trash2, MessageSquare, X, PanelLeftClose } from 'lucide-react'
 import { type ConversationMeta } from '@/lib/chatStorage'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -14,6 +13,7 @@ interface ChatSidebarProps {
   onNewConversation: () => void
   onSelectConversation: (id: string) => void
   onDeleteConversation: (id: string) => void
+  onOpenSettings: () => void
 }
 
 function formatRelativeTime(timestamp: number): string {
@@ -24,10 +24,35 @@ function formatRelativeTime(timestamp: number): string {
   const days = Math.floor(diff / 86400000)
 
   if (minutes < 1) return 'Ahora'
-  if (minutes < 60) return `Hace ${minutes}m`
-  if (hours < 24) return `Hace ${hours}h`
-  if (days < 7) return `Hace ${days}d`
+  if (minutes < 60) return `${minutes}m`
+  if (hours < 24) return `${hours}h`
+  if (days < 7) return `${days}d`
   return new Date(timestamp).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })
+}
+
+// Agrupa conversaciones por período
+function groupConversations(conversations: ConversationMeta[]) {
+  const now = Date.now()
+  const today: ConversationMeta[] = []
+  const yesterday: ConversationMeta[] = []
+  const thisWeek: ConversationMeta[] = []
+  const older: ConversationMeta[] = []
+
+  for (const c of conversations) {
+    const diff = now - c.updatedAt
+    const days = diff / 86400000
+    if (days < 1) today.push(c)
+    else if (days < 2) yesterday.push(c)
+    else if (days < 7) thisWeek.push(c)
+    else older.push(c)
+  }
+
+  const groups: { label: string; items: ConversationMeta[] }[] = []
+  if (today.length) groups.push({ label: 'Hoy', items: today })
+  if (yesterday.length) groups.push({ label: 'Ayer', items: yesterday })
+  if (thisWeek.length) groups.push({ label: 'Esta semana', items: thisWeek })
+  if (older.length) groups.push({ label: 'Anteriores', items: older })
+  return groups
 }
 
 export function ChatSidebar({
@@ -38,8 +63,10 @@ export function ChatSidebar({
   onNewConversation,
   onSelectConversation,
   onDeleteConversation,
+  onOpenSettings,
 }: ChatSidebarProps) {
   const [search, setSearch] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
@@ -50,6 +77,8 @@ export function ChatSidebar({
     )
   }, [conversations, search])
 
+  const groups = useMemo(() => groupConversations(filtered), [filtered])
+
   const handleDelete = (id: string) => {
     if (deletingId === id) {
       onDeleteConversation(id)
@@ -59,6 +88,144 @@ export function ChatSidebar({
       setTimeout(() => setDeletingId(null), 3000)
     }
   }
+
+  const sidebarContent = (
+    <div className="h-full w-[260px] bg-[#171717] flex flex-col">
+      {/* Top nav */}
+      <div className="flex items-center justify-between px-3 pt-3 pb-1 flex-shrink-0">
+        <button
+          onClick={onClose}
+          className="p-1.5 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
+          title="Cerrar sidebar"
+        >
+          <PanelLeftClose className="h-5 w-5" />
+        </button>
+        <button
+          onClick={() => {
+            onNewConversation()
+            if (window.innerWidth < 768) onClose()
+          }}
+          className="p-1.5 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
+          title="Nuevo chat"
+        >
+          <SquarePen className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Nav items */}
+      <div className="px-2 py-2 flex-shrink-0 space-y-0.5">
+        <button
+          onClick={() => setSearchOpen(!searchOpen)}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+        >
+          <Search className="h-4 w-4" />
+          <span>Buscar chats</span>
+        </button>
+      </div>
+
+      {/* Search input */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="px-2 overflow-hidden flex-shrink-0"
+          >
+            <div className="relative mb-2">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
+              <input
+                type="text"
+                placeholder="Buscar…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                autoFocus
+                className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-8 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-white/20"
+              />
+              {search && (
+                <button
+                  onClick={() => { setSearch(''); setSearchOpen(false) }}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Conversation list */}
+      <div className="flex-1 overflow-y-auto px-2 py-1 scrollbar-thin">
+        {groups.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-40 text-center">
+            <MessageSquare className="h-8 w-8 text-white/10 mb-2" />
+            <p className="text-xs text-white/30">
+              {search ? 'Sin resultados' : 'Sin conversaciones'}
+            </p>
+          </div>
+        ) : (
+          groups.map((group) => (
+            <div key={group.label} className="mb-3">
+              <p className="px-3 py-1.5 text-xs font-medium text-white/30">
+                {group.label}
+              </p>
+              {group.items.map((conv) => (
+                <div
+                  key={conv.id}
+                  onClick={() => {
+                    onSelectConversation(conv.id)
+                    if (window.innerWidth < 768) onClose()
+                  }}
+                  className={`group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                    activeId === conv.id
+                      ? 'bg-white/10'
+                      : 'hover:bg-white/5'
+                  }`}
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-white/80 truncate leading-snug">
+                      {conv.title}
+                    </p>
+                  </div>
+                  <span className="text-[10px] text-white/20 flex-shrink-0 group-hover:hidden">
+                    {formatRelativeTime(conv.updatedAt)}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDelete(conv.id)
+                    }}
+                    className={`flex-shrink-0 p-0.5 rounded transition-colors hidden group-hover:block ${
+                      deletingId === conv.id
+                        ? 'text-red-400'
+                        : 'text-white/30 hover:text-red-400'
+                    }`}
+                    title={deletingId === conv.id ? 'Confirmar' : 'Eliminar'}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="px-2 py-3 border-t border-white/5 flex-shrink-0">
+        <button
+          onClick={onOpenSettings}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
+        >
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[10px] font-bold text-white">
+            M
+          </div>
+          <span className="truncate">MoldeIA</span>
+        </button>
+      </div>
+    </div>
+  )
 
   return (
     <>
@@ -75,125 +242,32 @@ export function ChatSidebar({
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Desktop: sidebar estático */}
       <AnimatePresence>
         {isOpen && (
           <motion.aside
-            initial={{ x: -300, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -300, opacity: 0 }}
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 260, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed md:relative top-0 left-0 h-full w-72 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 z-50 flex flex-col"
+            className="hidden md:block h-full overflow-hidden flex-shrink-0"
           >
-            {/* Header */}
-            <div className="p-3 border-b border-white/10 flex-shrink-0">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-white/80">Conversaciones</h2>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onClose}
-                  className="h-7 w-7 text-white/40 hover:text-white md:hidden"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
+            {sidebarContent}
+          </motion.aside>
+        )}
+      </AnimatePresence>
 
-              <Button
-                onClick={onNewConversation}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm h-9 rounded-lg mb-2"
-              >
-                <Plus className="h-4 w-4 mr-1.5" />
-                Nueva conversación
-              </Button>
-
-              {/* Búsqueda */}
-              {conversations.length > 3 && (
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/30" />
-                  <input
-                    type="text"
-                    placeholder="Buscar…"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/50"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Lista de conversaciones */}
-            <div className="flex-1 overflow-y-auto py-1.5">
-              {filtered.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full px-6 text-center">
-                  <MessageSquare className="h-10 w-10 text-white/10 mb-3" />
-                  <p className="text-sm text-white/30">
-                    {search ? 'Sin resultados' : 'Aún no hay conversaciones'}
-                  </p>
-                  {!search && (
-                    <p className="text-xs text-white/20 mt-1">
-                      Envía un mensaje para comenzar
-                    </p>
-                  )}
-                </div>
-              ) : (
-                filtered.map((conv) => (
-                  <div
-                    key={conv.id}
-                    onClick={() => {
-                      onSelectConversation(conv.id)
-                      onClose()
-                    }}
-                    className={`group mx-1.5 mb-0.5 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
-                      activeId === conv.id
-                        ? 'bg-purple-600/20 border border-purple-500/30'
-                        : 'hover:bg-white/5 border border-transparent'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm text-white/90 font-medium truncate">
-                          {conv.title}
-                        </p>
-                        <p className="text-xs text-white/40 truncate mt-0.5">
-                          {conv.preview}
-                        </p>
-                        <div className="flex items-center gap-1 mt-1">
-                          <Clock className="h-3 w-3 text-white/20" />
-                          <span className="text-[10px] text-white/20">
-                            {formatRelativeTime(conv.updatedAt)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleDelete(conv.id)
-                        }}
-                        className={`flex-shrink-0 p-1 rounded transition-colors ${
-                          deletingId === conv.id
-                            ? 'text-red-400 bg-red-500/20'
-                            : 'text-white/20 opacity-0 group-hover:opacity-100 hover:text-red-400 hover:bg-red-500/10'
-                        }`}
-                        title={deletingId === conv.id ? 'Clic para confirmar' : 'Eliminar'}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Footer */}
-            {conversations.length > 0 && (
-              <div className="p-3 border-t border-white/10 flex-shrink-0">
-                <p className="text-[10px] text-white/20 text-center">
-                  {conversations.length} conversación{conversations.length !== 1 ? 'es' : ''}
-                </p>
-              </div>
-            )}
+      {/* Mobile: overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.aside
+            initial={{ x: -280 }}
+            animate={{ x: 0 }}
+            exit={{ x: -280 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed top-0 left-0 h-full z-50 md:hidden"
+          >
+            {sidebarContent}
           </motion.aside>
         )}
       </AnimatePresence>

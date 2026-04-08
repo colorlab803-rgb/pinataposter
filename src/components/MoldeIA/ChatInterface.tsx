@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Send, Bot, Loader2, ImagePlus, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { ArrowUp, Bot, Loader2, Plus, X } from 'lucide-react'
 import { ChatMessage, type Message } from './ChatMessage'
 import Image from 'next/image'
 
@@ -68,6 +67,8 @@ export function ChatInterface({
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const isEmptyState = messages.length === 0 || (messages.length === 1 && messages[0].id === 'welcome')
+
   // Cargar mensajes cuando cambia la conversación
   useEffect(() => {
     setMessages(initialMessages ?? [WELCOME_MESSAGE])
@@ -79,7 +80,6 @@ export function ChatInterface({
   const messagesRef = useRef(messages)
   useEffect(() => {
     messagesRef.current = messages
-    // Solo notificar si hay más mensajes que el welcome
     if (messages.length > 1 || (messages.length === 1 && messages[0].id !== 'welcome')) {
       onMessagesChange?.(messages)
     }
@@ -122,7 +122,6 @@ export function ChatInterface({
     async (toolCalls: ToolCall[]) => {
       for (let i = 0; i < toolCalls.length; i++) {
         const tc = toolCalls[i]
-        // Delay entre herramientas para que el generador procese
         if (i > 0) await new Promise((r) => setTimeout(r, 400))
 
         switch (tc.name) {
@@ -141,7 +140,6 @@ export function ChatInterface({
             break
           case 'descargarMolde': {
             const { formato } = tc.args as { formato: 'pdf' | 'zip' }
-            // Esperar a que el generador esté listo antes de descargar
             await new Promise((r) => setTimeout(r, 2000))
             onDownloadRequest(formato)
             break
@@ -157,7 +155,6 @@ export function ChatInterface({
     const hasImage = !!pendingImage
     if ((!text && !hasImage) || isLoading) return
 
-    // Si hay imagen, cargarla en el generador
     if (pendingImage) {
       onImageLoad(pendingImage.dataUrl)
     }
@@ -170,26 +167,19 @@ export function ChatInterface({
     }
 
     const imageForApi = pendingImage
-    const updatedMessages = [...messages, userMessage]
+    const updatedMessages = [...messages.filter((m) => m.id !== 'welcome'), userMessage]
     setMessages(updatedMessages)
     setInput('')
     setPendingImage(null)
     setIsLoading(true)
 
-    // Agregar placeholder del asistente "pensando"
     const thinkingId = (Date.now() + 1).toString()
 
     try {
       const chatMessages = updatedMessages
-        .filter((m) => m.id !== 'welcome')
-        .map((m) => ({
-          role: m.role,
-          content: m.content,
-        }))
+        .map((m) => ({ role: m.role, content: m.content }))
 
-      const generatorState = {
-        tieneImagen: hasImage || generatorReady,
-      }
+      const generatorState = { tieneImagen: hasImage || generatorReady }
 
       const res = await fetch('/api/molde-ia', {
         method: 'POST',
@@ -209,7 +199,6 @@ export function ChatInterface({
       const toolCalls: ToolCall[] = data.toolCalls ?? []
 
       if (toolCalls.length > 0) {
-        // Mostrar tool calls como "en progreso"
         const progressMessage: Message = {
           id: thinkingId,
           role: 'assistant',
@@ -218,11 +207,7 @@ export function ChatInterface({
           toolCallsStatus: 'running',
         }
         setMessages((prev) => [...prev, progressMessage])
-
-        // Ejecutar tool calls secuencialmente
         await executeToolCalls(toolCalls)
-
-        // Actualizar a "completado" y agregar texto
         setMessages((prev) =>
           prev.map((m) =>
             m.id === thinkingId
@@ -260,7 +245,6 @@ export function ChatInterface({
     }
   }
 
-  // Drag & drop handlers
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     setIsDragging(true)
@@ -276,47 +260,14 @@ export function ChatInterface({
     if (file) handleImageFile(file)
   }
 
-  return (
-    <div
-      className="flex flex-col h-full bg-slate-950/80 relative"
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      {/* Overlay de drag */}
-      {isDragging && (
-        <div className="absolute inset-0 z-50 bg-purple-600/20 border-2 border-dashed border-purple-400 rounded-lg flex items-center justify-center backdrop-blur-sm">
-          <div className="text-center">
-            <ImagePlus className="h-12 w-12 text-purple-400 mx-auto mb-2" />
-            <p className="text-purple-200 text-lg font-medium">Suelta la imagen aquí</p>
-          </div>
-        </div>
-      )}
-
-      {/* Mensajes */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-        {messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
-        {isLoading && (
-          <div className="flex gap-3">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-              <Bot className="h-3.5 w-3.5 text-white" />
-            </div>
-            <div className="px-3.5 py-2.5 rounded-2xl rounded-tl-sm bg-white/10 border border-white/10 flex items-center gap-2">
-              <Loader2 className="h-4 w-4 text-purple-400 animate-spin" />
-              <span className="text-sm text-purple-300">Analizando…</span>
-            </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Preview de imagen pendiente */}
+  // ── Input bar component (reused in empty + chat states) ──
+  const inputBar = (
+    <div className={`w-full ${isEmptyState ? 'max-w-2xl' : 'max-w-3xl'} mx-auto`}>
+      {/* Pending image preview */}
       {pendingImage && (
-        <div className="px-4 py-2 border-t border-white/10 bg-black/20">
+        <div className="mb-2 flex items-start">
           <div className="relative inline-block">
-            <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-purple-500/30">
+            <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-white/10">
               <Image
                 src={pendingImage.dataUrl}
                 alt="Imagen a enviar"
@@ -327,7 +278,7 @@ export function ChatInterface({
             </div>
             <button
               onClick={() => setPendingImage(null)}
-              className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
+              className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#424242] text-white rounded-full flex items-center justify-center hover:bg-[#555] border border-white/10"
             >
               <X className="h-3 w-3" />
             </button>
@@ -335,19 +286,17 @@ export function ChatInterface({
         </div>
       )}
 
-      {/* Input */}
-      <div className="px-4 py-3 border-t border-white/10 bg-black/20 flex-shrink-0">
-        <div className="flex gap-2 items-end">
-          {/* Botón de imagen */}
-          <Button
+      {/* Input container */}
+      <div className="relative bg-[#2f2f2f] rounded-3xl border border-white/5 shadow-lg">
+        <div className="flex items-end gap-1 p-2">
+          {/* Attach button */}
+          <button
             onClick={() => fileInputRef.current?.click()}
-            variant="ghost"
-            size="icon"
-            className="rounded-xl h-10 w-10 flex-shrink-0 text-white/40 hover:text-purple-400 hover:bg-purple-500/10"
             disabled={isLoading}
+            className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors disabled:opacity-40"
           >
-            <ImagePlus className="h-5 w-5" />
-          </Button>
+            <Plus className="h-5 w-5" />
+          </button>
           <input
             ref={fileInputRef}
             type="file"
@@ -360,35 +309,103 @@ export function ChatInterface({
             }}
           />
 
+          {/* Textarea */}
           <textarea
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={pendingImage ? 'Describe tu piñata o envía directo…' : 'Envía una foto o escribe aquí…'}
+            placeholder="Envía una foto o pregunta algo"
             rows={1}
-            className="flex-1 resize-none bg-white/10 border border-white/20 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-purple-500/50 focus:bg-white/15 transition-colors max-h-32 min-h-[40px]"
+            className="flex-1 resize-none bg-transparent py-2 px-1 text-[15px] text-white placeholder:text-white/40 focus:outline-none max-h-40 min-h-[36px]"
             style={{ height: 'auto' }}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement
               target.style.height = 'auto'
-              target.style.height = `${Math.min(target.scrollHeight, 128)}px`
+              target.style.height = `${Math.min(target.scrollHeight, 160)}px`
             }}
             disabled={isLoading}
           />
-          <Button
+
+          {/* Send button */}
+          <button
             onClick={sendMessage}
             disabled={(!input.trim() && !pendingImage) || isLoading}
-            size="icon"
-            className="bg-purple-600 hover:bg-purple-700 rounded-xl h-10 w-10 flex-shrink-0 disabled:opacity-40"
+            className="flex-shrink-0 w-9 h-9 rounded-full bg-white text-black flex items-center justify-center hover:bg-white/90 transition-colors disabled:opacity-20 disabled:bg-white/30"
           >
-            <Send className="h-4 w-4" />
-          </Button>
+            <ArrowUp className="h-5 w-5" />
+          </button>
         </div>
-        <p className="text-xs text-white/20 mt-1.5 text-center">
-          📷 Pega imagen · Arrastra · Adjunta · Shift+Enter para nueva línea
-        </p>
       </div>
+
+      <p className="text-[11px] text-white/25 mt-2 text-center">
+        MoldeIA puede cometer errores. Verifica la información importante.
+      </p>
+    </div>
+  )
+
+  return (
+    <div
+      className="flex flex-col h-full bg-[#212121] relative"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {/* Drag overlay */}
+      {isDragging && (
+        <div className="absolute inset-0 z-50 bg-purple-600/15 border-2 border-dashed border-purple-400/50 rounded-lg flex items-center justify-center backdrop-blur-sm">
+          <div className="text-center">
+            <Plus className="h-12 w-12 text-purple-400 mx-auto mb-2" />
+            <p className="text-purple-200 text-lg font-medium">Suelta la imagen aquí</p>
+          </div>
+        </div>
+      )}
+
+      {isEmptyState ? (
+        /* ── Empty state: centered like ChatGPT ── */
+        <div className="flex-1 flex flex-col items-center justify-center px-4">
+          <div className="mb-8 text-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-6">
+              <Bot className="h-5 w-5 text-white" />
+            </div>
+            <h1 className="text-[28px] font-medium text-white/90">
+              ¿En qué te puedo ayudar?
+            </h1>
+          </div>
+          <div className="w-full px-2">
+            {inputBar}
+          </div>
+        </div>
+      ) : (
+        /* ── Chat state: messages + bottom input ── */
+        <>
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-3xl mx-auto px-4 py-4 space-y-1">
+              {messages.map((msg) => (
+                <ChatMessage key={msg.id} message={msg} />
+              ))}
+              {isLoading && (
+                <div className="py-2">
+                  <div className="flex gap-3 items-start">
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
+                      <Bot className="h-3.5 w-3.5 text-white" />
+                    </div>
+                    <div className="flex items-center gap-2 pt-1">
+                      <Loader2 className="h-4 w-4 text-white/40 animate-spin" />
+                      <span className="text-sm text-white/40">Pensando…</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </div>
+
+          <div className="flex-shrink-0 px-4 pb-4 pt-2">
+            {inputBar}
+          </div>
+        </>
+      )}
     </div>
   )
 }
