@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap } from 'lucide-react'
+import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap, Wand2 } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 export default function Home() {
   const jsonLd = {
@@ -129,6 +129,10 @@ export default function Home() {
             <span className="text-lg sm:text-xl font-bold text-white">PiñataPoster</span>
           </div>
           <div className="flex items-center gap-3">
+            <Link href="/chat" className="text-sm text-pink-300 hover:text-white transition-colors hidden sm:inline-flex items-center gap-1.5">
+              <Wand2 className="h-3.5 w-3.5" />
+              MoldeIA
+            </Link>
             <Link href="/generator" className="text-sm text-purple-300 hover:text-white transition-colors hidden sm:inline">
               Crear diseño
             </Link>
@@ -181,6 +185,14 @@ export default function Home() {
               >
                 Crear mi molde gratis
                 <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                href="/chat"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-purple-300 hover:text-white bg-white/5 hover:bg-white/10 border border-purple-500/30 hover:border-purple-400/50 rounded-xl transition-all hover:scale-105 active:scale-95"
+              >
+                <Wand2 className="h-4 w-4 text-pink-400" />
+                Crear con MoldeIA
+                <span className="text-xs bg-pink-500/20 text-pink-300 px-1.5 py-0.5 rounded-full border border-pink-500/30">IA</span>
               </Link>
               <p className="text-xs sm:text-sm text-purple-300/60">
                 100% gratis · Sin registro · Sin marca de agua

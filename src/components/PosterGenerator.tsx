@@ -59,6 +59,14 @@ interface PosterGeneratorProps {
   onImageChange?: (imageFile: File | null) => void
   showImageUpload?: boolean
   showTitle?: boolean
+  // Props de control externo para MoldeIA
+  controlledWidth?: string
+  controlledHeight?: string
+  controlledPaperSize?: PaperSize
+  controlledOrientation?: Orientation
+  externalProcessedImageSrc?: string | null
+  onProcessedImageChange?: (src: string | null) => void
+  triggerDownload?: { format: 'pdf' | 'zip' } | null
 }
 
 export function PosterGenerator({ 
@@ -67,6 +75,13 @@ export function PosterGenerator({
   onImageChange,
   showImageUpload = true,
   showTitle = true,
+  controlledWidth,
+  controlledHeight,
+  controlledPaperSize,
+  controlledOrientation,
+  externalProcessedImageSrc,
+  onProcessedImageChange,
+  triggerDownload,
 }: PosterGeneratorProps) {
   const [currentStep, setCurrentStep] = useState(0)
   const [originalImageSrc, setOriginalImageSrc] = useState<string | null>(initialImageSrc || null)
@@ -213,6 +228,46 @@ export function PosterGenerator({
       preload.src = initialImageSrc
     }
   }, [initialImageSrc, processedImageSrc])
+
+  // Sincronización de props externas (MoldeIA)
+  useEffect(() => {
+    if (controlledWidth !== undefined) setTargetWidthCm(controlledWidth)
+  }, [controlledWidth])
+
+  useEffect(() => {
+    if (controlledHeight !== undefined) setTargetHeightCm(controlledHeight)
+  }, [controlledHeight])
+
+  useEffect(() => {
+    if (controlledPaperSize !== undefined) setPaperSize(controlledPaperSize)
+  }, [controlledPaperSize])
+
+  useEffect(() => {
+    if (controlledOrientation !== undefined) setOrientation(controlledOrientation)
+  }, [controlledOrientation])
+
+  useEffect(() => {
+    if (externalProcessedImageSrc !== undefined && externalProcessedImageSrc !== null) {
+      setProcessedImageSrc(externalProcessedImageSrc)
+      const preload = new window.Image()
+      preload.onload = () => setImageDimensions({ width: preload.width, height: preload.height })
+      preload.src = externalProcessedImageSrc
+    }
+  }, [externalProcessedImageSrc])
+
+  useEffect(() => {
+    if (onProcessedImageChange) {
+      onProcessedImageChange(processedImageSrc)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [processedImageSrc])
+
+  useEffect(() => {
+    if (triggerDownload?.format) {
+      handleDownloadRequest(triggerDownload.format)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerDownload])
 
   // Verificar rate-limit al montar el componente — deshabilitado (sin auth)
 
