@@ -17,6 +17,10 @@ interface ChatInterfaceProps {
   onUpscaleRequest: () => void
   onDownloadRequest: (format: 'pdf' | 'zip') => void
   generatorReady: boolean
+  conversationId: string | null
+  initialMessages?: Message[]
+  onMessagesChange?: (messages: Message[]) => void
+  userSettings?: import('@/lib/chatStorage').UserSettings | null
 }
 
 const WELCOME_MESSAGE: Message = {
@@ -46,8 +50,12 @@ export function ChatInterface({
   onUpscaleRequest,
   onDownloadRequest,
   generatorReady,
+  conversationId,
+  initialMessages,
+  onMessagesChange,
+  userSettings,
 }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE])
+  const [messages, setMessages] = useState<Message[]>(initialMessages ?? [WELCOME_MESSAGE])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [pendingImage, setPendingImage] = useState<{
@@ -59,6 +67,23 @@ export function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Cargar mensajes cuando cambia la conversación
+  useEffect(() => {
+    setMessages(initialMessages ?? [WELCOME_MESSAGE])
+    setPendingImage(null)
+    setInput('')
+  }, [conversationId, initialMessages])
+
+  // Notificar al padre cuando cambian los mensajes
+  const messagesRef = useRef(messages)
+  useEffect(() => {
+    messagesRef.current = messages
+    // Solo notificar si hay más mensajes que el welcome
+    if (messages.length > 1 || (messages.length === 1 && messages[0].id !== 'welcome')) {
+      onMessagesChange?.(messages)
+    }
+  }, [messages, onMessagesChange])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -174,6 +199,7 @@ export function ChatInterface({
           imageBase64: imageForApi?.base64,
           imageMimeType: imageForApi?.mimeType,
           generatorState,
+          userSettings: userSettings ?? undefined,
         }),
       })
 

@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'GOOGLE_AI_API_KEY no configurada' }, { status: 500 })
     }
 
-    const { messages, imageBase64, imageMimeType, generatorState } = await req.json()
+    const { messages, imageBase64, imageMimeType, generatorState, userSettings } = await req.json()
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: 'messages requerido' }, { status: 400 })
@@ -178,6 +178,15 @@ export async function POST(req: NextRequest) {
     let textContent = lastMessage.content || ''
     if (generatorState) {
       textContent += `\n\n[Estado actual del generador: ${JSON.stringify(generatorState)}]`
+    }
+    if (userSettings) {
+      const sizeMap: Record<string, string> = {
+        mini: '35cm alto, 25cm ancho',
+        mediana: '70cm alto, 50cm ancho',
+        grande: '90cm alto, 65cm ancho',
+        gigante: '110cm alto, 80cm ancho',
+      }
+      textContent += `\n\n[Preferencias del usuario: tamaño preferido=${sizeMap[userSettings.defaultPinataSize] || 'mediana'}, papel=${userSettings.defaultPaperSize || 'Letter'}, orientación=${userSettings.defaultOrientation || 'portrait'}, auto-descarga=${userSettings.autoDownloadPdf !== false ? 'sí' : 'no'}]`
     }
     if (imageBase64) {
       textContent += '\n\n[El usuario acaba de enviar una imagen. Analízala y ejecuta las herramientas para crear el molde automáticamente.]'

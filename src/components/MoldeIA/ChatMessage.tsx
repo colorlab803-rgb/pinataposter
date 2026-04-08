@@ -1,6 +1,7 @@
 import { Bot, User } from 'lucide-react'
 import { AgentAction } from './AgentAction'
 import Image from 'next/image'
+import ReactMarkdown from 'react-markdown'
 
 interface ToolCall {
   name: string
@@ -63,16 +64,35 @@ export function ChatMessage({ message }: ChatMessageProps) {
           </div>
         )}
 
-        {/* Texto */}
+        {/* Texto con Markdown */}
         {message.content && (
           <div
-            className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+            className={`px-3.5 py-2.5 rounded-2xl text-sm leading-relaxed ${
               isUser
                 ? 'bg-purple-600 text-white rounded-tr-sm'
                 : 'bg-white/10 text-white/90 rounded-tl-sm border border-white/10'
             }`}
           >
-            {message.content}
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => <p className="mb-1.5 last:mb-0">{children}</p>,
+                strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                em: ({ children }) => <em className="italic">{children}</em>,
+                ul: ({ children }) => <ul className="list-disc list-inside mb-1.5 space-y-0.5">{children}</ul>,
+                ol: ({ children }) => <ol className="list-decimal list-inside mb-1.5 space-y-0.5">{children}</ol>,
+                li: ({ children }) => <li>{children}</li>,
+                code: ({ children }) => (
+                  <code className="bg-white/10 px-1 py-0.5 rounded text-xs font-mono">{children}</code>
+                ),
+                a: ({ href, children }) => (
+                  <a href={href} target="_blank" rel="noopener noreferrer" className="text-purple-300 underline hover:text-purple-200">
+                    {children}
+                  </a>
+                ),
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
           </div>
         )}
       </div>
