@@ -156,7 +156,7 @@ export function ChatInterface({
 
     try {
       const chatMessages = updatedMessages
-        .filter((m) => m.id !== 'welcome' || m.content)
+        .filter((m) => m.id !== 'welcome')
         .map((m) => ({
           role: m.role,
           content: m.content,
