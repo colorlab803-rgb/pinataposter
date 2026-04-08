@@ -212,12 +212,19 @@ export function PosterGenerator({
 
   const handleDownloadAgain = async () => {
     if (!downloadCompleteInfo) return
-    const fileSaverModule = await import('file-saver')
-    const saveAs = (fileSaverModule as any)?.saveAs ?? (fileSaverModule as any)?.default?.saveAs ?? (fileSaverModule as any)?.default
-    saveAs(downloadCompleteInfo.blob, downloadCompleteInfo.fileName)
-    toast.success("Descargado nuevamente", {
-      description: `Se descargó ${downloadCompleteInfo.fileName} otra vez.`
-    })
+    try {
+      const fileSaverModule = await import('file-saver')
+      const saveAs = (fileSaverModule as any)?.saveAs ?? (fileSaverModule as any)?.default?.saveAs ?? (fileSaverModule as any)?.default
+      if (typeof saveAs !== 'function') throw new Error('saveAs no disponible')
+      saveAs(downloadCompleteInfo.blob, downloadCompleteInfo.fileName)
+      toast.success("Descargado nuevamente", {
+        description: `Se descargó ${downloadCompleteInfo.fileName} otra vez.`
+      })
+    } catch {
+      toast.error("Error al descargar", {
+        description: "No se pudo descargar el archivo. Inténtalo de nuevo."
+      })
+    }
   }
   useEffect(() => {
     if (initialImageSrc && !processedImageSrc) {
@@ -561,13 +568,15 @@ export function PosterGenerator({
   const generateSlices = useCallback(async (image: HTMLImageElement, grid: {cols: number, rows: number}, quality: number = 0.9) => {
     const finalWidthCm = parseFloat(targetWidthCm)
     const finalHeightCm = parseFloat(targetHeightCm)
-    const pxPerCm = image.width / finalWidthCm
+    // Usar ratios separados por eje para soportar dimensiones no proporcionales
+    const pxPerCmX = image.width / finalWidthCm
+    const pxPerCmY = image.height / finalHeightCm
     
     const sliceWidthCm = finalWidthCm / grid.cols
     const sliceHeightCm = finalHeightCm / grid.rows
 
-    const bleedXPx = includeBleed ? BLEED_CM * pxPerCm : 0
-    const bleedYPx = includeBleed ? BLEED_CM * pxPerCm : 0
+    const bleedXPx = includeBleed ? BLEED_CM * pxPerCmX : 0
+    const bleedYPx = includeBleed ? BLEED_CM * pxPerCmY : 0
     
     const slices = []
     for (let r = 0; r < grid.rows; r++) {
@@ -585,41 +594,39 @@ export function PosterGenerator({
         const bleedT = (r > 0) ? bleedYPx : 0
         const bleedB = (r < grid.rows - 1) ? bleedYPx : 0
 
-        // Calcular posición de origen en la imagen (con bleed)
-        let sx = c * sliceWidthCm * pxPerCm - bleedL
-        let sy = r * sliceHeightCm * pxPerCm - bleedT
+        // Dimensiones nominales del canvas (sin clipping)
+        const nominalW = sliceWidthCm * pxPerCmX + bleedL + bleedR
+        const nominalH = sliceHeightCm * pxPerCmY + bleedT + bleedB
 
-        // Calcular dimensiones de la porción a extraer (con bleed)
-        let sWidth = sliceWidthCm * pxPerCm + bleedL + bleedR
-        let sHeight = sliceHeightCm * pxPerCm + bleedT + bleedB
+        // Posición de origen en la imagen (con bleed)
+        const origSx = c * sliceWidthCm * pxPerCmX - bleedL
+        const origSy = r * sliceHeightCm * pxPerCmY - bleedT
 
-        // Limitar a los bordes de la imagen para evitar coordenadas negativas o fuera de rango
-        if (sx < 0) {
-          sWidth += sx
-          sx = 0
-        }
-        if (sy < 0) {
-          sHeight += sy
-          sy = 0
-        }
-        if (sx + sWidth > image.width) {
-          sWidth = image.width - sx
-        }
-        if (sy + sHeight > image.height) {
-          sHeight = image.height - sy
-        }
+        let sx = origSx
+        let sy = origSy
+        let sWidth = nominalW
+        let sHeight = nominalH
 
-        canvas.width = sliceWidthCm * pxPerCm + bleedL + bleedR
-        canvas.height = sliceHeightCm * pxPerCm + bleedT + bleedB
+        // Limitar a los bordes de la imagen para evitar coordenadas fuera de rango
+        if (sx < 0) { sWidth += sx; sx = 0 }
+        if (sy < 0) { sHeight += sy; sy = 0 }
+        if (sx + sWidth > image.width) sWidth = image.width - sx
+        if (sy + sHeight > image.height) sHeight = image.height - sy
+
+        canvas.width = Math.round(nominalW)
+        canvas.height = Math.round(nominalH)
         
         ctx.fillStyle = 'white'
         ctx.fillRect(0, 0, canvas.width, canvas.height)
         
-        // Dibujar la porción exacta de la imagen
+        // Offset en destino para compensar el clipping (evita estiramiento)
+        const dx = sx - origSx
+        const dy = sy - origSy
+
         ctx.drawImage(
             image,
             sx, sy, sWidth, sHeight,
-            0, 0, canvas.width, canvas.height
+            dx, dy, sWidth, sHeight
         )
 
         slices.push(canvas.toDataURL('image/jpeg', quality))
@@ -729,14 +736,12 @@ export function PosterGenerator({
       const jspdfModule = await import('jspdf')
       const jsPDF = (jspdfModule as any)?.default?.default ?? (jspdfModule as any)?.default ?? (jspdfModule as any)?.jsPDF
       if (typeof jsPDF !== 'function') {
-        console.error('generatePdf: jspdf import shape ->', Object.keys(jspdfModule as any))
         throw new Error('jsPDF no disponible (módulo inesperado)')
       }
 
       const fileSaverModule = await import('file-saver')
       const saveAs = (fileSaverModule as any)?.saveAs ?? (fileSaverModule as any)?.default?.saveAs ?? (fileSaverModule as any)?.default
       if (typeof saveAs !== 'function') {
-        console.error('generatePdf: file-saver import shape ->', Object.keys(fileSaverModule as any))
         throw new Error('saveAs no disponible (módulo inesperado)')
       }
 
@@ -777,7 +782,6 @@ export function PosterGenerator({
         pageCounter++
         const dataUrl = allSlices[index]
         if (!dataUrl) {
-          console.warn(`generatePdf: slice ${index} es undefined, saltando`)
           return
         }
         doc.addPage(paperSize.toLowerCase(), orientation)
@@ -873,7 +877,7 @@ export function PosterGenerator({
                 doc.setTextColor(255)
                 const coord = `${String.fromCharCode(65 + c)}${r + 1}`
                 const textW = doc.getTextWidth(coord)
-                doc.setFillColor(0, 0, 0, 0.5)
+                doc.setFillColor(60, 60, 60)
                 doc.rect(cellX + cellW/2 - textW/2 - 0.1, cellY + cellH/2 - 0.3, textW + 0.2, 0.5, 'F')
                 doc.text(coord, cellX + cellW/2, cellY + cellH/2, { align: 'center', baseline: 'middle' })
             }
@@ -910,7 +914,7 @@ export function PosterGenerator({
         
         setTimeout(() => {
           URL.revokeObjectURL(pdfUrl)
-        }, 60000)
+        }, 300000)
         
         handleDownloadComplete(finalFileName, 'pdf', pdfBlob)
         toast.success("¡PDF Descargado!", {
@@ -945,7 +949,6 @@ export function PosterGenerator({
       const jszipModule = await import('jszip')
       const JSZip = (jszipModule as any)?.default ?? (jszipModule as any)?.JSZip
       if (typeof JSZip !== 'function') {
-        console.error('generateZip: jszip import shape ->', Object.keys(jszipModule as any))
         throw new Error('JSZip no disponible (módulo inesperado)')
       }
 
@@ -963,6 +966,7 @@ export function PosterGenerator({
 
       pagesToInclude.forEach(index => {
         const dataUrl = allSlices[index]
+        if (!dataUrl) return
         const row = Math.floor(index / grid.cols)
         const col = index % grid.cols
         const coord = `${String.fromCharCode(65 + col)}${row + 1}`
