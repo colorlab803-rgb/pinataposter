@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { SquarePen, Search, Trash2, MessageSquare, X, PanelLeftClose } from 'lucide-react'
+import { SquarePen, Search, Trash2, MessageSquare, X, PanelLeftClose, Bot } from 'lucide-react'
 import { type ConversationMeta } from '@/lib/chatStorage'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -16,26 +16,12 @@ interface ChatSidebarProps {
   onOpenSettings: () => void
 }
 
-function formatRelativeTime(timestamp: number): string {
-  const now = Date.now()
-  const diff = now - timestamp
-  const minutes = Math.floor(diff / 60000)
-  const hours = Math.floor(diff / 3600000)
-  const days = Math.floor(diff / 86400000)
-
-  if (minutes < 1) return 'Ahora'
-  if (minutes < 60) return `${minutes}m`
-  if (hours < 24) return `${hours}h`
-  if (days < 7) return `${days}d`
-  return new Date(timestamp).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' })
-}
-
-// Agrupa conversaciones por período
 function groupConversations(conversations: ConversationMeta[]) {
   const now = Date.now()
   const today: ConversationMeta[] = []
   const yesterday: ConversationMeta[] = []
   const thisWeek: ConversationMeta[] = []
+  const thisMonth: ConversationMeta[] = []
   const older: ConversationMeta[] = []
 
   for (const c of conversations) {
@@ -44,13 +30,15 @@ function groupConversations(conversations: ConversationMeta[]) {
     if (days < 1) today.push(c)
     else if (days < 2) yesterday.push(c)
     else if (days < 7) thisWeek.push(c)
+    else if (days < 30) thisMonth.push(c)
     else older.push(c)
   }
 
   const groups: { label: string; items: ConversationMeta[] }[] = []
   if (today.length) groups.push({ label: 'Hoy', items: today })
   if (yesterday.length) groups.push({ label: 'Ayer', items: yesterday })
-  if (thisWeek.length) groups.push({ label: 'Esta semana', items: thisWeek })
+  if (thisWeek.length) groups.push({ label: 'Últimos 7 días', items: thisWeek })
+  if (thisMonth.length) groups.push({ label: 'Últimos 30 días', items: thisMonth })
   if (older.length) groups.push({ label: 'Anteriores', items: older })
   return groups
 }
@@ -91,29 +79,46 @@ export function ChatSidebar({
 
   const sidebarContent = (
     <div className="h-full w-[260px] bg-[#171717] flex flex-col">
-      {/* Top nav */}
+      {/* Top — Logo + sidebar toggle */}
       <div className="flex items-center justify-between px-3 pt-3 pb-1 flex-shrink-0">
-        <button
-          onClick={onClose}
-          className="p-1.5 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
-          title="Cerrar sidebar"
-        >
-          <PanelLeftClose className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center">
+            <Bot className="h-4 w-4 text-white/80" />
+          </div>
+        </div>
+        <div className="flex items-center gap-0.5">
+          <button
+            onClick={() => {
+              onNewConversation()
+              if (window.innerWidth < 768) onClose()
+            }}
+            className="p-1.5 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
+            title="Nuevo chat"
+          >
+            <SquarePen className="h-5 w-5" />
+          </button>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
+            title="Cerrar sidebar"
+          >
+            <PanelLeftClose className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Nav items */}
+      <div className="px-2 pt-2 pb-1 flex-shrink-0 space-y-0.5">
         <button
           onClick={() => {
             onNewConversation()
             if (window.innerWidth < 768) onClose()
           }}
-          className="p-1.5 rounded-lg text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
-          title="Nuevo chat"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
         >
-          <SquarePen className="h-5 w-5" />
+          <SquarePen className="h-4 w-4" />
+          <span>Nuevo chat</span>
         </button>
-      </div>
-
-      {/* Nav items */}
-      <div className="px-2 py-2 flex-shrink-0 space-y-0.5">
         <button
           onClick={() => setSearchOpen(!searchOpen)}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
@@ -155,7 +160,7 @@ export function ChatSidebar({
         )}
       </AnimatePresence>
 
-      {/* Conversation list */}
+      {/* Conversation history */}
       <div className="flex-1 overflow-y-auto px-2 py-1 scrollbar-thin">
         {groups.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-40 text-center">
@@ -166,8 +171,8 @@ export function ChatSidebar({
           </div>
         ) : (
           groups.map((group) => (
-            <div key={group.label} className="mb-3">
-              <p className="px-3 py-1.5 text-xs font-medium text-white/30">
+            <div key={group.label} className="mb-1">
+              <p className="px-3 pt-3 pb-1 text-xs font-medium text-white/40">
                 {group.label}
               </p>
               {group.items.map((conv) => (
@@ -177,28 +182,25 @@ export function ChatSidebar({
                     onSelectConversation(conv.id)
                     if (window.innerWidth < 768) onClose()
                   }}
-                  className={`group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                  className={`group flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
                     activeId === conv.id
                       ? 'bg-white/10'
-                      : 'hover:bg-white/5'
+                      : 'hover:bg-white/[0.07]'
                   }`}
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm text-white/80 truncate leading-snug">
+                    <p className="text-[13px] text-white/80 truncate leading-snug">
                       {conv.title}
                     </p>
                   </div>
-                  <span className="text-[10px] text-white/20 flex-shrink-0 group-hover:hidden">
-                    {formatRelativeTime(conv.updatedAt)}
-                  </span>
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
                       handleDelete(conv.id)
                     }}
-                    className={`flex-shrink-0 p-0.5 rounded transition-colors hidden group-hover:block ${
+                    className={`flex-shrink-0 p-0.5 rounded transition-colors opacity-0 group-hover:opacity-100 ${
                       deletingId === conv.id
-                        ? 'text-red-400'
+                        ? 'text-red-400 opacity-100'
                         : 'text-white/30 hover:text-red-400'
                     }`}
                     title={deletingId === conv.id ? 'Confirmar' : 'Eliminar'}
@@ -212,16 +214,16 @@ export function ChatSidebar({
         )}
       </div>
 
-      {/* Footer */}
+      {/* Footer — user/settings */}
       <div className="px-2 py-3 border-t border-white/5 flex-shrink-0">
         <button
           onClick={onOpenSettings}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/50 hover:text-white/80 hover:bg-white/5 transition-colors"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/60 hover:text-white/80 hover:bg-white/5 transition-colors"
         >
-          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-[10px] font-bold text-white">
-            M
+          <div className="w-7 h-7 rounded-full bg-[#353535] flex items-center justify-center text-[11px] font-semibold text-white/70">
+            P
           </div>
-          <span className="truncate">MoldeIA</span>
+          <span className="truncate">PinataPoster</span>
         </button>
       </div>
     </div>

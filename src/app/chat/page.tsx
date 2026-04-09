@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { PanelLeft, ChevronDown } from 'lucide-react'
+import { PanelLeft, ChevronDown, Settings, SquarePen } from 'lucide-react'
 import { toast } from 'sonner'
 import { PosterGenerator } from '@/components/PosterGenerator'
 import { ChatInterface } from '@/components/MoldeIA/ChatInterface'
@@ -222,19 +222,35 @@ export default function ChatPage() {
 
       {/* Contenido principal */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header minimal */}
-        <header className="flex-shrink-0 z-20 h-11 flex items-center px-3 gap-2">
-          {!sidebarOpen && (
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
-            >
-              <PanelLeft className="h-5 w-5" />
+        {/* Header */}
+        <header className="flex-shrink-0 z-20 h-11 flex items-center justify-between px-3">
+          <div className="flex items-center gap-2">
+            {!sidebarOpen && (
+              <>
+                <button
+                  onClick={() => setSidebarOpen(true)}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <PanelLeft className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={handleNewConversation}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <SquarePen className="h-5 w-5" />
+                </button>
+              </>
+            )}
+            <button className="flex items-center gap-1 text-white/80 hover:text-white transition-colors ml-1">
+              <span className="text-sm font-semibold">MoldeIA</span>
+              <ChevronDown className="h-3.5 w-3.5 opacity-50" />
             </button>
-          )}
-          <button className="flex items-center gap-1 text-white/80 hover:text-white transition-colors ml-1">
-            <span className="text-sm font-semibold">MoldeIA</span>
-            <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+          </div>
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+          >
+            <Settings className="h-5 w-5" />
           </button>
         </header>
 

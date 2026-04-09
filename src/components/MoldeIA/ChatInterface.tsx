@@ -365,9 +365,6 @@ export function ChatInterface({
         /* ── Empty state: centered like ChatGPT ── */
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           <div className="mb-8 text-center">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mx-auto mb-6">
-              <Bot className="h-5 w-5 text-white" />
-            </div>
             <h1 className="text-[28px] font-medium text-white/90">
               ¿En qué te puedo ayudar?
             </h1>
