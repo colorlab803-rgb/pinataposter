@@ -27,31 +27,48 @@ export async function POST(req: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey)
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash-preview-image-generation',
+      model: 'gemini-3.1-flash-image-preview',
+      // @ts-expect-error — responseModalities no está en los tipos pero es necesario para forzar respuesta de imagen
+      generationConfig: { responseModalities: ['Text', 'Image'] },
     })
 
-    const result = await model.generateContent([
-      {
-        inlineData: {
-          mimeType,
-          data: imageBase64,
+    const upscalePrompt = 'You are an image enhancement AI. Take this input image and generate an improved, higher-resolution version of the same image. Increase sharpness, enhance details, and improve overall visual quality. Output ONLY the enhanced image, keeping the same composition, colors, and content.'
+
+    // Intentar hasta 2 veces con prompts variados
+    const prompts = [
+      upscalePrompt,
+      'Generate a new high-quality version of this image with better resolution, sharper details, and enhanced clarity. The output must be an image that looks like an improved version of the input.',
+    ]
+
+    for (const prompt of prompts) {
+      const result = await model.generateContent([
+        {
+          inlineData: {
+            mimeType,
+            data: imageBase64,
+          },
         },
-      },
-      {
-        text: 'Mejora la calidad y nitidez de esta imagen manteniendo exactamente el mismo diseño, colores y composición. Hazla más nítida, con más detalle y resolución visual. No cambies el contenido, solo mejora la calidad.',
-      },
-    ])
+        { text: prompt },
+      ])
 
-    const response = result.response
+      const response = result.response
 
-    // Extraer imagen generada de la respuesta
-    for (const candidate of response.candidates ?? []) {
-      for (const part of candidate.content.parts) {
-        if (part.inlineData?.data) {
-          return NextResponse.json({
-            imageBase64: part.inlineData.data,
-            mimeType: part.inlineData.mimeType ?? 'image/png',
-          })
+      // Verificar si fue rechazada por IMAGE_RECITATION
+      const finishReason = response.candidates?.[0]?.finishReason as string | undefined
+      if (finishReason === 'IMAGE_RECITATION') {
+        console.warn('Upscale: IMAGE_RECITATION, reintentando con prompt alternativo...')
+        continue
+      }
+
+      // Extraer imagen generada de la respuesta
+      for (const candidate of response.candidates ?? []) {
+        for (const part of candidate.content?.parts ?? []) {
+          if (part.inlineData?.data) {
+            return NextResponse.json({
+              imageBase64: part.inlineData.data,
+              mimeType: part.inlineData.mimeType ?? 'image/png',
+            })
+          }
         }
       }
     }

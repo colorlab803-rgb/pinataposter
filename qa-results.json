@@ -1,0 +1,86 @@
+[
+    {
+        "id": "TC-01a",
+        "name": "Chat page loads",
+        "status": "PASS",
+        "detail": "HTTP 200",
+        "duration_ms": 1362
+    },
+    {
+        "id": "TC-01b",
+        "name": "MoldeGPT API reachable",
+        "status": "PASS",
+        "detail": "HTTP 400 (expected 400 for empty body)",
+        "duration_ms": 252
+    },
+    {
+        "id": "TC-01c",
+        "name": "Upscale API reachable",
+        "status": "PASS",
+        "detail": "HTTP 400 (expected 400 for empty body)",
+        "duration_ms": 224
+    },
+    {
+        "id": "TC-02",
+        "name": "Chat responde a saludo",
+        "status": "PASS",
+        "detail": "\u00a1Hola! Soy MoldeGPT, tu pi\u00f1atero experto. \ud83e\ude85 Puedo ayudarte a crear moldes para tus pi\u00f1atas. Solo tie",
+        "duration_ms": 1381
+    },
+    {
+        "id": "TC-03a",
+        "name": "Agente llama configurarTamano",
+        "status": "PASS",
+        "detail": "tamano=True|papel=True|descarga=True|total=4|names=upscalarImagen,configurarTamano,configurarPapel,descargarMolde",
+        "duration_ms": 6944
+    },
+    {
+        "id": "TC-03b",
+        "name": "Agente llama configurarPapel",
+        "status": "PASS",
+        "detail": "tamano=True|papel=True|descarga=True|total=4|names=upscalarImagen,configurarTamano,configurarPapel,descargarMolde",
+        "duration_ms": 0
+    },
+    {
+        "id": "TC-03c",
+        "name": "Agente llama descargarMolde",
+        "status": "PASS",
+        "detail": "tamano=True|papel=True|descarga=True|total=4|names=upscalarImagen,configurarTamano,configurarPapel,descargarMolde",
+        "duration_ms": 0
+    },
+    {
+        "id": "TC-04",
+        "name": "Agente invoca upscalarImagen",
+        "status": "PASS",
+        "detail": "upscalarImagen tool call presente",
+        "duration_ms": 1735
+    },
+    {
+        "id": "TC-05",
+        "name": "Agente reconfigura tama\u00f1o grande",
+        "status": "PASS",
+        "detail": "yes|alto=120|ancho=80",
+        "duration_ms": 4321
+    },
+    {
+        "id": "TC-06",
+        "name": "Upscale API retorna imagen mejorada",
+        "status": "PASS",
+        "detail": "yes|size=442008|mime=image/jpeg",
+        "duration_ms": 13344
+    },
+    {
+        "id": "TC-07a",
+        "name": "Rechaza messages inv\u00e1lido",
+        "status": "PASS",
+        "detail": "HTTP 400",
+        "duration_ms": 197
+    },
+    {
+        "id": "TC-07b",
+        "name": "Upscale rechaza sin imagen",
+        "status": "PASS",
+        "detail": "HTTP 400",
+        "duration_ms": 206
+    }
+]
