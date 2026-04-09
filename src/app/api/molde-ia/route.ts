@@ -8,7 +8,7 @@ import {
   type Part,
 } from '@google/generative-ai'
 
-const SYSTEM_PROMPT = `Eres MoldeIA, un agente experto en crear moldes de piñatas para PiñataPoster.
+const SYSTEM_PROMPT = `Eres MoldeGPT, un agente experto en crear moldes de piñatas para PiñataPoster.
 
 PERSONALIDAD:
 - Eres un piñatero experto, amigable y eficiente
@@ -239,7 +239,7 @@ export async function POST(req: NextRequest) {
       toolCalls: allToolCalls,
     })
   } catch (error) {
-    console.error('MoldeIA API error:', error)
+    console.error('MoldeGPT API error:', error)
     return NextResponse.json(
       { error: 'Error al procesar la solicitud' },
       { status: 500 }

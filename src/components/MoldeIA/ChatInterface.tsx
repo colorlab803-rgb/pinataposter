@@ -26,7 +26,7 @@ const WELCOME_MESSAGE: Message = {
   id: 'welcome',
   role: 'assistant',
   content:
-    '¡Hola! Soy **MoldeIA** 🪅\n\nEnvíame la foto de tu piñata y yo me encargo de crear el molde listo para imprimir.\n\n📷 Arrastra una imagen aquí, pégala, o usa el botón de foto.',
+    '¡Hola! Soy **MoldeGPT** 🪅\n\nEnvíame la foto de tu piñata y yo me encargo de crear el molde listo para imprimir.\n\n📷 Arrastra una imagen aquí, pégala, o usa el botón de foto.',
 }
 
 function fileToBase64(file: File): Promise<{ base64: string; mimeType: string; dataUrl: string }> {
@@ -331,7 +331,7 @@ export function ChatInterface({
           <button
             onClick={sendMessage}
             disabled={(!input.trim() && !pendingImage) || isLoading}
-            className="flex-shrink-0 w-9 h-9 rounded-full bg-white text-black flex items-center justify-center hover:bg-white/90 transition-colors disabled:opacity-20 disabled:bg-white/30"
+            className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white flex items-center justify-center hover:from-purple-500 hover:to-pink-500 transition-all disabled:opacity-20 disabled:from-gray-600 disabled:to-gray-600"
           >
             <ArrowUp className="h-5 w-5" />
           </button>
@@ -339,7 +339,7 @@ export function ChatInterface({
       </div>
 
       <p className="text-[11px] text-white/25 mt-2 text-center">
-        MoldeIA puede cometer errores. Verifica la información importante.
+        MoldeGPT puede cometer errores. Verifica la información importante.
       </p>
     </div>
   )
@@ -365,7 +365,7 @@ export function ChatInterface({
         /* ── Empty state: centered like ChatGPT ── */
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           <div className="mb-8 text-center">
-            <h1 className="text-[28px] font-medium text-white/90">
+            <h1 className="text-[28px] font-medium bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
               ¿En qué te puedo ayudar?
             </h1>
           </div>

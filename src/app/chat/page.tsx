@@ -24,7 +24,7 @@ const WELCOME_MESSAGE: Message = {
   id: 'welcome',
   role: 'assistant',
   content:
-    '¡Hola! Soy **MoldeIA** 🪅\n\nEnvíame la foto de tu piñata y yo me encargo de crear el molde listo para imprimir.\n\n📷 Arrastra una imagen aquí, pégala, o usa el botón de foto.',
+    '¡Hola! Soy **MoldeGPT** 🪅\n\nEnvíame la foto de tu piñata y yo me encargo de crear el molde listo para imprimir.\n\n📷 Arrastra una imagen aquí, pégala, o usa el botón de foto.',
 }
 
 export default function ChatPage() {
@@ -201,7 +201,7 @@ export default function ChatPage() {
   }, [])
 
   const handleDownloadRequest = useCallback((format: 'pdf' | 'zip') => {
-    const trigger = { format, projectName: 'MoldeIA-Piñata' }
+    const trigger = { format, projectName: 'MoldeGPT-Piñata' }
     setTriggerDownload(trigger)
     setTimeout(() => setTriggerDownload(null), 8000)
   }, [])
@@ -242,8 +242,8 @@ export default function ChatPage() {
               </>
             )}
             <button className="flex items-center gap-1 text-white/80 hover:text-white transition-colors ml-1">
-              <span className="text-sm font-semibold">MoldeIA</span>
-              <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+              <span className="text-sm font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">MoldeGPT</span>
+              <ChevronDown className="h-3.5 w-3.5 text-purple-400/50" />
             </button>
           </div>
           <button
