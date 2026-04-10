@@ -836,6 +836,7 @@ export function PosterGenerator({
         let currentY = planMargin
 
         doc.setFontSize(16)
+        doc.setTextColor(0)
         doc.text("Plano de Armado", planPageW / 2, currentY, { align: 'center' })
         currentY += 0.8
         
@@ -857,8 +858,27 @@ export function PosterGenerator({
         }
 
         const planX = (planPageW - planDisplayW) / 2
-        
+
+        // Dibujar la imagen de fondo con opacidad reducida
+        try {
+          const thumbCanvas = document.createElement('canvas')
+          const thumbCtx = thumbCanvas.getContext('2d')
+          if (thumbCtx) {
+            thumbCanvas.width = image.naturalWidth
+            thumbCanvas.height = image.naturalHeight
+            thumbCtx.globalAlpha = 0.35
+            thumbCtx.drawImage(image, 0, 0)
+            const thumbDataUrl = thumbCanvas.toDataURL('image/jpeg', 0.7)
+            doc.addImage(thumbDataUrl, 'JPEG', planX, currentY, planDisplayW, planDisplayH)
+          }
+        } catch {
+          // Si falla la imagen, seguimos sin ella
+        }
+
+        // Borde exterior
         doc.setDrawColor(0)
+        doc.setLineWidth(0.04)
+        doc.setLineDashPattern([], 0)
         doc.rect(planX, currentY, planDisplayW, planDisplayH)
 
         const cellW = planDisplayW / grid.cols
@@ -874,11 +894,11 @@ export function PosterGenerator({
                 doc.rect(cellX, cellY, cellW, cellH)
                 
                 doc.setFontSize(12)
-                doc.setTextColor(255)
                 const coord = `${String.fromCharCode(65 + c)}${r + 1}`
                 const textW = doc.getTextWidth(coord)
                 doc.setFillColor(60, 60, 60)
                 doc.rect(cellX + cellW/2 - textW/2 - 0.1, cellY + cellH/2 - 0.3, textW + 0.2, 0.5, 'F')
+                doc.setTextColor(255)
                 doc.text(coord, cellX + cellW/2, cellY + cellH/2, { align: 'center', baseline: 'middle' })
             }
         }
