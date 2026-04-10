@@ -15,19 +15,30 @@ export interface Message {
   imageUrl?: string
   toolCalls?: ToolCall[]
   toolCallsStatus?: 'running' | 'done'
+  quickActions?: QuickAction[]
+}
+
+export interface QuickAction {
+  label: string
+  message: string
 }
 
 interface ChatMessageProps {
   message: Message
+  isLast?: boolean
   onDownloadRequest?: (format: 'pdf' | 'zip') => void
+  onQuickAction?: (text: string) => void
 }
 
-export function ChatMessage({ message, onDownloadRequest }: ChatMessageProps) {
+export function ChatMessage({ message, isLast, onDownloadRequest, onQuickAction }: ChatMessageProps) {
   const isUser = message.role === 'user'
 
   const downloadToolCall = message.toolCalls?.find(
     (tc) => tc.name === 'descargarMolde' && message.toolCallsStatus === 'done'
   )
+
+  const showQuickActions = isLast && !isUser && message.quickActions && message.quickActions.length > 0
+    && message.toolCallsStatus !== 'running'
 
   return (
     <div className={`py-2 ${isUser ? 'flex justify-end' : ''}`}>
@@ -111,6 +122,21 @@ export function ChatMessage({ message, onDownloadRequest }: ChatMessageProps) {
                     <Download className="h-4 w-4" />
                     Descargar {String((downloadToolCall.args.formato as string) || 'pdf').toUpperCase()}
                   </button>
+                </div>
+              )}
+
+              {/* Quick action buttons */}
+              {showQuickActions && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {message.quickActions!.map((action, i) => (
+                    <button
+                      key={i}
+                      onClick={() => onQuickAction?.(action.message)}
+                      className="px-3 py-1.5 rounded-full text-xs font-medium border border-purple-500/30 text-purple-300 hover:bg-purple-500/15 hover:border-purple-500/50 hover:text-purple-200 transition-all"
+                    >
+                      {action.label}
+                    </button>
+                  ))}
                 </div>
               )}
 

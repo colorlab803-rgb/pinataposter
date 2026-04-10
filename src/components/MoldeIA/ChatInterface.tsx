@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { ArrowUp, Bot, Loader2, Plus, X } from 'lucide-react'
-import { ChatMessage, type Message } from './ChatMessage'
+import { ArrowUp, Bot, Loader2, Plus, X, Camera } from 'lucide-react'
+import { ChatMessage, type Message, type QuickAction } from './ChatMessage'
+import { ChatOnboarding } from './ChatOnboarding'
 import { WELCOME_MESSAGE } from '@/lib/chatStorage'
 import Image from 'next/image'
 
@@ -63,8 +64,64 @@ export function ChatInterface({
 
   const abortControllerRef = useRef<AbortController | null>(null)
   const prevConvIdRef = useRef<string | null | undefined>(undefined)
+  const lastUserTextRef = useRef<string>('')
 
   const isEmptyState = messages.length === 0 || (messages.length === 1 && messages[0].id === 'welcome')
+
+  // ── Suggestion chips for empty state ──
+  const suggestionChips = [
+    { icon: '🪅', label: 'Hacer un molde', message: 'Quiero hacer un molde de piñata' },
+    { icon: '📐', label: 'Ya tengo las medidas', message: 'Quiero hacer un molde, ya tengo las medidas' },
+    { icon: '❓', label: '¿Cómo funciona?', message: '¿Cómo funciona PinataPoster?' },
+  ]
+
+  // ── Derive quick actions from last assistant message ──
+  const getQuickActions = useCallback((msgs: Message[]): QuickAction[] => {
+    const lastAssistant = [...msgs].reverse().find((m) => m.role === 'assistant' && m.id !== 'welcome')
+    if (!lastAssistant) return []
+
+    const lastToolName = lastAssistant.toolCalls?.slice(-1)[0]?.name
+    const hasImage = msgs.some((m) => m.role === 'user' && m.imageUrl)
+    const text = lastAssistant.content.toLowerCase()
+
+    // After descargarMolde completed
+    if (lastToolName === 'descargarMolde' && lastAssistant.toolCallsStatus === 'done') {
+      return [
+        { label: '📐 Cambiar tamaño', message: 'Quiero cambiar el tamaño' },
+        { label: '📄 Cambiar papel', message: 'Quiero cambiar el papel' },
+        { label: '🆕 Nuevo molde', message: 'Quiero hacer un molde nuevo' },
+      ]
+    }
+
+    // After configurarPapel — offer to generate
+    if (lastToolName === 'configurarPapel' && lastAssistant.toolCallsStatus === 'done') {
+      return [
+        { label: '✅ Generar molde', message: 'Generar el molde' },
+        { label: '📐 Cambiar tamaño', message: 'Quiero cambiar el tamaño' },
+      ]
+    }
+
+    // After configurarTamano — offer paper options
+    if (lastToolName === 'configurarTamano' && lastAssistant.toolCallsStatus === 'done') {
+      return [
+        { label: '📄 Letter', message: 'Papel Letter' },
+        { label: '📄 Legal', message: 'Papel Legal' },
+        { label: '📄 Tabloid', message: 'Papel Tabloid' },
+      ]
+    }
+
+    // After image analysis (AI asking for size) — offer size presets
+    if (hasImage && !lastToolName && (text.includes('tamaño') || text.includes('medida') || text.includes('cm'))) {
+      return [
+        { label: '🪅 Mini (35cm)', message: 'Mini de 35 centímetros' },
+        { label: '🪅 Mediana (70cm)', message: 'Mediana de 70 centímetros' },
+        { label: '🪅 Grande (90cm)', message: 'Grande de 90 centímetros' },
+        { label: '🪅 Gigante (110cm)', message: 'Gigante de 110 centímetros' },
+      ]
+    }
+
+    return []
+  }, [])
 
   // Cancelar request al desmontar
   useEffect(() => {
@@ -170,8 +227,8 @@ export function ChatInterface({
     [onConfigChange, onUpscaleRequest, onDownloadRequest, userSettings?.autoDownloadPdf]
   )
 
-  const sendMessage = async () => {
-    const text = input.trim()
+  const sendMessage = async (overrideText?: string) => {
+    const text = (overrideText ?? input).trim()
     const hasImage = !!pendingImage
     if ((!text && !hasImage) || isLoading) return
 
@@ -192,6 +249,7 @@ export function ChatInterface({
     setInput('')
     setPendingImage(null)
     setIsLoading(true)
+    lastUserTextRef.current = text
 
     const assistantId = (Date.now() + 1).toString()
 
@@ -306,7 +364,11 @@ export function ChatInterface({
                 setMessages((prev) =>
                   prev.map((m) =>
                     m.id === assistantId
-                      ? { ...m, content: `❌ ${event.message || 'Error desconocido'}` }
+                      ? {
+                          ...m,
+                          content: `❌ ${event.message || 'Algo salió mal.'}`,
+                          quickActions: [{ label: '🔄 Reintentar', message: lastUserTextRef.current || 'Reintentar' }],
+                        }
                       : m
                   )
                 )
@@ -328,28 +390,35 @@ export function ChatInterface({
           )
         )
       }
+
+      // Inject quick actions on the last assistant message
+      setMessages((prev) => {
+        const actions = getQuickActions(prev)
+        if (actions.length === 0) return prev
+        return prev.map((m) =>
+          m.id === assistantId ? { ...m, quickActions: actions } : m
+        )
+      })
     } catch (error) {
       // Ignorar abortos (cambio de conversación)
       if (error instanceof DOMException && error.name === 'AbortError') return
 
       console.error('Chat send error:', error)
+      const errorMsg = error instanceof Error && error.message.includes('fetch')
+        ? '❌ No se pudo conectar. Revisa tu conexión a internet.'
+        : '❌ Algo salió mal. Puedes intentar de nuevo.'
       setMessages((prev) => {
         const hasAssistant = prev.some((m) => m.id === assistantId)
-        if (hasAssistant) {
-          return prev.map((m) =>
-            m.id === assistantId
-              ? { ...m, content: '❌ Ocurrió un error. Por favor intenta de nuevo.' }
-              : m
-          )
+        const errorMessage: Message = {
+          id: assistantId,
+          role: 'assistant' as const,
+          content: errorMsg,
+          quickActions: [{ label: '🔄 Reintentar', message: lastUserTextRef.current || 'Reintentar' }],
         }
-        return [
-          ...prev,
-          {
-            id: assistantId,
-            role: 'assistant' as const,
-            content: '❌ Ocurrió un error. Por favor intenta de nuevo.',
-          },
-        ]
+        if (hasAssistant) {
+          return prev.map((m) => m.id === assistantId ? errorMessage : m)
+        }
+        return [...prev, errorMessage]
       })
     } finally {
       setIsLoading(false)
@@ -362,6 +431,13 @@ export function ChatInterface({
       e.preventDefault()
       sendMessage()
     }
+  }
+
+  const handleQuickAction = (text: string) => {
+    if (isLoading) return
+    // Clear quick actions from all messages when user picks one
+    setMessages((prev) => prev.map((m) => ({ ...m, quickActions: undefined })))
+    sendMessage(text)
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -448,7 +524,7 @@ export function ChatInterface({
 
           {/* Send button */}
           <button
-            onClick={sendMessage}
+            onClick={() => sendMessage()}
             disabled={(!input.trim() && !pendingImage) || isLoading}
             className="flex-shrink-0 w-9 h-9 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white flex items-center justify-center hover:from-purple-500 hover:to-pink-500 transition-all disabled:opacity-20 disabled:from-gray-600 disabled:to-gray-600"
           >
@@ -470,12 +546,15 @@ export function ChatInterface({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
+      {/* Onboarding modal (first visit only) */}
+      <ChatOnboarding />
+
       {/* Drag overlay */}
       {isDragging && (
         <div className="absolute inset-0 z-50 bg-purple-600/15 border-2 border-dashed border-purple-400/50 rounded-lg flex items-center justify-center backdrop-blur-sm">
           <div className="text-center">
-            <Plus className="h-12 w-12 text-purple-400 mx-auto mb-2" />
-            <p className="text-purple-200 text-lg font-medium">Suelta la imagen aquí</p>
+            <Camera className="h-12 w-12 text-purple-400 mx-auto mb-2" />
+            <p className="text-purple-200 text-lg font-medium">Suelta tu imagen aquí 📷</p>
           </div>
         </div>
       )}
@@ -483,13 +562,38 @@ export function ChatInterface({
       {isEmptyState ? (
         /* ── Empty state: centered like ChatGPT ── */
         <div className="flex-1 flex flex-col items-center justify-center px-4">
-          <div className="mb-8 text-center">
+          <div className="mb-6 text-center">
             <h1 className="text-[28px] font-medium bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
               ¿En qué te puedo ayudar?
             </h1>
           </div>
+
+          {/* Suggestion chips */}
+          <div className="flex flex-wrap justify-center gap-2 mb-6 max-w-lg">
+            {suggestionChips.map((chip, i) => (
+              <button
+                key={i}
+                onClick={() => handleQuickAction(chip.message)}
+                disabled={isLoading}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-white/10 bg-[#2f2f2f] text-sm text-white/80 hover:bg-white/10 hover:border-purple-500/30 hover:text-white transition-all disabled:opacity-40"
+              >
+                <span>{chip.icon}</span>
+                <span>{chip.label}</span>
+              </button>
+            ))}
+          </div>
+
           <div className="w-full px-2">
             {inputBar}
+          </div>
+
+          {/* Image guide */}
+          <div className="flex items-center gap-3 mt-4 text-[11px] text-white/30">
+            <span>📷 JPG o PNG</span>
+            <span>•</span>
+            <span>hasta 50MB</span>
+            <span>•</span>
+            <span>✅ Fondo limpio funciona mejor</span>
           </div>
         </div>
       ) : (
@@ -497,11 +601,13 @@ export function ChatInterface({
         <>
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-3xl mx-auto px-4 py-4 space-y-1">
-              {messages.map((msg) => (
+              {messages.map((msg, idx) => (
                 <ChatMessage
                   key={msg.id}
                   message={msg}
+                  isLast={idx === messages.length - 1}
                   onDownloadRequest={onDownloadRequest}
+                  onQuickAction={handleQuickAction}
                 />
               ))}
               {isLoading && (
