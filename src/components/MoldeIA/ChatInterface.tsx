@@ -14,7 +14,7 @@ interface ToolCall {
 interface ChatInterfaceProps {
   onConfigChange: (updates: { targetWidth?: string; targetHeight?: string; paperSize?: string; orientation?: string }) => void
   onImageLoad: (dataUrl: string) => void
-  onUpscaleRequest: () => void
+  onUpscaleRequest: () => Promise<void>
   onDownloadRequest: (format: 'pdf' | 'zip') => void
   generatorReady: boolean
   conversationId: string | null
@@ -155,6 +155,9 @@ export function ChatInterface({
             onUpscaleRequest()
             break
           case 'descargarMolde': {
+            // Siempre hacer upscale antes de generar el PDF
+            await onUpscaleRequest()
+            await new Promise((r) => setTimeout(r, 500))
             if (userSettings?.autoDownloadPdf) {
               const fmt = (tc.args.formato as 'pdf' | 'zip') || 'pdf'
               onDownloadRequest(fmt)
