@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
+const IMAGE_MODELS = [
+  'gemini-2.0-flash-preview-image-generation',
+  'gemini-2.0-flash-exp-image-generation',
+]
+
 export async function POST(req: NextRequest) {
   try {
     const apiKey = process.env.GOOGLE_AI_API_KEY
@@ -17,7 +22,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'imageBase64 requerido' }, { status: 400 })
     }
 
-    // Validar tamaño (~10MB máx en base64)
     if (imageBase64.length > 14_000_000) {
       return NextResponse.json(
         { error: 'Imagen demasiado grande para upscale (máx ~10MB)' },
@@ -26,61 +30,63 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-3.1-flash-image-preview',
-      // @ts-expect-error — responseModalities no está en los tipos pero es necesario para forzar respuesta de imagen
-      generationConfig: { responseModalities: ['Text', 'Image'] },
-    })
 
-    const upscalePrompt = 'You are an image enhancement AI. Take this input image and generate an improved, higher-resolution version of the same image. Increase sharpness, enhance details, and improve overall visual quality. Output ONLY the enhanced image, keeping the same composition, colors, and content.'
-
-    // Intentar hasta 2 veces con prompts variados
     const prompts = [
-      upscalePrompt,
+      'You are an image enhancement AI. Take this input image and generate an improved, higher-resolution version of the same image. Increase sharpness, enhance details, and improve overall visual quality. Output ONLY the enhanced image, keeping the same composition, colors, and content.',
       'Generate a new high-quality version of this image with better resolution, sharper details, and enhanced clarity. The output must be an image that looks like an improved version of the input.',
     ]
 
-    for (const prompt of prompts) {
-      const result = await model.generateContent([
-        {
-          inlineData: {
-            mimeType,
-            data: imageBase64,
-          },
-        },
-        { text: prompt },
-      ])
+    for (const modelName of IMAGE_MODELS) {
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        // @ts-expect-error — responseModalities no está en los tipos pero la API lo requiere para generar imágenes
+        generationConfig: { responseModalities: ['Text', 'Image'] },
+      })
 
-      const response = result.response
+      for (const prompt of prompts) {
+        try {
+          const result = await model.generateContent([
+            { inlineData: { mimeType, data: imageBase64 } },
+            { text: prompt },
+          ])
 
-      // Verificar si fue rechazada por IMAGE_RECITATION
-      const finishReason = response.candidates?.[0]?.finishReason as string | undefined
-      if (finishReason === 'IMAGE_RECITATION') {
-        console.warn('Upscale: IMAGE_RECITATION, reintentando con prompt alternativo...')
-        continue
-      }
+          const response = result.response
+          const finishReason = response.candidates?.[0]?.finishReason as string | undefined
 
-      // Extraer imagen generada de la respuesta
-      for (const candidate of response.candidates ?? []) {
-        for (const part of candidate.content?.parts ?? []) {
-          if (part.inlineData?.data) {
-            return NextResponse.json({
-              imageBase64: part.inlineData.data,
-              mimeType: part.inlineData.mimeType ?? 'image/png',
-            })
+          if (finishReason === 'IMAGE_RECITATION') {
+            console.warn(`Upscale [${modelName}]: IMAGE_RECITATION, reintentando…`)
+            continue
+          }
+
+          for (const candidate of response.candidates ?? []) {
+            for (const part of candidate.content?.parts ?? []) {
+              if (part.inlineData?.data) {
+                return NextResponse.json({
+                  imageBase64: part.inlineData.data,
+                  mimeType: part.inlineData.mimeType ?? 'image/png',
+                })
+              }
+            }
+          }
+        } catch (modelError) {
+          const msg = modelError instanceof Error ? modelError.message : String(modelError)
+          console.warn(`Upscale [${modelName}] falló: ${msg}`)
+          if (msg.includes('not found') || msg.includes('not available') || msg.includes('404')) {
+            break // Modelo no existe, probar el siguiente
           }
         }
       }
     }
 
     return NextResponse.json(
-      { error: 'No se pudo generar imagen mejorada' },
+      { error: 'No se pudo generar imagen mejorada. Todos los modelos fallaron.' },
       { status: 500 }
     )
   } catch (error) {
-    console.error('Upscale API error:', error)
+    const msg = error instanceof Error ? error.message : 'Error desconocido'
+    console.error('Upscale API error:', msg)
     return NextResponse.json(
-      { error: 'Error al procesar el upscale' },
+      { error: `Error al procesar el upscale: ${msg}` },
       { status: 500 }
     )
   }

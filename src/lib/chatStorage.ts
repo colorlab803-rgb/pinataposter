@@ -87,14 +87,9 @@ class LocalChatStorage implements IChatStorage {
 
   saveConversation(conversation: Conversation): void {
     const map = this.readConversationsMap()
-    // Strip imageUrl from messages to save space
     const cleaned: Conversation = {
       ...conversation,
-      messages: conversation.messages.map((m) => {
-        const { imageUrl, ...rest } = m
-        void imageUrl
-        return rest
-      }),
+      messages: conversation.messages.map(({ imageUrl: _, ...rest }) => rest),
     }
     map[conversation.id] = cleaned
     this.writeConversationsMap(map)
@@ -133,6 +128,15 @@ class LocalChatStorage implements IChatStorage {
 // ── Singleton ───────────────────────────────────────────────
 
 export const chatStorage: IChatStorage = new LocalChatStorage()
+
+// ── Welcome message ─────────────────────────────────────────
+
+export const WELCOME_MESSAGE: Message = {
+  id: 'welcome',
+  role: 'assistant',
+  content:
+    '¡Hola! Soy **MoldeGPT** 🪅\n\nEnvíame la foto de tu piñata y yo me encargo de crear el molde listo para imprimir.\n\n📷 Arrastra una imagen aquí, pégala, o usa el botón de foto.',
+}
 
 // ── Helpers ─────────────────────────────────────────────────
 

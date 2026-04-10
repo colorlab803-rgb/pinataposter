@@ -125,6 +125,7 @@ const functionDeclarations: FunctionDeclaration[] = [
 
 const tools: Tool[] = [{ functionDeclarations }]
 
+const CHAT_MODEL = 'gemini-2.5-flash'
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GOOGLE_AI_API_KEY
@@ -154,7 +155,7 @@ export async function POST(req: NextRequest) {
 
   const genAI = new GoogleGenerativeAI(apiKey)
   const model = genAI.getGenerativeModel({
-    model: 'gemini-3.1-pro-preview',
+    model: CHAT_MODEL,
     systemInstruction: SYSTEM_PROMPT,
     tools,
     toolConfig: { functionCallingConfig: { mode: FunctionCallingMode.AUTO } },
@@ -251,8 +252,19 @@ export async function POST(req: NextRequest) {
 
         send({ type: 'done' })
       } catch (error) {
-        console.error('MoldeGPT streaming error:', error)
-        send({ type: 'error', message: 'Error al procesar la solicitud' })
+        const msg = error instanceof Error ? error.message : 'Error desconocido'
+        console.error(`MoldeGPT streaming error [${CHAT_MODEL}]:`, msg)
+
+        let userMessage = 'Error al procesar la solicitud.'
+        if (msg.includes('API key')) {
+          userMessage = 'La API key de Gemini es inválida o expiró. Contacta al administrador.'
+        } else if (msg.includes('not found') || msg.includes('not available')) {
+          userMessage = `El modelo ${CHAT_MODEL} no está disponible. Contacta al administrador.`
+        } else if (msg.includes('quota') || msg.includes('429')) {
+          userMessage = 'Se excedió el límite de uso de la API. Intenta más tarde.'
+        }
+
+        send({ type: 'error', message: userMessage })
       } finally {
         controller.close()
       }

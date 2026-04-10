@@ -13,19 +13,13 @@ import {
   generateConversationId,
   generateTitle,
   generatePreview,
+  WELCOME_MESSAGE,
   type ConversationMeta,
   type UserSettings,
 } from '@/lib/chatStorage'
 
 type PaperSize = 'Letter' | 'Legal' | 'Tabloid' | 'A4' | 'A3'
 type Orientation = 'portrait' | 'landscape'
-
-const WELCOME_MESSAGE: Message = {
-  id: 'welcome',
-  role: 'assistant',
-  content:
-    '¡Hola! Soy **MoldeGPT** 🪅\n\nEnvíame la foto de tu piñata y yo me encargo de crear el molde listo para imprimir.\n\n📷 Arrastra una imagen aquí, pégala, o usa el botón de foto.',
-}
 
 export default function ChatPage() {
   const [config, setConfig] = useState<{
@@ -45,6 +39,7 @@ export default function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true) // abierto por defecto en desktop
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null)
+  const downloadTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     setConversations(chatStorage.getConversations())
@@ -201,9 +196,10 @@ export default function ChatPage() {
   }, [])
 
   const handleDownloadRequest = useCallback((format: 'pdf' | 'zip') => {
+    if (downloadTimerRef.current) clearTimeout(downloadTimerRef.current)
     const trigger = { format, projectName: 'MoldeGPT-Piñata' }
     setTriggerDownload(trigger)
-    setTimeout(() => setTriggerDownload(null), 8000)
+    downloadTimerRef.current = setTimeout(() => setTriggerDownload(null), 8000)
   }, [])
 
   return (

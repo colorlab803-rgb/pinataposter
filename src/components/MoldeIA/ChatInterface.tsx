@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { ArrowUp, Bot, Loader2, Plus, X } from 'lucide-react'
 import { ChatMessage, type Message } from './ChatMessage'
+import { WELCOME_MESSAGE } from '@/lib/chatStorage'
 import Image from 'next/image'
 
 interface ToolCall {
@@ -20,13 +21,6 @@ interface ChatInterfaceProps {
   initialMessages?: Message[]
   onMessagesChange?: (messages: Message[]) => void
   userSettings?: import('@/lib/chatStorage').UserSettings | null
-}
-
-const WELCOME_MESSAGE: Message = {
-  id: 'welcome',
-  role: 'assistant',
-  content:
-    '¡Hola! Soy **MoldeGPT** 🪅\n\nEnvíame la foto de tu piñata y yo me encargo de crear el molde listo para imprimir.\n\n📷 Arrastra una imagen aquí, pégala, o usa el botón de foto.',
 }
 
 function fileToBase64(file: File): Promise<{ base64: string; mimeType: string; dataUrl: string }> {
@@ -67,7 +61,16 @@ export function ChatInterface({
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const abortControllerRef = useRef<AbortController | null>(null)
+
   const isEmptyState = messages.length === 0 || (messages.length === 1 && messages[0].id === 'welcome')
+
+  // Cancelar request al desmontar o cambiar de conversación
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort()
+    }
+  }, [conversationId])
 
   // Cargar mensajes cuando cambia la conversación
   useEffect(() => {
@@ -139,13 +142,16 @@ export function ChatInterface({
             onUpscaleRequest()
             break
           case 'descargarMolde': {
-            // No auto-descargar; el botón en ChatMessage se encarga
+            if (userSettings?.autoDownloadPdf) {
+              const fmt = (tc.args.formato as 'pdf' | 'zip') || 'pdf'
+              onDownloadRequest(fmt)
+            }
             break
           }
         }
       }
     },
-    [onConfigChange, onUpscaleRequest, onDownloadRequest]
+    [onConfigChange, onUpscaleRequest, onDownloadRequest, userSettings?.autoDownloadPdf]
   )
 
   const sendMessage = async () => {
@@ -174,6 +180,10 @@ export function ChatInterface({
     const assistantId = (Date.now() + 1).toString()
 
     try {
+      abortControllerRef.current?.abort()
+      const controller = new AbortController()
+      abortControllerRef.current = controller
+
       const chatMessages = updatedMessages.map((m) => ({ role: m.role, content: m.content }))
       const generatorState = { tieneImagen: hasImage || generatorReady }
 
@@ -187,6 +197,7 @@ export function ChatInterface({
           generatorState,
           userSettings: userSettings ?? undefined,
         }),
+        signal: controller.signal,
       })
 
       if (!res.ok) throw new Error('Error en la API')
@@ -264,12 +275,18 @@ export function ChatInterface({
                 )
                 break
             }
-          } catch {
-            // Ignorar líneas JSON mal formadas
+          } catch (parseError) {
+            if (jsonStr.trim()) {
+              console.warn('SSE JSON parse error:', parseError, 'line:', jsonStr.slice(0, 100))
+            }
           }
         }
       }
-    } catch {
+    } catch (error) {
+      // Ignorar abortos (cambio de conversación)
+      if (error instanceof DOMException && error.name === 'AbortError') return
+
+      console.error('Chat send error:', error)
       setMessages((prev) => {
         const hasAssistant = prev.some((m) => m.id === assistantId)
         if (hasAssistant) {
