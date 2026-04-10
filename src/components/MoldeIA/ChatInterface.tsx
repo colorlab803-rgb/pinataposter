@@ -139,9 +139,7 @@ export function ChatInterface({
             onUpscaleRequest()
             break
           case 'descargarMolde': {
-            const { formato } = tc.args as { formato: 'pdf' | 'zip' }
-            await new Promise((r) => setTimeout(r, 2000))
-            onDownloadRequest(formato)
+            // No auto-descargar; el botón en ChatMessage se encarga
             break
           }
         }
@@ -379,7 +377,11 @@ export function ChatInterface({
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-3xl mx-auto px-4 py-4 space-y-1">
               {messages.map((msg) => (
-                <ChatMessage key={msg.id} message={msg} />
+                <ChatMessage
+                  key={msg.id}
+                  message={msg}
+                  onDownloadRequest={onDownloadRequest}
+                />
               ))}
               {isLoading && (
                 <div className="py-2">

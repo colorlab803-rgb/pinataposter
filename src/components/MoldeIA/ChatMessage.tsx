@@ -1,4 +1,4 @@
-import { Bot } from 'lucide-react'
+import { Bot, Download } from 'lucide-react'
 import { AgentAction } from './AgentAction'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
@@ -19,10 +19,15 @@ export interface Message {
 
 interface ChatMessageProps {
   message: Message
+  onDownloadRequest?: (format: 'pdf' | 'zip') => void
 }
 
-export function ChatMessage({ message }: ChatMessageProps) {
+export function ChatMessage({ message, onDownloadRequest }: ChatMessageProps) {
   const isUser = message.role === 'user'
+
+  const downloadToolCall = message.toolCalls?.find(
+    (tc) => tc.name === 'descargarMolde' && message.toolCallsStatus === 'done'
+  )
 
   return (
     <div className={`py-2 ${isUser ? 'flex justify-end' : ''}`}>
@@ -93,6 +98,19 @@ export function ChatMessage({ message }: ChatMessageProps) {
                   >
                     {message.content}
                   </ReactMarkdown>
+                </div>
+              )}
+
+              {/* Download button */}
+              {downloadToolCall && onDownloadRequest && (
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => onDownloadRequest((downloadToolCall.args.formato as 'pdf' | 'zip') || 'pdf')}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30"
+                  >
+                    <Download className="h-4 w-4" />
+                    Descargar {String((downloadToolCall.args.formato as string) || 'pdf').toUpperCase()}
+                  </button>
                 </div>
               )}
 

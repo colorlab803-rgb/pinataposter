@@ -23,7 +23,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   defaultPinataSize: 'mediana',
   defaultPaperSize: 'Letter',
   defaultOrientation: 'portrait',
-  autoDownloadPdf: true,
+  autoDownloadPdf: false,
 }
 
 export interface ConversationMeta {
