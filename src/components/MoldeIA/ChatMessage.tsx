@@ -28,9 +28,10 @@ interface ChatMessageProps {
   isLast?: boolean
   onDownloadRequest?: (format: 'pdf' | 'zip') => void
   onQuickAction?: (text: string) => void
+  generatorReady?: boolean
 }
 
-export function ChatMessage({ message, isLast, onDownloadRequest, onQuickAction }: ChatMessageProps) {
+export function ChatMessage({ message, isLast, onDownloadRequest, onQuickAction, generatorReady }: ChatMessageProps) {
   const isUser = message.role === 'user'
 
   const downloadToolCall = message.toolCalls?.find(
@@ -115,13 +116,23 @@ export function ChatMessage({ message, isLast, onDownloadRequest, onQuickAction 
               {/* Download button */}
               {downloadToolCall && onDownloadRequest && (
                 <div className="mt-3 flex gap-2">
-                  <button
-                    onClick={() => onDownloadRequest((downloadToolCall.args.formato as 'pdf' | 'zip') || 'pdf')}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30"
-                  >
-                    <Download className="h-4 w-4" />
-                    Descargar {String((downloadToolCall.args.formato as string) || 'pdf').toUpperCase()}
-                  </button>
+                  {generatorReady ? (
+                    <button
+                      onClick={() => onDownloadRequest((downloadToolCall.args.formato as 'pdf' | 'zip') || 'pdf')}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium hover:from-purple-500 hover:to-pink-500 transition-all shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30"
+                    >
+                      <Download className="h-4 w-4" />
+                      Descargar {String((downloadToolCall.args.formato as string) || 'pdf').toUpperCase()}
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 text-white/40 text-sm font-medium cursor-not-allowed border border-white/10"
+                    >
+                      <Download className="h-4 w-4" />
+                      Sube una imagen primero
+                    </button>
+                  )}
                 </div>
               )}
 

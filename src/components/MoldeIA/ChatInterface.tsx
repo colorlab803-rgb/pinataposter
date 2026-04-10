@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { ArrowUp, Bot, Loader2, Plus, X, Camera } from 'lucide-react'
+import { toast } from 'sonner'
 import { ChatMessage, type Message, type QuickAction } from './ChatMessage'
 import { ChatOnboarding } from './ChatOnboarding'
 import { WELCOME_MESSAGE } from '@/lib/chatStorage'
@@ -209,9 +210,17 @@ export function ChatInterface({
             break
           }
           case 'upscalarImagen':
+            if (!generatorReady) {
+              toast.error('Sin imagen', { description: 'Sube una imagen primero para poder mejorarla.' })
+              break
+            }
             onUpscaleRequest()
             break
           case 'descargarMolde': {
+            if (!generatorReady) {
+              toast.error('Sin imagen', { description: 'Sube una imagen primero para generar el molde.' })
+              break
+            }
             // Siempre hacer upscale antes de generar el PDF
             await onUpscaleRequest()
             await new Promise((r) => setTimeout(r, 500))
@@ -224,7 +233,7 @@ export function ChatInterface({
         }
       }
     },
-    [onConfigChange, onUpscaleRequest, onDownloadRequest, userSettings?.autoDownloadPdf]
+    [onConfigChange, onUpscaleRequest, onDownloadRequest, userSettings?.autoDownloadPdf, generatorReady]
   )
 
   const sendMessage = async (overrideText?: string) => {
@@ -608,6 +617,7 @@ export function ChatInterface({
                   isLast={idx === messages.length - 1}
                   onDownloadRequest={onDownloadRequest}
                   onQuickAction={handleQuickAction}
+                  generatorReady={generatorReady}
                 />
               ))}
               {isLoading && (
