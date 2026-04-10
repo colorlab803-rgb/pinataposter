@@ -4,48 +4,48 @@
         "name": "Chat page loads",
         "status": "PASS",
         "detail": "HTTP 200",
-        "duration_ms": 1362
+        "duration_ms": 209
     },
     {
         "id": "TC-01b",
         "name": "MoldeGPT API reachable",
         "status": "PASS",
         "detail": "HTTP 400 (expected 400 for empty body)",
-        "duration_ms": 252
+        "duration_ms": 183
     },
     {
         "id": "TC-01c",
         "name": "Upscale API reachable",
         "status": "PASS",
         "detail": "HTTP 400 (expected 400 for empty body)",
-        "duration_ms": 224
+        "duration_ms": 171
     },
     {
         "id": "TC-02",
         "name": "Chat responde a saludo",
         "status": "PASS",
-        "detail": "\u00a1Hola! Soy MoldeGPT, tu pi\u00f1atero experto. \ud83e\ude85 Puedo ayudarte a crear moldes para tus pi\u00f1atas. Solo tie",
-        "duration_ms": 1381
+        "detail": "\u00a1Hola! Soy MoldeGPT, tu asistente experto para crear moldes de pi\u00f1atas. \ud83e\udd73 Puedo ayudarte a:  1.  **C",
+        "duration_ms": 1814
     },
     {
         "id": "TC-03a",
         "name": "Agente llama configurarTamano",
         "status": "PASS",
-        "detail": "tamano=True|papel=True|descarga=True|total=4|names=upscalarImagen,configurarTamano,configurarPapel,descargarMolde",
-        "duration_ms": 6944
+        "detail": "tamano=True|papel=True|descarga=True|total=6|names=configurarTamano,configurarPapel,upscalarImagen,descargarMolde,configurarTamano,configurarPapel",
+        "duration_ms": 13961
     },
     {
         "id": "TC-03b",
         "name": "Agente llama configurarPapel",
         "status": "PASS",
-        "detail": "tamano=True|papel=True|descarga=True|total=4|names=upscalarImagen,configurarTamano,configurarPapel,descargarMolde",
+        "detail": "tamano=True|papel=True|descarga=True|total=6|names=configurarTamano,configurarPapel,upscalarImagen,descargarMolde,configurarTamano,configurarPapel",
         "duration_ms": 0
     },
     {
         "id": "TC-03c",
         "name": "Agente llama descargarMolde",
         "status": "PASS",
-        "detail": "tamano=True|papel=True|descarga=True|total=4|names=upscalarImagen,configurarTamano,configurarPapel,descargarMolde",
+        "detail": "tamano=True|papel=True|descarga=True|total=6|names=configurarTamano,configurarPapel,upscalarImagen,descargarMolde,configurarTamano,configurarPapel",
         "duration_ms": 0
     },
     {
@@ -53,34 +53,34 @@
         "name": "Agente invoca upscalarImagen",
         "status": "PASS",
         "detail": "upscalarImagen tool call presente",
-        "duration_ms": 1735
+        "duration_ms": 1597
     },
     {
         "id": "TC-05",
         "name": "Agente reconfigura tama\u00f1o grande",
         "status": "PASS",
         "detail": "yes|alto=120|ancho=80",
-        "duration_ms": 4321
+        "duration_ms": 2537
     },
     {
         "id": "TC-06",
         "name": "Upscale API retorna imagen mejorada",
         "status": "PASS",
-        "detail": "yes|size=442008|mime=image/jpeg",
-        "duration_ms": 13344
+        "detail": "yes|size=306888|mime=image/png",
+        "duration_ms": 3917
     },
     {
         "id": "TC-07a",
         "name": "Rechaza messages inv\u00e1lido",
         "status": "PASS",
         "detail": "HTTP 400",
-        "duration_ms": 197
+        "duration_ms": 178
     },
     {
         "id": "TC-07b",
         "name": "Upscale rechaza sin imagen",
         "status": "PASS",
         "detail": "HTTP 400",
-        "duration_ms": 206
+        "duration_ms": 184
     }
 ]

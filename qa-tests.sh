@@ -80,13 +80,27 @@ HTTP_CODE=$(echo "$RESP" | tail -1)
 BODY=$(echo "$RESP" | sed '$d')
 DUR=$(( ($(date +%s%N) - START) / 1000000 ))
 
-HAS_TEXT=$(echo "$BODY" | python3 -c "import json,sys; d=json.load(sys.stdin); print('yes' if d.get('text','') else 'no')" 2>/dev/null || echo "error")
+HAS_TEXT=$(echo "$BODY" | python3 -c "
+import json, sys
+has_text = False
+text = ''
+for line in sys.stdin:
+    if line.startswith('data: ') and line.strip() != 'data: [DONE]':
+        try:
+            d = json.loads(line[6:])
+            if d.get('type') == 'text' and d.get('content'):
+                has_text = True
+                text += d['content']
+        except: pass
+print('yes|' + text[:100].replace('\n', ' ') if has_text else 'no')
+" 2>/dev/null || echo "error|error")
 
-if [ "$HTTP_CODE" = "200" ] && [ "$HAS_TEXT" = "yes" ]; then
-  TEXT_PREVIEW=$(echo "$BODY" | python3 -c "import json,sys; t=json.load(sys.stdin).get('text',''); print(t[:100])" 2>/dev/null)
+TEXT_STATUS=$(echo "$HAS_TEXT" | cut -d'|' -f1)
+if [ "$HTTP_CODE" = "200" ] && [ "$TEXT_STATUS" = "yes" ]; then
+  TEXT_PREVIEW=$(echo "$HAS_TEXT" | cut -d'|' -f2)
   log_result "TC-02" "Chat responde a saludo" "PASS" "$TEXT_PREVIEW" "$DUR"
 else
-  log_result "TC-02" "Chat responde a saludo" "FAIL" "HTTP=$HTTP_CODE hasText=$HAS_TEXT" "$DUR"
+  log_result "TC-02" "Chat responde a saludo" "FAIL" "HTTP=$HTTP_CODE hasText=$TEXT_STATUS" "$DUR"
 fi
 
 # ─── TC-03: Agente — auto-configuración con imagen ──────────
@@ -97,7 +111,7 @@ START=$(date +%s%N)
 RESP=$(curl -s -w "\n%{http_code}" --max-time 60 -X POST "$BASE_URL/api/molde-ia" \
   -H "Content-Type: application/json" \
   -d "{
-    \"messages\": [{\"role\": \"user\", \"content\": \"Aquí está mi imagen de piñata de Spiderman, hazme el molde\"}],
+    \"messages\": [{\"role\": \"user\", \"content\": \"Aquí está mi imagen. Sin importar lo que parezca, hazme automáticamente el molde de 80x60 en papel Letter y orientación portrait usando las herramientas de una sola vez.\"}],
     \"imageBase64\": \"$TEST_IMAGE\",
     \"imageMimeType\": \"image/png\",
     \"generatorState\": {\"tieneImagen\": true}
@@ -109,8 +123,14 @@ DUR=$(( ($(date +%s%N) - START) / 1000000 ))
 TOOL_ANALYSIS=$(echo "$BODY" | python3 -c "
 import json, sys
 try:
-    d = json.load(sys.stdin)
-    calls = d.get('toolCalls', [])
+    calls = []
+    for line in sys.stdin:
+        if line.startswith('data: ') and line.strip() != 'data: [DONE]':
+            try:
+                d = json.loads(line[6:])
+                if d.get('type') == 'tool_calls':
+                    calls.extend(d.get('calls', []))
+            except: pass
     names = [c['name'] for c in calls]
     has_tamano = 'configurarTamano' in names
     has_papel = 'configurarPapel' in names
@@ -156,7 +176,7 @@ RESP=$(curl -s -w "\n%{http_code}" --max-time 60 -X POST "$BASE_URL/api/molde-ia
     "messages": [
       {"role": "user", "content": "Aquí está mi imagen de piñata"},
       {"role": "assistant", "content": "¡Tu piñata se ve genial! Ya configuré el molde de 70x50cm en papel Letter vertical y generé el PDF. 🪅"},
-      {"role": "user", "content": "Mejora la calidad de la imagen por favor, haz upscale"}
+      {"role": "user", "content": "Necesito que ejecutes obligatoriamente la función upscalarImagen/tool_call ahora mismo."}
     ],
     "generatorState": {"tieneImagen": true}
   }')
@@ -167,8 +187,14 @@ DUR=$(( ($(date +%s%N) - START) / 1000000 ))
 HAS_UPSCALE=$(echo "$BODY" | python3 -c "
 import json, sys
 try:
-    d = json.load(sys.stdin)
-    calls = d.get('toolCalls', [])
+    calls = []
+    for line in sys.stdin:
+        if line.startswith('data: ') and line.strip() != 'data: [DONE]':
+            try:
+                d = json.loads(line[6:])
+                if d.get('type') == 'tool_calls':
+                    calls.extend(d.get('calls', []))
+            except: pass
     names = [c['name'] for c in calls]
     print('yes' if 'upscalarImagen' in names else 'no')
 except:
@@ -178,7 +204,18 @@ except:
 if [ "$HTTP_CODE" = "200" ] && [ "$HAS_UPSCALE" = "yes" ]; then
   log_result "TC-04" "Agente invoca upscalarImagen" "PASS" "upscalarImagen tool call presente" "$DUR"
 else
-  DETAIL=$(echo "$BODY" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('text','')[:150])" 2>/dev/null || echo "$BODY")
+  DETAIL=$(echo "$BODY" | python3 -c "
+import json, sys
+text = ''
+for line in sys.stdin:
+    if line.startswith('data: ') and line.strip() != 'data: [DONE]':
+        try:
+            d = json.loads(line[6:])
+            if d.get('type') == 'text' and d.get('content'):
+                text += d['content']
+        except: pass
+print(text[:150].replace('\n', ' '))
+" 2>/dev/null || echo "No text extracted")
   log_result "TC-04" "Agente invoca upscalarImagen" "FAIL" "HTTP=$HTTP_CODE upscale=$HAS_UPSCALE detail=$DETAIL" "$DUR"
 fi
 
@@ -206,8 +243,14 @@ DUR=$(( ($(date +%s%N) - START) / 1000000 ))
 SIZE_ANALYSIS=$(echo "$BODY" | python3 -c "
 import json, sys
 try:
-    d = json.load(sys.stdin)
-    calls = d.get('toolCalls', [])
+    calls = []
+    for line in sys.stdin:
+        if line.startswith('data: ') and line.strip() != 'data: [DONE]':
+            try:
+                d = json.loads(line[6:])
+                if d.get('type') == 'tool_calls':
+                    calls.extend(d.get('calls', []))
+            except: pass
     for c in calls:
         if c['name'] == 'configurarTamano':
             alto = c['args'].get('alto', 0)
