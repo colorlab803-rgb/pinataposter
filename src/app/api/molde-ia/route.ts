@@ -33,8 +33,8 @@ Cuando el usuario PROVEE las medidas o confirma un tamaño:
 3. Si el usuario confirma o elige papel, EJECUTA configurarPapel
 
 Cuando toda la configuración está lista:
-1. Dile al usuario que el molde está listo
-2. EJECUTA descargarMolde para que aparezca el botón de descarga
+1. EJECUTA descargarMolde para que aparezca el botón de descarga
+2. En tu texto di algo como "¡Preparando tu molde!" o "Generando tu molde…" — NUNCA digas que "está listo" porque primero se mejora la imagen con IA y eso tarda unos segundos
 3. NO descargues automáticamente — el usuario decidirá cuándo descargar con el botón
 
 EXCEPCIÓN — si el usuario da TODA la info en un solo mensaje (ej: "hazme un molde de 80x60 en Letter"):

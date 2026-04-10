@@ -225,6 +225,8 @@ export function ChatInterface({
       let buffer = ''
       let allToolCalls: ToolCall[] = []
       let messageCreated = false
+      let deferredText = ''
+      let hasDescargarMolde = false
 
       const ensureMessage = () => {
         if (!messageCreated) {
@@ -257,15 +259,24 @@ export function ChatInterface({
             switch (event.type) {
               case 'text':
                 ensureMessage()
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === assistantId ? { ...m, content: m.content + event.content } : m
+                if (hasDescargarMolde) {
+                  // Diferir texto hasta que los tools terminen
+                  deferredText += event.content
+                } else {
+                  setMessages((prev) =>
+                    prev.map((m) =>
+                      m.id === assistantId ? { ...m, content: m.content + event.content } : m
+                    )
                   )
-                )
+                }
                 break
-              case 'tool_calls':
+              case 'tool_calls': {
                 ensureMessage()
-                allToolCalls = [...allToolCalls, ...(event.calls ?? [])]
+                const calls = (event.calls ?? []) as ToolCall[]
+                allToolCalls = [...allToolCalls, ...calls]
+                if (calls.some((tc: ToolCall) => tc.name === 'descargarMolde')) {
+                  hasDescargarMolde = true
+                }
                 setMessages((prev) =>
                   prev.map((m) =>
                     m.id === assistantId
@@ -273,13 +284,23 @@ export function ChatInterface({
                       : m
                   )
                 )
-                await executeToolCalls(event.calls ?? [])
+                await executeToolCalls(calls)
                 setMessages((prev) =>
                   prev.map((m) =>
                     m.id === assistantId ? { ...m, toolCallsStatus: 'done' as const } : m
                   )
                 )
+                // Mostrar texto diferido ahora que los tools terminaron
+                if (deferredText) {
+                  setMessages((prev) =>
+                    prev.map((m) =>
+                      m.id === assistantId ? { ...m, content: m.content + deferredText } : m
+                    )
+                  )
+                  deferredText = ''
+                }
                 break
+              }
               case 'error':
                 ensureMessage()
                 setMessages((prev) =>
@@ -297,6 +318,15 @@ export function ChatInterface({
             }
           }
         }
+      }
+
+      // Si quedó texto diferido sin tool_calls posteriores, mostrarlo
+      if (deferredText) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId ? { ...m, content: m.content + deferredText } : m
+          )
+        )
       }
     } catch (error) {
       // Ignorar abortos (cambio de conversación)

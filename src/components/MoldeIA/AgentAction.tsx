@@ -29,12 +29,12 @@ const actionConfig: Record<string, {
   upscalarImagen: {
     icon: <Wand2 className="h-3.5 w-3.5" />,
     label: 'Mejorando imagen',
-    formatArgs: () => 'Upscale con IA…',
+    formatArgs: () => 'Real-ESRGAN 4x…',
   },
   descargarMolde: {
     icon: <ArrowDownToLine className="h-3.5 w-3.5" />,
-    label: 'Generando molde',
-    formatArgs: (a) => `Formato ${String(a.formato).toUpperCase()}`,
+    label: 'Preparando molde',
+    formatArgs: (a) => `Upscale 4x + ${String(a.formato || 'pdf').toUpperCase()}`,
   },
 }
 
