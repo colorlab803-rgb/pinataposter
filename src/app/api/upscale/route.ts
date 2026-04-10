@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const IMAGE_MODELS = [
-  'gemini-2.5-flash-image',
-  'gemini-3.1-flash-image-preview',
-]
+const REPLICATE_MODEL = 'nightmareai/real-esrgan'
+const UPSCALE_FACTOR = 4
+const MAX_POLL_TIME_MS = 120_000
+const POLL_INTERVAL_MS = 1500
 
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = process.env.GOOGLE_AI_API_KEY
-    if (!apiKey) {
+    const replicateKey = process.env.REPLICATE_API_TOKEN
+    if (!replicateKey) {
       return NextResponse.json(
-        { error: 'GOOGLE_AI_API_KEY no configurada' },
+        { error: 'REPLICATE_API_TOKEN no configurada' },
         { status: 500 }
       )
     }
@@ -22,66 +21,100 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'imageBase64 requerido' }, { status: 400 })
     }
 
-    if (imageBase64.length > 14_000_000) {
+    if (imageBase64.length > 20_000_000) {
       return NextResponse.json(
-        { error: 'Imagen demasiado grande para upscale (máx ~10MB)' },
+        { error: 'Imagen demasiado grande para upscale (máx ~15MB)' },
         { status: 413 }
       )
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey)
+    const dataUri = `data:${mimeType};base64,${imageBase64}`
 
-    const prompts = [
-      'You are an image enhancement AI. Take this input image and generate an improved, higher-resolution version of the same image. Increase sharpness, enhance details, and improve overall visual quality. Output ONLY the enhanced image, keeping the same composition, colors, and content.',
-      'Generate a new high-quality version of this image with better resolution, sharper details, and enhanced clarity. The output must be an image that looks like an improved version of the input.',
-    ]
+    // Crear predicción
+    const createRes = await fetch(`https://api.replicate.com/v1/models/${REPLICATE_MODEL}/predictions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${replicateKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        input: {
+          image: dataUri,
+          scale: UPSCALE_FACTOR,
+          face_enhance: false,
+        },
+      }),
+    })
 
-    for (const modelName of IMAGE_MODELS) {
-      const model = genAI.getGenerativeModel({
-        model: modelName,
-        // @ts-expect-error — responseModalities no está en los tipos pero la API lo requiere para generar imágenes
-        generationConfig: { responseModalities: ['Text', 'Image'] },
-      })
-
-      for (const prompt of prompts) {
-        try {
-          const result = await model.generateContent([
-            { inlineData: { mimeType, data: imageBase64 } },
-            { text: prompt },
-          ])
-
-          const response = result.response
-          const finishReason = response.candidates?.[0]?.finishReason as string | undefined
-
-          if (finishReason === 'IMAGE_RECITATION') {
-            console.warn(`Upscale [${modelName}]: IMAGE_RECITATION, reintentando…`)
-            continue
-          }
-
-          for (const candidate of response.candidates ?? []) {
-            for (const part of candidate.content?.parts ?? []) {
-              if (part.inlineData?.data) {
-                return NextResponse.json({
-                  imageBase64: part.inlineData.data,
-                  mimeType: part.inlineData.mimeType ?? 'image/png',
-                })
-              }
-            }
-          }
-        } catch (modelError) {
-          const msg = modelError instanceof Error ? modelError.message : String(modelError)
-          console.warn(`Upscale [${modelName}] falló: ${msg}`)
-          if (msg.includes('not found') || msg.includes('not available') || msg.includes('404')) {
-            break // Modelo no existe, probar el siguiente
-          }
-        }
-      }
+    if (!createRes.ok) {
+      const err = await createRes.json().catch(() => ({}))
+      console.error('Replicate create error:', err)
+      return NextResponse.json(
+        { error: `Error al iniciar upscale: ${(err as { detail?: string }).detail || createRes.statusText}` },
+        { status: createRes.status }
+      )
     }
 
-    return NextResponse.json(
-      { error: 'No se pudo generar imagen mejorada. Todos los modelos fallaron.' },
-      { status: 500 }
-    )
+    const prediction = await createRes.json() as {
+      id: string
+      status: string
+      output?: string
+      error?: string
+      urls: { get: string }
+    }
+
+    // Poll hasta completar
+    const startTime = Date.now()
+    let result = prediction
+
+    while (result.status !== 'succeeded' && result.status !== 'failed' && result.status !== 'canceled') {
+      if (Date.now() - startTime > MAX_POLL_TIME_MS) {
+        return NextResponse.json(
+          { error: 'El upscale tardó demasiado. Intenta con una imagen más pequeña.' },
+          { status: 504 }
+        )
+      }
+
+      await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS))
+
+      const pollRes = await fetch(result.urls.get, {
+        headers: { 'Authorization': `Token ${replicateKey}` },
+      })
+      result = await pollRes.json() as typeof result
+    }
+
+    if (result.status === 'failed') {
+      console.error('Replicate prediction failed:', result.error)
+      return NextResponse.json(
+        { error: `Upscale falló: ${result.error || 'Error desconocido'}` },
+        { status: 500 }
+      )
+    }
+
+    if (!result.output) {
+      return NextResponse.json(
+        { error: 'No se obtuvo imagen del upscale' },
+        { status: 500 }
+      )
+    }
+
+    // Descargar la imagen resultado y convertir a base64
+    const imageRes = await fetch(result.output)
+    if (!imageRes.ok) {
+      return NextResponse.json(
+        { error: 'Error al descargar imagen mejorada' },
+        { status: 500 }
+      )
+    }
+
+    const imageBuffer = await imageRes.arrayBuffer()
+    const outputBase64 = Buffer.from(imageBuffer).toString('base64')
+    const outputMimeType = imageRes.headers.get('content-type') || 'image/png'
+
+    return NextResponse.json({
+      imageBase64: outputBase64,
+      mimeType: outputMimeType,
+    })
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'Error desconocido'
     console.error('Upscale API error:', msg)
