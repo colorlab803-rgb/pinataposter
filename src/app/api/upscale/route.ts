@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 const IMAGE_MODELS = [
-  'gemini-2.0-flash-preview-image-generation',
-  'gemini-2.0-flash-exp-image-generation',
+  'gemini-2.5-flash-image',
+  'gemini-3.1-flash-image-preview',
 ]
 
 export async function POST(req: NextRequest) {
