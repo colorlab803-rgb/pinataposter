@@ -206,20 +206,49 @@ export async function POST(req: NextRequest) {
 
       try {
         const chat = model.startChat({ history })
-        let maxIterations = 5
+        const MAX_ITERATIONS = 5
+        const MAX_RETRIES = 2
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let currentParts: any = lastParts
+        let hasStreamedText = false
+        const calledFunctions = new Set<string>()
 
-        while (maxIterations > 0) {
-          maxIterations--
+        for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
+          let result
+          let lastError: Error | null = null
 
-          const result = await chat.sendMessageStream(currentParts)
+          // Retry logic para continuaciones después de function responses
+          for (let retry = 0; retry <= (iteration > 0 ? MAX_RETRIES : 0); retry++) {
+            try {
+              if (retry > 0) {
+                await new Promise((r) => setTimeout(r, 1000 * retry))
+                console.log(`MoldeGPT: retry ${retry} for iteration ${iteration}`)
+              }
+              result = await chat.sendMessageStream(currentParts)
+              lastError = null
+              break
+            } catch (e) {
+              lastError = e instanceof Error ? e : new Error(String(e))
+              console.error(`MoldeGPT: sendMessageStream failed (iter=${iteration}, retry=${retry}):`, lastError.message)
+            }
+          }
+
+          if (!result) {
+            // Si ya enviamos texto, cerramos con lo que tenemos
+            if (hasStreamedText) {
+              send({ type: 'text', content: '\n\n⚠️ La respuesta se interrumpió. Intenta de nuevo.' })
+              break
+            }
+            throw lastError ?? new Error('sendMessageStream falló')
+          }
+
           const functionCalls: Array<{ name: string; args: Record<string, unknown> }> = []
 
           for await (const chunk of result.stream) {
             for (const candidate of chunk.candidates ?? []) {
               for (const part of candidate.content.parts) {
                 if ('text' in part && part.text) {
+                  hasStreamedText = true
                   send({ type: 'text', content: part.text })
                 }
                 if ('functionCall' in part && part.functionCall) {
@@ -234,15 +263,24 @@ export async function POST(req: NextRequest) {
 
           if (functionCalls.length === 0) break
 
-          send({ type: 'tool_calls', calls: functionCalls })
+          // Filtrar funciones duplicadas (el modelo a veces re-llama la misma función)
+          const newCalls = functionCalls.filter((fc) => {
+            const key = `${fc.name}:${JSON.stringify(fc.args)}`
+            if (calledFunctions.has(key)) return false
+            calledFunctions.add(key)
+            return true
+          })
 
-          const functionResponses = functionCalls.map((fc) => ({
+          if (newCalls.length === 0) break
+
+          send({ type: 'tool_calls', calls: newCalls })
+
+          const functionResponses = newCalls.map((fc) => ({
             functionResponse: {
               name: fc.name,
               response: {
                 success: true,
                 message: `${fc.name} ejecutado correctamente`,
-                estado: generatorState,
               },
             },
           }))
@@ -255,13 +293,19 @@ export async function POST(req: NextRequest) {
         const msg = error instanceof Error ? error.message : 'Error desconocido'
         console.error(`MoldeGPT streaming error [${CHAT_MODEL}]:`, msg)
 
-        let userMessage = 'Error al procesar la solicitud.'
-        if (msg.includes('API key')) {
+        let userMessage = 'Error al procesar la solicitud. Intenta de nuevo.'
+        if (msg.includes('API key') || msg.includes('API_KEY_INVALID')) {
           userMessage = 'La API key de Gemini es inválida o expiró. Contacta al administrador.'
         } else if (msg.includes('not found') || msg.includes('not available')) {
           userMessage = `El modelo ${CHAT_MODEL} no está disponible. Contacta al administrador.`
-        } else if (msg.includes('quota') || msg.includes('429')) {
-          userMessage = 'Se excedió el límite de uso de la API. Intenta más tarde.'
+        } else if (msg.includes('quota') || msg.includes('429') || msg.includes('RESOURCE_EXHAUSTED')) {
+          userMessage = 'Se excedió el límite de uso de la API. Intenta en unos segundos.'
+        } else if (msg.includes('SAFETY') || msg.includes('safety')) {
+          userMessage = 'La respuesta fue bloqueada por filtros de seguridad. Intenta reformular tu mensaje.'
+        } else if (msg.includes('RECITATION')) {
+          userMessage = 'La respuesta fue bloqueada por políticas de contenido. Intenta con otra imagen o descripción.'
+        } else if (msg.includes('fetch failed') || msg.includes('ECONNRESET') || msg.includes('ETIMEDOUT')) {
+          userMessage = 'Error de conexión con el servidor de IA. Intenta de nuevo.'
         }
 
         send({ type: 'error', message: userMessage })
