@@ -31,6 +31,7 @@ export default function ChatPage() {
   const [externalProcessedImage, setExternalProcessedImage] = useState<string | null | undefined>(undefined)
   const [triggerDownload, setTriggerDownload] = useState<{ format: 'pdf' | 'zip'; projectName?: string } | null>(null)
   const [generatorReady, setGeneratorReady] = useState(false)
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 })
   const currentImageRef = useRef<string | null>(null)
 
   const [conversations, setConversations] = useState<ConversationMeta[]>([])
@@ -258,6 +259,7 @@ export default function ChatPage() {
             onUpscaleRequest={handleUpscaleRequest}
             onDownloadRequest={handleDownloadRequest}
             generatorReady={generatorReady}
+            imageDimensions={imageDimensions}
             conversationId={activeConversationId}
             initialMessages={activeMessages}
             onMessagesChange={handleMessagesChange}
@@ -274,6 +276,7 @@ export default function ChatPage() {
             controlledOrientation={config.orientation as Orientation | undefined}
             externalProcessedImageSrc={externalProcessedImage}
             onProcessedImageChange={handleProcessedImageChange}
+            onImageDimensionsChange={setImageDimensions}
             triggerDownload={triggerDownload}
           />
         </div>

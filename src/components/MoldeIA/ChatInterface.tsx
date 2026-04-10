@@ -19,6 +19,7 @@ interface ChatInterfaceProps {
   onUpscaleRequest: () => Promise<void>
   onDownloadRequest: (format: 'pdf' | 'zip') => void
   generatorReady: boolean
+  imageDimensions?: { width: number; height: number }
   conversationId: string | null
   initialMessages?: Message[]
   onMessagesChange?: (messages: Message[]) => void
@@ -45,6 +46,7 @@ export function ChatInterface({
   onUpscaleRequest,
   onDownloadRequest,
   generatorReady,
+  imageDimensions,
   conversationId,
   initialMessages,
   onMessagesChange,
@@ -192,8 +194,21 @@ export function ChatInterface({
 
         switch (tc.name) {
           case 'configurarTamano': {
-            const { ancho, alto } = tc.args as { ancho: number; alto: number }
-            onConfigChange({ targetWidth: String(ancho), targetHeight: String(alto) })
+            const { ancho, alto } = tc.args as { ancho?: number; alto?: number }
+            const dims = imageDimensions
+            if (ancho && alto) {
+              onConfigChange({ targetWidth: String(ancho), targetHeight: String(alto) })
+            } else if (alto && dims && dims.width > 0 && dims.height > 0) {
+              const calcAncho = (alto * (dims.width / dims.height)).toFixed(2)
+              onConfigChange({ targetWidth: calcAncho, targetHeight: String(alto) })
+            } else if (ancho && dims && dims.width > 0 && dims.height > 0) {
+              const calcAlto = (ancho * (dims.height / dims.width)).toFixed(2)
+              onConfigChange({ targetWidth: String(ancho), targetHeight: calcAlto })
+            } else if (ancho) {
+              onConfigChange({ targetWidth: String(ancho) })
+            } else if (alto) {
+              onConfigChange({ targetHeight: String(alto) })
+            }
             break
           }
           case 'configurarPapel': {
@@ -225,7 +240,7 @@ export function ChatInterface({
         }
       }
     },
-    [onConfigChange, onUpscaleRequest, onDownloadRequest, userSettings?.autoDownloadPdf, generatorReady]
+    [onConfigChange, onUpscaleRequest, onDownloadRequest, userSettings?.autoDownloadPdf, generatorReady, imageDimensions]
   )
 
   const sendMessage = async (overrideText?: string) => {
@@ -260,7 +275,10 @@ export function ChatInterface({
       abortControllerRef.current = controller
 
       const chatMessages = updatedMessages.map((m) => ({ role: m.role, content: m.content }))
-      const generatorState = { tieneImagen: hasImage || generatorReady }
+      const generatorState = {
+        tieneImagen: hasImage || generatorReady,
+        imagenPixeles: imageDimensions?.width ? { ancho: imageDimensions.width, alto: imageDimensions.height } : undefined,
+      }
 
       const res = await fetch('/api/molde-ia', {
         method: 'POST',

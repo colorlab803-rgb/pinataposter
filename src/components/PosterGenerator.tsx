@@ -66,6 +66,7 @@ interface PosterGeneratorProps {
   controlledOrientation?: Orientation
   externalProcessedImageSrc?: string | null
   onProcessedImageChange?: (src: string | null) => void
+  onImageDimensionsChange?: (dims: { width: number; height: number }) => void
   triggerDownload?: { format: 'pdf' | 'zip'; projectName?: string } | null
 }
 
@@ -81,6 +82,7 @@ export function PosterGenerator({
   controlledOrientation,
   externalProcessedImageSrc,
   onProcessedImageChange,
+  onImageDimensionsChange,
   triggerDownload,
 }: PosterGeneratorProps) {
   const [currentStep, setCurrentStep] = useState(0)
@@ -268,6 +270,13 @@ export function PosterGenerator({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [processedImageSrc])
+
+  useEffect(() => {
+    if (onImageDimensionsChange && imageDimensions.width > 0 && imageDimensions.height > 0) {
+      onImageDimensionsChange(imageDimensions)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageDimensions])
 
   useEffect(() => {
     if (triggerDownload?.format) {
