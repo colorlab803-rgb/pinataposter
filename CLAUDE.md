@@ -35,7 +35,7 @@ App Next.js 15 que divide imágenes para impresión a gran escala en múltiples 
     --project=rutas-488705 \
     --region=us-central1 \
     --source=. \
-    --set-env-vars="NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1,HOSTNAME=0.0.0.0,ADMIN_PASSWORD=PinataPoster2026!" \
+    --set-env-vars="NODE_ENV=production,NEXT_TELEMETRY_DISABLED=1,HOSTNAME=0.0.0.0,ADMIN_PASSWORD=PinataPoster2026!,GOOGLE_AI_API_KEY=AIzaSyDYFOeJRi6-4iqMykghnGGO_rKTe7Z6m1E" \
     --max-instances=3 \
     --memory=512Mi \
     --cpu=1 \
