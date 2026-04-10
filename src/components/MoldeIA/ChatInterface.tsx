@@ -62,18 +62,31 @@ export function ChatInterface({
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const abortControllerRef = useRef<AbortController | null>(null)
+  const prevConvIdRef = useRef<string | null | undefined>(undefined)
 
   const isEmptyState = messages.length === 0 || (messages.length === 1 && messages[0].id === 'welcome')
 
-  // Cancelar request al desmontar o cambiar de conversación
+  // Cancelar request al desmontar
   useEffect(() => {
     return () => {
       abortControllerRef.current?.abort()
     }
-  }, [conversationId])
+  }, [])
 
-  // Cargar mensajes cuando cambia la conversación
+  // Cargar mensajes cuando se cambia de conversación (switch real, no auto-creación)
   useEffect(() => {
+    const prev = prevConvIdRef.current
+    prevConvIdRef.current = conversationId
+
+    // Primera renderización: no resetear, ya se inicializó con useState
+    if (prev === undefined) return
+
+    // Auto-asignación de ID a conversación nueva (null → id): no resetear
+    // Esto pasa cuando se envía el primer mensaje y handleMessagesChange crea el ID
+    if (prev === null && conversationId !== null) return
+
+    // Cambio real de conversación: resetear estado y abortar request pendiente
+    abortControllerRef.current?.abort()
     setMessages(initialMessages ?? [WELCOME_MESSAGE])
     setPendingImage(null)
     setInput('')
