@@ -211,6 +211,7 @@ export async function POST(req: NextRequest) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let currentParts: any = lastParts
         let hasStreamedText = false
+        let hasExecutedTools = false
         const calledFunctions = new Set<string>()
 
         for (let iteration = 0; iteration < MAX_ITERATIONS; iteration++) {
@@ -234,7 +235,10 @@ export async function POST(req: NextRequest) {
           }
 
           if (!result) {
-            // Si ya enviamos texto, cerramos con lo que tenemos
+            // Si ya ejecutamos herramientas, la continuación es solo texto decorativo — no es error
+            if (hasExecutedTools) {
+              break
+            }
             if (hasStreamedText) {
               send({ type: 'text', content: '\n\n⚠️ La respuesta se interrumpió. Intenta de nuevo.' })
               break
@@ -244,21 +248,30 @@ export async function POST(req: NextRequest) {
 
           const functionCalls: Array<{ name: string; args: Record<string, unknown> }> = []
 
-          for await (const chunk of result.stream) {
-            for (const candidate of chunk.candidates ?? []) {
-              for (const part of candidate.content.parts) {
-                if ('text' in part && part.text) {
-                  hasStreamedText = true
-                  send({ type: 'text', content: part.text })
-                }
-                if ('functionCall' in part && part.functionCall) {
-                  functionCalls.push({
-                    name: part.functionCall.name,
-                    args: (part.functionCall.args ?? {}) as Record<string, unknown>,
-                  })
+          try {
+            for await (const chunk of result.stream) {
+              for (const candidate of chunk.candidates ?? []) {
+                for (const part of candidate.content.parts) {
+                  if ('text' in part && part.text) {
+                    hasStreamedText = true
+                    send({ type: 'text', content: part.text })
+                  }
+                  if ('functionCall' in part && part.functionCall) {
+                    functionCalls.push({
+                      name: part.functionCall.name,
+                      args: (part.functionCall.args ?? {}) as Record<string, unknown>,
+                    })
+                  }
                 }
               }
             }
+          } catch (streamError) {
+            // Si el stream falla DURANTE la lectura pero ya ejecutamos tools, no es error crítico
+            if (hasExecutedTools) {
+              console.warn('MoldeGPT: stream read failed after tools executed, continuing gracefully:', (streamError as Error).message)
+              break
+            }
+            throw streamError
           }
 
           if (functionCalls.length === 0) break
@@ -274,6 +287,7 @@ export async function POST(req: NextRequest) {
           if (newCalls.length === 0) break
 
           send({ type: 'tool_calls', calls: newCalls })
+          hasExecutedTools = true
 
           const functionResponses = newCalls.map((fc) => ({
             functionResponse: {
