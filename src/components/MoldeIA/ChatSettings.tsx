@@ -16,12 +16,7 @@ interface ChatSettingsProps {
   onSettingsChange: (settings: UserSettings) => void
 }
 
-const PINATA_SIZES = [
-  { value: 'mini', label: 'Mini (30-40 cm)' },
-  { value: 'mediana', label: 'Mediana (60-80 cm)' },
-  { value: 'grande', label: 'Grande (80-100 cm)' },
-  { value: 'gigante', label: 'Gigante (100-120 cm)' },
-] as const
+
 
 const PAPER_SIZES = [
   { value: 'Letter', label: 'Carta' },
@@ -97,28 +92,6 @@ export function ChatSettings({
 
           {/* Content */}
           <div className="px-5 py-4 space-y-5 max-h-[60vh] overflow-y-auto">
-            {/* Tamaño de piñata */}
-            <div>
-              <label className="text-sm text-white/70 font-medium mb-2 block">
-                Tamaño de piñata por defecto
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {PINATA_SIZES.map((s) => (
-                  <button
-                    key={s.value}
-                    onClick={() => updateSetting('defaultPinataSize', s.value)}
-                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                      settings.defaultPinataSize === s.value
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white/5 text-white/60 hover:bg-white/10 border border-white/10'
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             {/* Tamaño de papel */}
             <div>
               <label className="text-sm text-white/70 font-medium mb-2 block">

@@ -44,17 +44,11 @@ Cuando el usuario pide cambios:
 - Si es claro (ej: "más grande", "cámbialo a Legal"), ejecuta la herramienta directamente
 - Si es ambiguo, pregunta para clarificar
 
-TAMAÑOS REFERENCIA DE PIÑATAS:
-- Mini/de mesa: 30-40 cm alto, 25-30 cm ancho
-- Mediana estándar: 60-80 cm alto, 45-60 cm ancho
-- Grande: 80-100 cm alto, 60-75 cm ancho
-- Gigante: 100-120 cm alto, 75-90 cm ancho
-
-PAPEL RECOMENDADO (para sugerir al usuario):
+PAPEL RECOMENDADO (para sugerir al usuario según las medidas que dé):
 - Piñatas hasta 80cm: Carta vertical
 - Piñatas altas (>80cm): Oficio vertical
 - Piñatas anchas (ancho > alto): Carta horizontal
-- Piñatas gigantes (>100cm): Doble Carta vertical
+- Piñatas muy grandes (>100cm): Doble Carta vertical
 
 REGLA CRÍTICA — IMAGEN OBLIGATORIA:
 - SIEMPRE revisa [Estado actual del generador] al inicio de cada mensaje.
@@ -71,7 +65,7 @@ REGLAS:
 - NUNCA descargues automáticamente. Siempre usa descargarMolde para que aparezca el botón, pero solo cuando todo esté configurado.
 - Usa emojis moderadamente para ser amigable 🪅✅📐
 - Respuestas cortas y directas, máximo 3-4 líneas de texto.
-- Cuando sugieras tamaños, ofrece opciones claras (ej: "¿Mini (35cm), Mediana (70cm), Grande (90cm) o Gigante (110cm)?").`
+- NO ofrezcas tamaños predefinidos ni categorías (mini, mediana, grande, etc.). Pregunta directamente: "¿Qué medidas quieres para tu piñata? (alto y ancho en centímetros)".`
 
 const functionDeclarations: FunctionDeclaration[] = [
   {
@@ -147,7 +141,7 @@ export async function POST(req: NextRequest) {
     imageBase64?: string
     imageMimeType?: string
     generatorState?: Record<string, unknown>
-    userSettings?: Record<string, unknown> & { defaultPinataSize?: string; defaultPaperSize?: string; defaultOrientation?: string; autoDownloadPdf?: boolean }
+    userSettings?: Record<string, unknown> & { defaultPaperSize?: string; defaultOrientation?: string; autoDownloadPdf?: boolean }
   }
 
   try {
@@ -192,13 +186,7 @@ export async function POST(req: NextRequest) {
     textContent += `\n\n[Estado actual del generador: ${JSON.stringify(generatorState)}]`
   }
   if (userSettings) {
-    const sizeMap: Record<string, string> = {
-      mini: '35cm alto, 25cm ancho',
-      mediana: '70cm alto, 50cm ancho',
-      grande: '90cm alto, 65cm ancho',
-      gigante: '110cm alto, 80cm ancho',
-    }
-    textContent += `\n\n[Preferencias del usuario: tamaño preferido=${sizeMap[userSettings.defaultPinataSize ?? ''] || 'mediana'}, papel=${userSettings.defaultPaperSize || 'Letter'}, orientación=${userSettings.defaultOrientation || 'portrait'}, auto-descarga=${userSettings.autoDownloadPdf !== false ? 'sí' : 'no'}]`
+    textContent += `\n\n[Preferencias del usuario: papel=${userSettings.defaultPaperSize || 'Letter'}, orientación=${userSettings.defaultOrientation || 'portrait'}, auto-descarga=${userSettings.autoDownloadPdf !== false ? 'sí' : 'no'}]`
   }
   if (imageBase64) {
     textContent += '\n\n[El usuario acaba de enviar una imagen. Analízala, describe lo que ves, y pregunta qué tamaño de piñata quiere antes de configurar.]'

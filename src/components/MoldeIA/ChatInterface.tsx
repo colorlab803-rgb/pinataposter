@@ -111,15 +111,7 @@ export function ChatInterface({
       ]
     }
 
-    // After image analysis (AI asking for size) — offer size presets
-    if (hasImage && !lastToolName && (text.includes('tamaño') || text.includes('medida') || text.includes('cm'))) {
-      return [
-        { label: '🪅 Mini (35cm)', message: 'Mini de 35 centímetros' },
-        { label: '🪅 Mediana (70cm)', message: 'Mediana de 70 centímetros' },
-        { label: '🪅 Grande (90cm)', message: 'Grande de 90 centímetros' },
-        { label: '🪅 Gigante (110cm)', message: 'Gigante de 110 centímetros' },
-      ]
-    }
+    // After image analysis (AI asking for size) — no presets, user types freely
 
     return []
   }, [])

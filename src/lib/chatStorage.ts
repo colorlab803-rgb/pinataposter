@@ -13,14 +13,12 @@ export interface Conversation {
 }
 
 export interface UserSettings {
-  defaultPinataSize: 'mini' | 'mediana' | 'grande' | 'gigante'
   defaultPaperSize: 'Letter' | 'Legal' | 'Tabloid' | 'A4' | 'A3'
   defaultOrientation: 'portrait' | 'landscape'
   autoDownloadPdf: boolean
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
-  defaultPinataSize: 'mediana',
   defaultPaperSize: 'Letter',
   defaultOrientation: 'portrait',
   autoDownloadPdf: false,
