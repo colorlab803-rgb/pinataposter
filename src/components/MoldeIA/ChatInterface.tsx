@@ -171,12 +171,10 @@ export function ChatInterface({
     setPendingImage(null)
     setIsLoading(true)
 
-    const thinkingId = (Date.now() + 1).toString()
+    const assistantId = (Date.now() + 1).toString()
 
     try {
-      const chatMessages = updatedMessages
-        .map((m) => ({ role: m.role, content: m.content }))
-
+      const chatMessages = updatedMessages.map((m) => ({ role: m.role, content: m.content }))
       const generatorState = { tieneImagen: hasImage || generatorReady }
 
       const res = await fetch('/api/molde-ia', {
@@ -193,43 +191,103 @@ export function ChatInterface({
 
       if (!res.ok) throw new Error('Error en la API')
 
-      const data = await res.json()
-      const toolCalls: ToolCall[] = data.toolCalls ?? []
+      const reader = res.body?.getReader()
+      if (!reader) throw new Error('No se pudo leer el stream')
 
-      if (toolCalls.length > 0) {
-        const progressMessage: Message = {
-          id: thinkingId,
-          role: 'assistant',
-          content: '',
-          toolCalls,
-          toolCallsStatus: 'running',
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let allToolCalls: ToolCall[] = []
+      let messageCreated = false
+
+      const ensureMessage = () => {
+        if (!messageCreated) {
+          messageCreated = true
+          setIsLoading(false)
+          setMessages((prev) => [
+            ...prev,
+            { id: assistantId, role: 'assistant' as const, content: '' },
+          ])
         }
-        setMessages((prev) => [...prev, progressMessage])
-        await executeToolCalls(toolCalls)
-        setMessages((prev) =>
-          prev.map((m) =>
-            m.id === thinkingId
-              ? { ...m, content: data.text ?? '', toolCallsStatus: 'done' as const }
-              : m
-          )
-        )
-      } else {
-        const assistantMessage: Message = {
-          id: thinkingId,
-          role: 'assistant',
-          content: data.text ?? '',
+      }
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+
+        const lines = buffer.split('\n')
+        buffer = lines.pop() ?? ''
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue
+          const jsonStr = line.slice(6)
+          if (!jsonStr) continue
+
+          try {
+            const event = JSON.parse(jsonStr)
+
+            switch (event.type) {
+              case 'text':
+                ensureMessage()
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantId ? { ...m, content: m.content + event.content } : m
+                  )
+                )
+                break
+              case 'tool_calls':
+                ensureMessage()
+                allToolCalls = [...allToolCalls, ...(event.calls ?? [])]
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantId
+                      ? { ...m, toolCalls: allToolCalls, toolCallsStatus: 'running' as const }
+                      : m
+                  )
+                )
+                await executeToolCalls(event.calls ?? [])
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantId ? { ...m, toolCallsStatus: 'done' as const } : m
+                  )
+                )
+                break
+              case 'error':
+                ensureMessage()
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantId
+                      ? { ...m, content: `❌ ${event.message || 'Error desconocido'}` }
+                      : m
+                  )
+                )
+                break
+            }
+          } catch {
+            // Ignorar líneas JSON mal formadas
+          }
         }
-        setMessages((prev) => [...prev, assistantMessage])
       }
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: thinkingId,
-          role: 'assistant' as const,
-          content: '❌ Ocurrió un error. Por favor intenta de nuevo.',
-        },
-      ])
+      setMessages((prev) => {
+        const hasAssistant = prev.some((m) => m.id === assistantId)
+        if (hasAssistant) {
+          return prev.map((m) =>
+            m.id === assistantId
+              ? { ...m, content: '❌ Ocurrió un error. Por favor intenta de nuevo.' }
+              : m
+          )
+        }
+        return [
+          ...prev,
+          {
+            id: assistantId,
+            role: 'assistant' as const,
+            content: '❌ Ocurrió un error. Por favor intenta de nuevo.',
+          },
+        ]
+      })
     } finally {
       setIsLoading(false)
       inputRef.current?.focus()
