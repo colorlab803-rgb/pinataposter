@@ -24,9 +24,9 @@ const PINATA_SIZES = [
 ] as const
 
 const PAPER_SIZES = [
-  { value: 'Letter', label: 'Carta (Letter)' },
-  { value: 'Legal', label: 'Oficio (Legal)' },
-  { value: 'Tabloid', label: 'Tabloide (Tabloid)' },
+  { value: 'Letter', label: 'Carta' },
+  { value: 'Legal', label: 'Oficio' },
+  { value: 'Tabloid', label: 'Doble Carta' },
   { value: 'A4', label: 'A4' },
   { value: 'A3', label: 'A3' },
 ] as const

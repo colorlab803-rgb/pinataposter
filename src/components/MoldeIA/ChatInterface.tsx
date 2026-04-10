@@ -105,9 +105,9 @@ export function ChatInterface({
     // After configurarTamano — offer paper options
     if (lastToolName === 'configurarTamano' && lastAssistant.toolCallsStatus === 'done') {
       return [
-        { label: '📄 Letter', message: 'Papel Letter' },
-        { label: '📄 Legal', message: 'Papel Legal' },
-        { label: '📄 Tabloid', message: 'Papel Tabloid' },
+        { label: '📄 Carta', message: 'Papel Carta' },
+        { label: '📄 Oficio', message: 'Papel Oficio' },
+        { label: '📄 Doble Carta', message: 'Papel Doble Carta' },
       ]
     }
 

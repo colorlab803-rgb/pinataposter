@@ -1300,9 +1300,9 @@ export function PosterGenerator({
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Letter">Letter</SelectItem>
-                            <SelectItem value="Legal">Legal</SelectItem>
-                            <SelectItem value="Tabloid">Tabloid</SelectItem>
+                            <SelectItem value="Letter">Carta</SelectItem>
+                            <SelectItem value="Legal">Oficio</SelectItem>
+                            <SelectItem value="Tabloid">Doble Carta</SelectItem>
                             <SelectItem value="A4">A4</SelectItem>
                             <SelectItem value="A3">A3</SelectItem>
                           </SelectContent>
