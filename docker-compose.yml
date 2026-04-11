@@ -14,3 +14,4 @@ services:
       - "127.0.0.1:3010:3000"
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-PinataPoster2026!}
+      - DISABLE_CHAT=true
