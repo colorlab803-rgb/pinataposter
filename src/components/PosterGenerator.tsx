@@ -833,6 +833,13 @@ export function PosterGenerator({
 
         const coordText = `Fila ${row + 1}, Columna ${col + 1} (${String.fromCharCode(65 + col)}${row + 1})`
         doc.text(coordText, MARGIN_CM, pageH - 0.5)
+
+        // Texto de donación sutil en el margen superior
+        doc.setFontSize(6.5)
+        doc.setTextColor(180)
+        const donationHint = 'PiñataPoster.com es gratis · Apóyanos: 646990404071880785'
+        const donationHintW = doc.getTextWidth(donationHint)
+        doc.text(donationHint, pageW / 2 - donationHintW / 2, 0.4)
       })
 
       // Add assembly plan if enabled and multiple pages
@@ -911,6 +918,92 @@ export function PosterGenerator({
                 doc.text(coord, cellX + cellW/2, cellY + cellH/2, { align: 'center', baseline: 'middle' })
             }
         }
+      }
+
+      // Página de donación al final
+      {
+        doc.addPage(paperSize.toLowerCase(), 'portrait')
+        const donPageDims = paperSizes[paperSize]
+        const dpW = donPageDims.width
+        const dpH = donPageDims.height
+        const dpM = 2.5
+        let dy = dpM
+
+        // Encabezado emocional
+        doc.setFontSize(22)
+        doc.setTextColor(60)
+        doc.text('¡Gracias por usar PiñataPoster!', dpW / 2, dy, { align: 'center' })
+        dy += 1.2
+
+        doc.setFontSize(11)
+        doc.setTextColor(120)
+        doc.text('Tu molde está listo. Esperamos que quede increíble.', dpW / 2, dy, { align: 'center' })
+        dy += 1.8
+
+        // Línea decorativa
+        doc.setDrawColor(200)
+        doc.setLineWidth(0.02)
+        doc.line(dpW * 0.3, dy, dpW * 0.7, dy)
+        dy += 1.2
+
+        // Mensaje principal
+        doc.setFontSize(13)
+        doc.setTextColor(60)
+        doc.text('Ayúdanos a seguir siendo gratis', dpW / 2, dy, { align: 'center' })
+        dy += 1
+
+        doc.setFontSize(9.5)
+        doc.setTextColor(100)
+        const msgLines = doc.splitTextToSize(
+          'PiñataPoster es gratuito para todos gracias al apoyo de personas como tú. ' +
+          'Mantener los servidores y mejorar la herramienta tiene un costo real. ' +
+          'Si este molde te ahorró tiempo o dinero, considera hacer una pequeña donación. ' +
+          'Incluso lo que cuesta un cafecito hace la diferencia para que miles de piñateros sigan usando esta herramienta gratis.',
+          dpW - dpM * 2
+        )
+        doc.text(msgLines, dpW / 2, dy, { align: 'center' })
+        dy += msgLines.length * 0.45 + 1.2
+
+        // Cuentas bancarias con formato claro
+        const accountsData = [
+          { label: 'Transferencia nacional (México)', number: '646990404071880785' },
+          { label: 'Transferencia internacional', number: '170002404071880783' },
+          { label: 'Código BIC / SWIFT', number: 'REVOMXM2' },
+        ]
+
+        accountsData.forEach((acc) => {
+          // Fondo sutil para cada cuenta
+          const boxW = dpW - dpM * 2
+          const boxH = 1.6
+          const boxX = dpM
+          doc.setFillColor(245, 245, 250)
+          doc.roundedRect(boxX, dy - 0.1, boxW, boxH, 0.2, 0.2, 'F')
+          
+          doc.setFontSize(8)
+          doc.setTextColor(140)
+          doc.text(acc.label, dpW / 2, dy + 0.4, { align: 'center' })
+          
+          doc.setFontSize(13)
+          doc.setTextColor(40)
+          doc.text(acc.number, dpW / 2, dy + 1.1, { align: 'center' })
+          
+          dy += boxH + 0.5
+        })
+
+        dy += 0.5
+
+        // Mensaje de cierre
+        doc.setFontSize(9)
+        doc.setTextColor(150)
+        doc.text('No hay monto mínimo · Cada aportación cuenta', dpW / 2, dy, { align: 'center' })
+        dy += 0.8
+        doc.text('¡Gracias por apoyar a la comunidad piñatera!', dpW / 2, dy, { align: 'center' })
+        dy += 1.5
+
+        // URL
+        doc.setFontSize(10)
+        doc.setTextColor(100)
+        doc.text('pinataposter.com', dpW / 2, dy, { align: 'center' })
       }
 
       const pdfBlob = doc.output('blob')
