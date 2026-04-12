@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { DonationBanner } from '@/components/DonationBanner'
 export default function Home() {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -307,6 +308,9 @@ export default function Home() {
             </Link>
           </div>
         </section>
+
+        {/* Donation Banner */}
+        <DonationBanner />
 
         {/* Footer */}
         <footer className="relative border-t border-white/10 py-6 px-4 text-center">

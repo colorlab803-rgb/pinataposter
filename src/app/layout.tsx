@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/ThemeProvider';
-import { SurveyModal } from '@/components/SurveyModal';
+import { DonationModal } from '@/components/DonationModal';
 import { TrackVisit } from '@/components/TrackVisit';
 
 const siteUrl = 'https://pinataposter.com';
@@ -97,7 +97,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <SurveyModal />
+          <DonationModal />
           <TrackVisit />
           <Toaster 
             theme="dark" 
