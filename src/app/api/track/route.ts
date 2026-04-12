@@ -24,8 +24,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    console.error('Error en /api/track:', message)
-    return NextResponse.json({ error: 'Error al registrar', detail: message }, { status: 500 })
+    console.error('Error en /api/track:', error instanceof Error ? error.message : error)
+    return NextResponse.json({ error: 'Error al registrar' }, { status: 500 })
   }
 }
