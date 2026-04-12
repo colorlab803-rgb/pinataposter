@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { AuthProvider } from '@/components/AuthProvider';
 import { DonationModal } from '@/components/DonationModal';
 import { TrackVisit } from '@/components/TrackVisit';
 
@@ -96,7 +97,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
+          <AuthProvider>
           {children}
+          </AuthProvider>
           <DonationModal />
           <TrackVisit />
           <Toaster 
