@@ -1,18 +1,18 @@
 import { initializeApp, getApps, cert, type App } from 'firebase-admin/app'
 import { getAuth as getAdminAuth, type Auth } from 'firebase-admin/auth'
+import { getFirestore as getAdminFirestore, type Firestore } from 'firebase-admin/firestore'
 
 const PROJECT_ID = 'rutas-488705'
 
 let app: App
 let auth: Auth
+let db: Firestore
 
 function getAdminApp(): App {
   if (!app) {
     if (getApps().length > 0) {
       app = getApps()[0]
     } else {
-      // En Cloud Run usa ADC automáticamente.
-      // En local necesita GOOGLE_APPLICATION_CREDENTIALS o service account key.
       const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
       if (serviceAccountKey) {
         const serviceAccount = JSON.parse(serviceAccountKey)
@@ -30,6 +30,13 @@ export function getFirebaseAdminAuth(): Auth {
     auth = getAdminAuth(getAdminApp())
   }
   return auth
+}
+
+export function getFirebaseAdminFirestore(): Firestore {
+  if (!db) {
+    db = getAdminFirestore(getAdminApp())
+  }
+  return db
 }
 
 export async function verifyIdToken(token: string) {

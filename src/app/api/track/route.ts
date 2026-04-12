@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true })
-  } catch {
+  } catch (error) {
+    console.error('Error en /api/track:', error)
     return NextResponse.json({ error: 'Error al registrar' }, { status: 500 })
   }
 }
