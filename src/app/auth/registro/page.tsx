@@ -12,7 +12,7 @@ import { Loader2, Mail, Lock, User, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 
 export default function RegistroPage() {
-  const { signUp, signInWithGoogle, user, loading: authLoading } = useAuth()
+  const { signUp, signInWithGoogle, user, loading: authLoading, configured } = useAuth()
   const router = useRouter()
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
@@ -24,6 +24,23 @@ export default function RegistroPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+      </div>
+    )
+  }
+
+  if (!configured) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
+        <div className="bg-gray-900/80 border border-gray-800 rounded-xl p-6 max-w-md text-center">
+          <p className="text-4xl mb-4">🔧</p>
+          <h2 className="text-xl font-bold text-white mb-2">Firebase no configurado</h2>
+          <p className="text-gray-400 text-sm mb-4">
+            Para usar el catálogo digital, configura las variables NEXT_PUBLIC_FIREBASE_* en tu archivo .env.local
+          </p>
+          <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm">
+            Volver al inicio
+          </Link>
+        </div>
       </div>
     )
   }

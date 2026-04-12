@@ -10,19 +10,24 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
+export const isFirebaseConfigured = !!firebaseConfig.apiKey
+
 let app: FirebaseApp
 let auth: Auth
 
-export function getFirebaseApp(): FirebaseApp {
+export function getFirebaseApp(): FirebaseApp | null {
+  if (!isFirebaseConfigured) return null
   if (!app) {
     app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig)
   }
   return app
 }
 
-export function getFirebaseAuth(): Auth {
+export function getFirebaseAuth(): Auth | null {
+  const firebaseApp = getFirebaseApp()
+  if (!firebaseApp) return null
   if (!auth) {
-    auth = getAuth(getFirebaseApp())
+    auth = getAuth(firebaseApp)
     auth.languageCode = 'es'
   }
   return auth

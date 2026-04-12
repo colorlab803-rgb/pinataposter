@@ -11,11 +11,12 @@ import {
   updateProfile,
   type User,
 } from 'firebase/auth'
-import { getFirebaseAuth } from '@/lib/firebase'
+import { getFirebaseAuth, isFirebaseConfigured } from '@/lib/firebase'
 
 interface AuthContextValue {
   user: User | null
   loading: boolean
+  configured: boolean
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string, displayName: string) => Promise<void>
   signInWithGoogle: () => Promise<void>
@@ -27,10 +28,14 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(isFirebaseConfigured)
 
   useEffect(() => {
     const auth = getFirebaseAuth()
+    if (!auth) {
+      setLoading(false)
+      return
+    }
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser)
       setLoading(false)
@@ -40,23 +45,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(async (email: string, password: string) => {
     const auth = getFirebaseAuth()
+    if (!auth) throw new Error('Firebase no está configurado')
     await signInWithEmailAndPassword(auth, email, password)
   }, [])
 
   const signUp = useCallback(async (email: string, password: string, displayName: string) => {
     const auth = getFirebaseAuth()
+    if (!auth) throw new Error('Firebase no está configurado')
     const credential = await createUserWithEmailAndPassword(auth, email, password)
     await updateProfile(credential.user, { displayName })
   }, [])
 
   const signInWithGoogle = useCallback(async () => {
     const auth = getFirebaseAuth()
+    if (!auth) throw new Error('Firebase no está configurado')
     const provider = new GoogleAuthProvider()
     await signInWithPopup(auth, provider)
   }, [])
 
   const signOut = useCallback(async () => {
     const auth = getFirebaseAuth()
+    if (!auth) return
     await firebaseSignOut(auth)
   }, [])
 
@@ -66,7 +75,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user])
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signInWithGoogle, signOut, getIdToken }}>
+    <AuthContext.Provider value={{ user, loading, configured: isFirebaseConfigured, signIn, signUp, signInWithGoogle, signOut, getIdToken }}>
       {children}
     </AuthContext.Provider>
   )

@@ -11,14 +11,14 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
-  const { user, loading } = useAuth()
+  const { user, loading, configured } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && (!user || !configured)) {
       router.replace('/auth/login')
     }
-  }, [user, loading, router])
+  }, [user, loading, configured, router])
 
   if (loading) {
     return fallback || (
