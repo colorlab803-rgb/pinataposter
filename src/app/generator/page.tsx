@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { PosterGenerator } from '@/components/PosterGenerator'
+import { HighDemandGate } from '@/components/HighDemandGate'
 import { Scissors, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
@@ -53,7 +54,9 @@ export default function GeneratorPage() {
         </header>
 
         <main>
-          <PosterGenerator />
+          <HighDemandGate>
+            <PosterGenerator />
+          </HighDemandGate>
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <AdNativeBanner />
           </div>
