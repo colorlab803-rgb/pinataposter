@@ -42,3 +42,34 @@ export function getPremiumEmail(): string | null {
     return null
   }
 }
+
+export async function checkPremiumServer(idToken: string): Promise<{
+  premium: boolean
+  expiresAt?: number
+}> {
+  try {
+    const res = await fetch('/api/premium/check', {
+      headers: { Authorization: `Bearer ${idToken}` },
+    })
+    if (!res.ok) return { premium: false }
+    const data = await res.json()
+    
+    // Si el servidor dice que es premium, sincronizar localStorage
+    if (data.premium && data.expiresAt) {
+      const localData: PremiumData = {
+        expiresAt: data.expiresAt,
+        email: '',
+      }
+      localStorage.setItem(PREMIUM_KEY, JSON.stringify(localData))
+    }
+    
+    return data
+  } catch {
+    return { premium: false }
+  }
+}
+
+export async function syncPremiumFromServer(idToken: string): Promise<boolean> {
+  const result = await checkPremiumServer(idToken)
+  return result.premium
+}

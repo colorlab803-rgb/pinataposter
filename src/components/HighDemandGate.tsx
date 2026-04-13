@@ -1,27 +1,59 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Zap, Shield, Clock, Loader2, AlertTriangle, Hourglass } from 'lucide-react'
+import { Zap, Shield, Clock, Loader2, AlertTriangle, Hourglass, LogIn, Store } from 'lucide-react'
 import { shouldShowDemandBanner } from '@/lib/demandSchedule'
-import { isPremiumUser } from '@/lib/premium'
+import { isPremiumUser, syncPremiumFromServer } from '@/lib/premium'
+import { useAuth } from '@/components/AuthProvider'
 import { toast } from 'sonner'
 
 export function HighDemandGate({ children }: { children: React.ReactNode }) {
   const [showGate, setShowGate] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [checkingPremium, setCheckingPremium] = useState(true)
   const [mounted, setMounted] = useState(false)
   const router = useRouter()
+  const { user, loading: authLoading, getIdToken } = useAuth()
+
+  const checkPremiumStatus = useCallback(async () => {
+    // Primero check rápido de localStorage
+    if (isPremiumUser()) {
+      setShowGate(false)
+      setCheckingPremium(false)
+      return
+    }
+
+    // Si hay usuario logueado, verificar en servidor
+    if (user) {
+      try {
+        const token = await getIdToken()
+        if (token) {
+          const isPremium = await syncPremiumFromServer(token)
+          if (isPremium) {
+            setShowGate(false)
+            setCheckingPremium(false)
+            return
+          }
+        }
+      } catch {
+        // Error de red — usar localStorage como fallback
+      }
+    }
+
+    // No es premium, mostrar gate si el horario lo indica
+    setShowGate(shouldShowDemandBanner())
+    setCheckingPremium(false)
+  }, [user, getIdToken])
 
   useEffect(() => {
     setMounted(true)
-    if (isPremiumUser()) {
-      setShowGate(false)
-      return
-    }
-    setShowGate(shouldShowDemandBanner())
+  }, [])
 
-    // Re-evaluar cada minuto (para cambios de hora)
+  useEffect(() => {
+    if (!mounted || authLoading) return
+    checkPremiumStatus()
+
     const interval = setInterval(() => {
       if (isPremiumUser()) {
         setShowGate(false)
@@ -31,13 +63,24 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
     }, 60_000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [mounted, authLoading, checkPremiumStatus])
 
   async function handleCheckout() {
+    if (!user) {
+      router.push('/auth/login?redirect=/generator')
+      return
+    }
+
     setLoading(true)
     try {
-      const res = await fetch('/api/checkout', { method: 'POST' })
+      const idToken = await getIdToken()
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      })
       const data = await res.json()
+
       if (data.url) {
         window.location.href = data.url
       } else {
@@ -54,24 +97,20 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
     router.push('/')
   }
 
-  // Antes del montaje, mostrar children para evitar flash
-  if (!mounted) return <>{children}</>
+  if (!mounted || authLoading || checkingPremium) return <>{children}</>
 
   if (!showGate) return <>{children}</>
 
   return (
     <>
-      {/* Contenido del generador desenfocado detrás */}
       <div className="pointer-events-none select-none" aria-hidden="true">
         <div className="blur-sm opacity-30">
           {children}
         </div>
       </div>
 
-      {/* Overlay bloqueante */}
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md px-4">
         <div className="max-w-lg w-full rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-white/10 shadow-2xl shadow-purple-500/10 overflow-hidden">
-          {/* Header con gradiente */}
           <div className="bg-gradient-to-r from-amber-600/20 via-orange-600/20 to-red-600/20 border-b border-white/10 px-6 py-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center animate-pulse">
@@ -84,14 +123,12 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          {/* Contenido */}
           <div className="px-6 py-5 space-y-5">
             <p className="text-sm text-purple-200/80 leading-relaxed">
               Debido al crecimiento de usuarios, hemos implementado un <strong className="text-white">sistema de uso justo</strong> para 
               garantizar la disponibilidad del servicio. El generador de moldes tiene acceso limitado en horarios de alta demanda.
             </p>
 
-            {/* Beneficios del acceso preferencial */}
             <div className="space-y-3">
               <h3 className="text-sm font-semibold text-white flex items-center gap-2">
                 <Shield className="h-4 w-4 text-purple-400" />
@@ -102,6 +139,7 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
                   { icon: Zap, text: 'Acceso ilimitado al generador, sin esperas' },
                   { icon: Clock, text: 'Válido por 12 meses completos' },
                   { icon: Shield, text: 'Prioridad en horarios de alta demanda' },
+                  { icon: Store, text: 'Paga con tarjeta o en efectivo en OXXO' },
                 ].map(({ icon: Icon, text }, i) => (
                   <div key={i} className="flex items-center gap-2.5 text-sm text-purple-200/70">
                     <Icon className="h-4 w-4 text-purple-400 shrink-0" />
@@ -111,7 +149,6 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
               </div>
             </div>
 
-            {/* Precio y CTA */}
             <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl border border-purple-500/20 p-4 text-center space-y-3">
               <div>
                 <span className="text-3xl font-bold text-white">$169</span>
@@ -130,6 +167,11 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
                     <Loader2 className="h-5 w-5 animate-spin" />
                     Redirigiendo a Stripe...
                   </>
+                ) : !user ? (
+                  <>
+                    <LogIn className="h-5 w-5" />
+                    Inicia sesión para acceder
+                  </>
                 ) : (
                   <>
                     <Zap className="h-5 w-5" />
@@ -139,7 +181,6 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
               </button>
             </div>
 
-            {/* Botón de esperar */}
             <button
               onClick={handleWait}
               className="w-full py-2.5 px-4 rounded-xl text-sm text-purple-300/60 hover:text-purple-200 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
@@ -149,7 +190,7 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
             </button>
 
             <p className="text-[11px] text-center text-purple-300/40">
-              Pago seguro procesado por Stripe · No almacenamos datos de tarjeta
+              Pago seguro procesado por Stripe · Acepta tarjeta y OXXO · No almacenamos datos de tarjeta
             </p>
           </div>
         </div>

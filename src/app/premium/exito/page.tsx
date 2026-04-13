@@ -3,14 +3,18 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { setPremiumStatus } from '@/lib/premium'
-import { CheckCircle2, Loader2 } from 'lucide-react'
+import { useAuth } from '@/components/AuthProvider'
+import { CheckCircle2, Loader2, Clock, Store } from 'lucide-react'
 
 function PremiumExitoContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  const { user, loading: authLoading, getIdToken } = useAuth()
+  const [status, setStatus] = useState<'loading' | 'success' | 'pending_oxxo' | 'error'>('loading')
 
   useEffect(() => {
+    if (authLoading) return
+
     const sessionId = searchParams.get('session_id')
     if (!sessionId) {
       setStatus('error')
@@ -19,27 +23,40 @@ function PremiumExitoContent() {
 
     async function verifyAndActivate() {
       try {
-        const res = await fetch(`/api/checkout/verify?session_id=${sessionId}`)
+        const headers: Record<string, string> = {}
+        if (user) {
+          const token = await getIdToken()
+          if (token) {
+            headers['Authorization'] = `Bearer ${token}`
+          }
+        }
+
+        const res = await fetch(`/api/checkout/verify?session_id=${sessionId}`, { headers })
         const data = await res.json()
 
-        if (data.paid && data.email) {
-          setPremiumStatus(data.email)
+        if (data.paid) {
+          // Pago completado (tarjeta) — activar inmediatamente
+          setPremiumStatus(data.email || user?.email || 'premium@pinataposter.com')
           setStatus('success')
           setTimeout(() => router.push('/generator'), 3000)
+        } else if (data.paymentStatus === 'unpaid') {
+          // OXXO — pago pendiente
+          setStatus('pending_oxxo')
         } else {
-          setPremiumStatus(data.email || 'premium@pinataposter.com')
+          // Fallback: activar con email genérico
+          setPremiumStatus(data.email || user?.email || 'premium@pinataposter.com')
           setStatus('success')
           setTimeout(() => router.push('/generator'), 3000)
         }
       } catch {
-        setPremiumStatus('premium@pinataposter.com')
+        setPremiumStatus(user?.email || 'premium@pinataposter.com')
         setStatus('success')
         setTimeout(() => router.push('/generator'), 3000)
       }
     }
 
     verifyAndActivate()
-  }, [searchParams, router])
+  }, [searchParams, router, user, authLoading, getIdToken])
 
   return (
     <div className="max-w-md w-full text-center space-y-6">
@@ -62,6 +79,33 @@ function PremiumExitoContent() {
             Ya puedes usar el generador sin interrupciones.
           </p>
           <p className="text-sm text-purple-400">Redirigiendo al generador...</p>
+        </>
+      )}
+
+      {status === 'pending_oxxo' && (
+        <>
+          <div className="w-20 h-20 rounded-full bg-amber-500/20 flex items-center justify-center mx-auto">
+            <Store className="h-12 w-12 text-amber-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-white">¡Casi listo! 🏪</h1>
+          <p className="text-purple-300">
+            Tu voucher de OXXO ha sido generado. Realiza el pago en cualquier sucursal OXXO y tu acceso se activará automáticamente.
+          </p>
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 space-y-2">
+            <div className="flex items-center justify-center gap-2 text-amber-300">
+              <Clock className="h-4 w-4" />
+              <span className="text-sm font-medium">Pago pendiente</span>
+            </div>
+            <p className="text-xs text-amber-300/70">
+              Tienes hasta 3 días para realizar el pago. Una vez confirmado, podrás usar el generador sin límites.
+            </p>
+          </div>
+          <button
+            onClick={() => router.push('/generator')}
+            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors"
+          >
+            Volver al generador
+          </button>
         </>
       )}
 

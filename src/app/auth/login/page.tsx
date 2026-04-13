@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { useAuth } from '@/components/AuthProvider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,9 +12,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Loader2, Mail, Lock, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 
-export default function LoginPage() {
+function LoginContent() {
   const { signIn, signInWithGoogle, user, loading: authLoading, configured } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/dashboard'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -46,7 +49,7 @@ export default function LoginPage() {
   }
 
   if (user) {
-    router.replace('/dashboard')
+    router.replace(redirectTo)
     return null
   }
 
@@ -60,7 +63,7 @@ export default function LoginPage() {
     try {
       await signIn(email, password)
       toast.success('¡Bienvenido de vuelta!')
-      router.push('/dashboard')
+      router.push(redirectTo)
     } catch (err: unknown) {
       const error = err as { code?: string }
       if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
@@ -80,7 +83,7 @@ export default function LoginPage() {
     try {
       await signInWithGoogle()
       toast.success('¡Bienvenido!')
-      router.push('/dashboard')
+      router.push(redirectTo)
     } catch (err: unknown) {
       const error = err as { code?: string }
       if (error.code !== 'auth/popup-closed-by-user') {
@@ -197,5 +200,17 @@ export default function LoginPage() {
         </Card>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   )
 }

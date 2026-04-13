@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { verifyIdToken } from '@/lib/firebase-admin'
+import { setPremiumInFirestore } from '@/lib/premium-firestore'
 
 function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -13,12 +15,46 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'session_id requerido' }, { status: 400 })
   }
 
+  const authHeader = req.headers.get('Authorization')
+  let authenticatedUid: string | null = null
+  if (authHeader?.startsWith('Bearer ')) {
+    try {
+      const token = authHeader.split('Bearer ')[1]
+      const decoded = await verifyIdToken(token)
+      authenticatedUid = decoded.uid
+    } catch {
+      // Token inválido — continuar sin autenticación
+    }
+  }
+
   try {
     const stripe = getStripe()
     const session = await stripe.checkout.sessions.retrieve(sessionId)
+    
+    const paid = session.payment_status === 'paid'
+    const email = session.customer_details?.email || session.metadata?.email || null
+    const paymentStatus = session.payment_status
+
+    // Si el pago está completado y tenemos un usuario autenticado, guardar en Firestore
+    if (paid && authenticatedUid) {
+      const paymentMethod = session.payment_method_types?.includes('oxxo')
+        ? 'oxxo' as const
+        : 'card' as const
+      
+      await setPremiumInFirestore(
+        authenticatedUid,
+        email || '',
+        sessionId,
+        paymentMethod,
+        session.amount_total || 16900
+      )
+    }
+
     return NextResponse.json({
-      paid: session.payment_status === 'paid',
-      email: session.customer_details?.email || null,
+      paid,
+      email,
+      paymentStatus,
+      uid: session.metadata?.uid || null,
     })
   } catch (error) {
     console.error('Error verificando sesión de Stripe:', error)
