@@ -29,6 +29,7 @@ App Next.js 15 que divide imágenes para impresión a gran escala en múltiples 
 - Proyecto GCP: `rutas-488705`
 - Región: `us-central1`
 - Servicio: `pinataposter`
+- **Importante:** Las variables `NEXT_PUBLIC_*` se incrustan en el cliente en **build time**. Están en `.env.production` (se incluye en Docker via `.dockerignore`). Las variables server-only se pasan en runtime con `--set-env-vars`.
 - Para desplegar:
   ```bash
   gcloud run deploy pinataposter \
