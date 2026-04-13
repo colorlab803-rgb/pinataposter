@@ -135,10 +135,6 @@ export default function Home() {
             <Link href="/generator" className="text-sm text-purple-300 hover:text-white transition-colors hidden sm:inline">
               Crear molde
             </Link>
-            <Link href="/auth/login" className="text-sm text-purple-300 hover:text-white transition-colors hidden sm:inline flex items-center gap-1">
-              <Store className="h-3.5 w-3.5" />
-              Mi catálogo
-            </Link>
             <ThemeToggle />
           </div>
         </div>
