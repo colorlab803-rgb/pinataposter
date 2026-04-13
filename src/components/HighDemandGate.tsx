@@ -1,14 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Zap, Shield, Clock, Loader2, AlertTriangle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Zap, Shield, Clock, Loader2, AlertTriangle, Hourglass } from 'lucide-react'
 import { shouldShowDemandBanner } from '@/lib/demandSchedule'
 import { isPremiumUser } from '@/lib/premium'
+import { toast } from 'sonner'
 
 export function HighDemandGate({ children }: { children: React.ReactNode }) {
   const [showGate, setShowGate] = useState(false)
   const [loading, setLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
@@ -38,12 +41,17 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
       if (data.url) {
         window.location.href = data.url
       } else {
-        throw new Error('No se recibió URL de checkout')
+        throw new Error(data.error || 'No se recibió URL de checkout')
       }
     } catch (error) {
       console.error('Error al iniciar checkout:', error)
+      toast.error('Error al conectar con el sistema de pago. Intenta de nuevo en unos minutos.')
       setLoading(false)
     }
+  }
+
+  function handleWait() {
+    router.push('/')
   }
 
   // Antes del montaje, mostrar children para evitar flash
@@ -130,6 +138,15 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
                 )}
               </button>
             </div>
+
+            {/* Botón de esperar */}
+            <button
+              onClick={handleWait}
+              className="w-full py-2.5 px-4 rounded-xl text-sm text-purple-300/60 hover:text-purple-200 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+            >
+              <Hourglass className="h-4 w-4" />
+              Prefiero esperar
+            </button>
 
             <p className="text-[11px] text-center text-purple-300/40">
               Pago seguro procesado por Stripe · No almacenamos datos de tarjeta
