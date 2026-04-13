@@ -5,6 +5,7 @@ import { PosterGenerator } from '@/components/PosterGenerator'
 import { Scissors, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { AdNativeBanner } from '@/components/ads/AdNativeBanner'
 import Link from 'next/link'
 
 export default function GeneratorPage() {
@@ -53,6 +54,9 @@ export default function GeneratorPage() {
 
         <main>
           <PosterGenerator />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <AdNativeBanner />
+          </div>
         </main>
       </div>
     </div>

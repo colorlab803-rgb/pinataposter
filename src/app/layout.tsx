@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { AuthProvider } from '@/components/AuthProvider';
 import { DonationModal } from '@/components/DonationModal';
 import { TrackVisit } from '@/components/TrackVisit';
+import { AdScripts } from '@/components/ads/AdScripts';
 
 const siteUrl = 'https://pinataposter.com';
 const title = 'PiñataPoster - Imprime Moldes y Diseños de Piñatas en Tamaño Real';
@@ -102,6 +103,7 @@ export default function RootLayout({
           </AuthProvider>
           <DonationModal />
           <TrackVisit />
+          <AdScripts />
           <Toaster 
             theme="dark" 
             position="top-center" 

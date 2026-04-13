@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap, Store } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { DonationBanner } from '@/components/DonationBanner'
+import { AdBanner } from '@/components/ads/AdBanner'
+import { AdNativeBanner } from '@/components/ads/AdNativeBanner'
 export default function Home() {
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -194,6 +196,11 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Ad Banner - después del hero */}
+        <div className="relative px-4 sm:px-6">
+          <AdNativeBanner />
+        </div>
+
         {/* Cómo funciona */}
         <section className="relative py-16 sm:py-24 px-4 sm:px-6">
           <div className="max-w-4xl mx-auto">
@@ -286,6 +293,11 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Ad Banner - entre secciones */}
+        <div className="relative px-4 sm:px-6">
+          <AdBanner />
+        </div>
+
         {/* FAQ */}
         <section className="relative py-16 sm:py-24 px-4 sm:px-6 bg-black/20">
           <div className="max-w-3xl mx-auto">
@@ -329,6 +341,11 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Ad Banner - antes del footer */}
+        <div className="relative px-4 sm:px-6">
+          <AdNativeBanner />
+        </div>
 
         {/* Footer CTA */}
         <section className="relative py-16 sm:py-20 px-4 sm:px-6 text-center">
