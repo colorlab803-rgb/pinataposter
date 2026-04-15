@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap, Store } from 'lucide-react'
+import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { DonationBanner } from '@/components/DonationBanner'
 import { AdBanner } from '@/components/ads/AdBanner'
@@ -253,41 +253,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Catálogo Digital */}
-        <section className="relative py-16 sm:py-24 px-4 sm:px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/30 text-pink-300 text-xs sm:text-sm mb-4">
-              <Store className="h-3.5 w-3.5" />
-              Nuevo: Catálogo Digital
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-              Crea tu catálogo de piñatas online
-            </h2>
-            <p className="text-purple-300 max-w-lg mx-auto mb-8">
-              ¿Eres piñatero o piñatera? Muestra tus creaciones a tus clientes con un catálogo digital profesional y gratuito. Compártelo por WhatsApp y redes sociales.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
-              {[
-                { emoji: '🏪', title: 'Tu tienda online', desc: 'Logo, datos, redes sociales' },
-                { emoji: '📸', title: 'Fotos de productos', desc: 'Múltiples fotos, precios, tallas' },
-                { emoji: '💬', title: 'Contacto directo', desc: 'Botón de WhatsApp integrado' },
-              ].map((item) => (
-                <div key={item.title} className="p-4 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-2xl mb-2">{item.emoji}</div>
-                  <h3 className="font-semibold text-white text-sm mb-1">{item.title}</h3>
-                  <p className="text-xs text-purple-300">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-            <Link
-              href="/auth/registro"
-              className="inline-flex items-center gap-2 px-6 py-3 text-base font-semibold text-white bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 rounded-xl shadow-2xl shadow-pink-500/25 transition-all hover:scale-105 active:scale-95"
-            >
-              Crear mi catálogo gratis
-              <ArrowRight className="h-5 w-5" />
-            </Link>
-          </div>
-        </section>
 
         {/* Ad Banner - entre secciones */}
         <div className="relative px-4 sm:px-6">
