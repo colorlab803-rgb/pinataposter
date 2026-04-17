@@ -134,10 +134,15 @@ export function PosterGenerator({
 
   // Daily usage limit state
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const [limitReached, setLimitReached] = useState(false)
   const { user, getIdToken } = useAuth()
 
   const checkDailyLimit = useCallback(async (): Promise<boolean> => {
     if (!user) return false
+    if (limitReached) {
+      setShowUpgradeModal(true)
+      return false
+    }
     try {
       const token = await getIdToken()
       if (!token) return false
@@ -147,15 +152,19 @@ export function PosterGenerator({
       })
       const data = await res.json()
       if (!data.allowed) {
+        setLimitReached(true)
         setShowUpgradeModal(true)
         return false
       }
+      if (data.isPremium) return true
+      // Free user: uso registrado exitosamente
       return true
     } catch {
-      // Si falla la verificación, permitir por cortesía
-      return true
+      // Si falla la verificación, denegar por seguridad
+      setShowUpgradeModal(true)
+      return false
     }
-  }, [user, getIdToken])
+  }, [user, getIdToken, limitReached])
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const isMobile = useIsMobile()
@@ -308,19 +317,25 @@ export function PosterGenerator({
   useEffect(() => {
     if (triggerDownload?.format) {
       if (triggerDownload.projectName) {
-        // Auto-descarga (MoldeIA) — reintentar si el generador no está listo
-        let attempts = 0
-        const maxAttempts = 10
-        const attempt = () => {
-          attempts++
-          if (processedImageSrc && grid && targetWidthCm && targetHeightCm && selectedPages.size > 0) {
-            if (triggerDownload.format === 'pdf') generatePdf(triggerDownload.projectName!)
-            else generateZip(triggerDownload.projectName!)
-          } else if (attempts < maxAttempts) {
-            setTimeout(attempt, 500)
+        // Auto-descarga (MoldeIA) — verificar límite antes de generar
+        const attemptWithCheck = async () => {
+          const allowed = await checkDailyLimit()
+          if (!allowed) return
+
+          let attempts = 0
+          const maxAttempts = 10
+          const attempt = () => {
+            attempts++
+            if (processedImageSrc && grid && targetWidthCm && targetHeightCm && selectedPages.size > 0) {
+              if (triggerDownload.format === 'pdf') generatePdf(triggerDownload.projectName!)
+              else generateZip(triggerDownload.projectName!)
+            } else if (attempts < maxAttempts) {
+              setTimeout(attempt, 500)
+            }
           }
+          attempt()
         }
-        attempt()
+        attemptWithCheck()
       } else {
         handleDownloadRequest(triggerDownload.format)
       }
@@ -709,6 +724,12 @@ export function PosterGenerator({
   }
 
   const handleConfirmDownload = async () => {
+    // Doble verificación: si el límite se alcanzó entre la solicitud y la confirmación
+    if (limitReached) {
+      setShowUpgradeModal(true)
+      setIsFileNameDialogOpen(false)
+      return
+    }
     if (downloadType === 'pdf') {
       generatePdf(projectName)
     } else if (downloadType === 'zip') {
@@ -1577,7 +1598,7 @@ export function PosterGenerator({
                       <Button 
                         size="lg" 
                         onClick={() => handleDownloadRequest('pdf')}
-                        disabled={isProcessing || !grid || selectedPages.size === 0}
+                        disabled={isProcessing || !grid || selectedPages.size === 0 || limitReached}
                         className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
                         {isProcessing && downloadType === 'pdf' ? (
@@ -1592,7 +1613,7 @@ export function PosterGenerator({
                         variant="outline" 
                         size="lg" 
                         onClick={() => handleDownloadRequest('zip')}
-                        disabled={isProcessing || !grid || selectedPages.size === 0}
+                        disabled={isProcessing || !grid || selectedPages.size === 0 || limitReached}
                         className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
                         {isProcessing && downloadType === 'zip' ? (
