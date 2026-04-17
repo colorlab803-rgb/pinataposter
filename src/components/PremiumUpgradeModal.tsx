@@ -63,14 +63,14 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">Límite diario alcanzado</h2>
-              <p className="text-xs text-purple-300/70">Ya usaste tu molde gratuito de hoy</p>
+              <p className="text-xs text-purple-300/70">Ya usaste tu molde del día</p>
             </div>
           </div>
         </div>
 
         <div className="px-6 py-5 space-y-5">
           <p className="text-sm text-purple-200/80 leading-relaxed">
-            Los usuarios gratuitos pueden generar <strong className="text-white">1 molde por día</strong>. 
+            Tu plan actual incluye <strong className="text-white">1 molde por día</strong>. 
             Desbloquea el acceso ilimitado por todo un año con un único pago.
           </p>
 
@@ -125,7 +125,7 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
             onClick={onClose}
             className="w-full py-2.5 px-4 rounded-xl text-sm text-purple-300/60 hover:text-purple-200 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
           >
-            Vuelve mañana por otro molde gratis
+            Vuelve mañana por otro molde
           </button>
 
           <p className="text-[11px] text-center text-purple-300/40">

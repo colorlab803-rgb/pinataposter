@@ -126,7 +126,7 @@ export default function RegistroPage() {
             </div>
             <CardTitle className="text-2xl text-white">Crear cuenta</CardTitle>
             <CardDescription className="text-gray-400">
-              Crea tu catálogo digital de piñatas gratis
+              Crea tu catálogo digital de piñatas
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

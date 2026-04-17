@@ -37,7 +37,7 @@ export function DonationBanner() {
             </div>
 
             <h3 className="text-lg sm:text-xl font-bold text-white">
-              PiñataPoster es gratis gracias a personas como tú
+              PiñataPoster existe gracias a personas como tú
             </h3>
             
             <p className="text-sm text-purple-200/70 max-w-lg mx-auto leading-relaxed">

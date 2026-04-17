@@ -193,7 +193,7 @@ function LoginContent() {
             <p className="text-center text-sm text-gray-400">
               ¿No tienes cuenta?{' '}
               <Link href="/auth/registro" className="text-purple-400 hover:text-purple-300 font-medium">
-                Regístrate gratis
+                Regístrate aquí
               </Link>
             </p>
           </CardContent>

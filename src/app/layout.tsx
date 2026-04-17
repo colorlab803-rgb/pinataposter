@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     'posterizar imagen', 'imprimir poster casero', 'piñatero', 'piñatería',
     'molde piñata tamaño real PDF', 'imprimir patron grande en hojas carta',
     'dividir imagen para imprimir en varias hojas', 'poster casero sin plotter',
-    'molde piñata gratis para imprimir', 'herramienta para piñateros',
+    'molde piñata para imprimir', 'herramienta para piñateros',
     'imprimir diseño grande en casa', 'patron costura tamaño real',
     'ampliar imagen para imprimir', 'piñata de Spiderman molde',
     'piñata de número molde', 'molde piñata estrella',

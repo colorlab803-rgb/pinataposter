@@ -18,7 +18,7 @@ export default function Home() {
         '@type': 'Offer',
         priceCurrency: 'MXN',
         price: '0',
-        name: 'Gratuito (1 molde/día)',
+        name: 'Básico (1 molde/día)',
         availability: 'https://schema.org/InStock',
       },
       {
@@ -49,10 +49,10 @@ export default function Home() {
       },
       {
         '@type': 'Question',
-        name: '¿Puedo usar PiñataPoster gratis?',
+        name: '¿Cómo funciona PiñataPoster?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Sí, puedes crear 1 molde gratis al día iniciando sesión con Google. Para uso ilimitado sin restricciones, puedes obtener acceso premium por solo $50 MXN al año.',
+          text: 'Inicia sesión con Google, sube tu diseño, define el tamaño y descarga tu molde. El plan básico incluye 1 molde al día. Para uso ilimitado, obtén acceso premium por solo $50 MXN al año.',
         },
       },
       {
@@ -196,7 +196,7 @@ export default function Home() {
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <p className="text-xs sm:text-sm text-purple-300/60">
-                1 molde gratis al día · Ilimitado desde $50 MXN/año
+                1 molde al día · Ilimitado desde $50 MXN/año
               </p>
             </div>
           </div>
@@ -283,8 +283,8 @@ export default function Home() {
                   a: 'Sube tu diseño a PiñataPoster, define el tamaño real en centímetros (por ejemplo 80 cm de alto) y la herramienta divide la imagen automáticamente en hojas tamaño carta u oficio. Descarga el PDF, imprime, recorta por las guías y pega las hojas.',
                 },
                 {
-                  q: '¿PiñataPoster es gratis?',
-                  a: 'Sí, puedes crear 1 molde gratis al día con tu cuenta de Google. Para uso ilimitado, puedes obtener acceso premium por $50 MXN al año.',
+                  q: '¿Cómo funciona PiñataPoster?',
+                  a: 'Inicia sesión con Google, sube tu diseño, define el tamaño y descarga tu molde. El plan básico incluye 1 molde al día. Para uso ilimitado, obtén acceso premium por $50 MXN al año.',
                 },
                 {
                   q: '¿En qué tamaños de papel puedo imprimir?',

@@ -37,7 +37,7 @@ const accounts = [
 const futureFeatures = [
   'Más tamaños de papel y formatos',
   'Generador de moldes con IA',
-  'Biblioteca de plantillas gratis',
+  'Biblioteca de plantillas premium',
 ]
 
 export function DonationModal() {
@@ -86,7 +86,7 @@ export function DonationModal() {
               </DialogTitle>
               <DialogDescription className="text-center text-sm leading-relaxed pt-2">
                 Esta herramienta fue creada con mucho cariño para que cualquier piñatero 
-                pueda imprimir sus moldes <strong className="text-foreground">gratis, sin registro y sin límites</strong>.
+                pueda imprimir sus moldes <strong className="text-foreground">fácilmente y sin complicaciones</strong>.
               </DialogDescription>
             </DialogHeader>
 
@@ -141,7 +141,7 @@ export function DonationModal() {
               </DialogTitle>
               <DialogDescription className="text-center text-sm">
                 Cualquier monto ayuda. Incluso lo que cuesta un cafecito ☕ hace la diferencia 
-                para que miles de piñateros sigan usando esta herramienta gratis.
+                para que miles de piñateros sigan disfrutando esta herramienta.
               </DialogDescription>
             </DialogHeader>
 

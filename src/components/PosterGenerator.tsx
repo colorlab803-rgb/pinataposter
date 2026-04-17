@@ -868,7 +868,7 @@ export function PosterGenerator({
         // Texto de donación sutil en el margen superior
         doc.setFontSize(6.5)
         doc.setTextColor(180)
-        const donationHint = 'PiñataPoster.com es gratis · Apóyanos: 646990404071880785'
+        const donationHint = 'PiñataPoster.com · Apóyanos: 646990404071880785'
         const donationHintW = doc.getTextWidth(donationHint)
         doc.text(donationHint, pageW / 2 - donationHintW / 2, 0.4)
       })
@@ -980,16 +980,16 @@ export function PosterGenerator({
         // Mensaje principal
         doc.setFontSize(13)
         doc.setTextColor(60)
-        doc.text('Ayúdanos a seguir siendo gratis', dpW / 2, dy, { align: 'center' })
+        doc.text('Apoya a PiñataPoster', dpW / 2, dy, { align: 'center' })
         dy += 1
 
         doc.setFontSize(9.5)
         doc.setTextColor(100)
         const msgLines = doc.splitTextToSize(
-          'PiñataPoster es gratuito para todos gracias al apoyo de personas como tú. ' +
+          'PiñataPoster existe gracias al apoyo de personas como tú. ' +
           'Mantener los servidores y mejorar la herramienta tiene un costo real. ' +
           'Si este molde te ahorró tiempo o dinero, considera hacer una pequeña donación. ' +
-          'Incluso lo que cuesta un cafecito hace la diferencia para que miles de piñateros sigan usando esta herramienta gratis.',
+          'Incluso lo que cuesta un cafecito hace la diferencia para que miles de piñateros sigan disfrutando esta herramienta.',
           dpW - dpM * 2
         )
         doc.text(msgLines, dpW / 2, dy, { align: 'center' })

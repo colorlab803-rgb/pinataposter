@@ -236,7 +236,7 @@ export function PremiumBanner({ onUpgradeClick }: { onUpgradeClick: () => void }
         <div className="flex items-center gap-2 min-w-0">
           <Crown className="h-4 w-4 text-purple-400 shrink-0" />
           <p className="text-xs text-purple-200/80 truncate">
-            <span className="hidden sm:inline">Estás en el plan gratuito · </span>
+            <span className="hidden sm:inline">Desbloquea todo el potencial · </span>
             <strong className="text-white">Moldes ilimitados por $50 MXN/año</strong>
           </p>
         </div>

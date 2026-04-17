@@ -70,7 +70,7 @@ function GoogleLoginScreen() {
           </button>
 
           <div className="space-y-2 text-xs text-purple-300/50">
-            <p>✨ 1 molde gratis por día</p>
+            <p>✨ 1 molde por día incluido</p>
             <p>👑 Acceso ilimitado desde $50 MXN/año</p>
           </div>
         </div>
