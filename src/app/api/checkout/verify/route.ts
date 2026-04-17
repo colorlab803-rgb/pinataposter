@@ -37,15 +37,11 @@ export async function GET(req: NextRequest) {
 
     // Si el pago está completado y tenemos un usuario autenticado, guardar en Firestore
     if (paid && authenticatedUid) {
-      const paymentMethod = session.payment_method_types?.includes('oxxo')
-        ? 'oxxo' as const
-        : 'card' as const
-      
       await setPremiumInFirestore(
         authenticatedUid,
         email || '',
         sessionId,
-        paymentMethod,
+        'card',
         session.amount_total || 5000
       )
     }

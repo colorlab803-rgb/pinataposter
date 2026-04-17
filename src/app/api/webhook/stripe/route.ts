@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
         // Para pagos con tarjeta, payment_status será 'paid'
         // Para OXXO, será 'unpaid' (se paga después)
         if (session.payment_status === 'paid') {
-          await activatePremium(session)
+          await activatePremium(session, 'card')
         }
         break
       }
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       case 'checkout.session.async_payment_succeeded': {
         // OXXO: el usuario pagó en la tienda
         const session = event.data.object as Stripe.Checkout.Session
-        await activatePremium(session)
+        await activatePremium(session, 'oxxo')
         break
       }
 
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ received: true })
 }
 
-async function activatePremium(session: Stripe.Checkout.Session) {
+async function activatePremium(session: Stripe.Checkout.Session, paymentMethod: 'card' | 'oxxo') {
   const uid = session.metadata?.uid
   const email = session.metadata?.email || session.customer_details?.email || ''
 
@@ -71,10 +71,6 @@ async function activatePremium(session: Stripe.Checkout.Session) {
     console.error('Webhook: sesión sin uid en metadata', session.id)
     return
   }
-
-  const paymentMethod = session.payment_method_types?.includes('oxxo') 
-    ? 'oxxo' as const
-    : 'card' as const
 
   await setPremiumInFirestore(uid, email, session.id, paymentMethod, session.amount_total || 5000)
   console.log(`✅ Premium activado para uid=${uid}, email=${email}, método=${paymentMethod}`)

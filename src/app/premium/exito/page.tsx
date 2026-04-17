@@ -43,15 +43,12 @@ function PremiumExitoContent() {
           // OXXO — pago pendiente
           setStatus('pending_oxxo')
         } else {
-          // Fallback: activar con email genérico
-          setPremiumStatus(data.email || user?.email || 'premium@pinataposter.com')
-          setStatus('success')
-          setTimeout(() => router.push('/generator'), 3000)
+          // Pago no completado — mostrar error
+          setStatus('error')
         }
       } catch {
-        setPremiumStatus(user?.email || 'premium@pinataposter.com')
-        setStatus('success')
-        setTimeout(() => router.push('/generator'), 3000)
+        // Error de red/API — no activar premium, mostrar error
+        setStatus('error')
       }
     }
 
