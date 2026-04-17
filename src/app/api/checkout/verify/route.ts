@@ -36,7 +36,13 @@ export async function GET(req: NextRequest) {
     const paymentStatus = session.payment_status
 
     // Si el pago está completado y tenemos un usuario autenticado, guardar en Firestore
+    // Verificar que el uid del pago coincida con el usuario autenticado (prevenir hijacking)
     if (paid && authenticatedUid) {
+      const sessionUid = session.metadata?.uid
+      if (sessionUid && sessionUid !== authenticatedUid) {
+        return NextResponse.json({ error: 'Sesión de pago no corresponde a tu cuenta' }, { status: 403 })
+      }
+
       await setPremiumInFirestore(
         authenticatedUid,
         email || '',
