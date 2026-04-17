@@ -19,7 +19,7 @@ export async function setPremiumInFirestore(
   email: string,
   stripeSessionId: string,
   paymentMethod: 'card' | 'oxxo',
-  amount: number = 16900
+  amount: number = 5000
 ): Promise<void> {
   const db = getFirebaseAdminFirestore()
   const now = Date.now()

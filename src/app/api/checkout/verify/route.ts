@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
         email || '',
         sessionId,
         paymentMethod,
-        session.amount_total || 16900
+        session.amount_total || 5000
       )
     }
 

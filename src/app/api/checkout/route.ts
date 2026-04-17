@@ -44,10 +44,10 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: 'mxn',
             product_data: {
-              name: 'PiñataPoster — Acceso Preferencial',
-              description: 'Acceso ilimitado al generador de moldes por 12 meses. Sin interrupciones ni tiempos de espera.',
+              name: 'PiñataPoster — Acceso Ilimitado',
+              description: 'Moldes ilimitados por 12 meses. Sin restricciones diarias.',
             },
-            unit_amount: 16900,
+            unit_amount: 5000,
           },
           quantity: 1,
         },

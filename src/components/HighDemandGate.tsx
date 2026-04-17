@@ -151,7 +151,7 @@ export function HighDemandGate({ children }: { children: React.ReactNode }) {
 
             <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl border border-purple-500/20 p-4 text-center space-y-3">
               <div>
-                <span className="text-3xl font-bold text-white">$169</span>
+                <span className="text-3xl font-bold text-white">$50</span>
                 <span className="text-lg text-purple-300 ml-1">MXN</span>
               </div>
               <p className="text-xs text-purple-300/60">

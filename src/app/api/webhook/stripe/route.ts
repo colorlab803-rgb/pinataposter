@@ -76,6 +76,6 @@ async function activatePremium(session: Stripe.Checkout.Session) {
     ? 'oxxo' as const
     : 'card' as const
 
-  await setPremiumInFirestore(uid, email, session.id, paymentMethod, session.amount_total || 16900)
+  await setPremiumInFirestore(uid, email, session.id, paymentMethod, session.amount_total || 5000)
   console.log(`✅ Premium activado para uid=${uid}, email=${email}, método=${paymentMethod}`)
 }

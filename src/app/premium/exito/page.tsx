@@ -75,8 +75,8 @@ function PremiumExitoContent() {
           </div>
           <h1 className="text-2xl font-bold text-white">¡Acceso activado! 🎉</h1>
           <p className="text-purple-300">
-            Tu acceso preferencial está activo por <strong className="text-white">12 meses</strong>.
-            Ya puedes usar el generador sin interrupciones.
+            Tu acceso ilimitado está activo por <strong className="text-white">12 meses</strong>.
+            Ya puedes crear todos los moldes que necesites sin restricciones.
           </p>
           <p className="text-sm text-purple-400">Redirigiendo al generador...</p>
         </>

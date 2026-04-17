@@ -5,6 +5,8 @@ import ReactCrop, { type Crop, type PixelCrop, centerCrop, makeAspectCrop } from
 import 'react-image-crop/dist/ReactCrop.css'
 import { toast } from 'sonner'
 import { trackGeneratorUse } from '@/components/TrackVisit'
+import { useAuth } from '@/components/AuthProvider'
+import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -129,6 +131,31 @@ export function PosterGenerator({
 
   // Auto-crop state
   const [isAutoCropping, setIsAutoCropping] = useState(false)
+
+  // Daily usage limit state
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
+  const { user, getIdToken } = useAuth()
+
+  const checkDailyLimit = useCallback(async (): Promise<boolean> => {
+    if (!user) return false
+    try {
+      const token = await getIdToken()
+      if (!token) return false
+      const res = await fetch('/api/molde-usage', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const data = await res.json()
+      if (!data.allowed) {
+        setShowUpgradeModal(true)
+        return false
+      }
+      return true
+    } catch {
+      // Si falla la verificación, permitir por cortesía
+      return true
+    }
+  }, [user, getIdToken])
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const isMobile = useIsMobile()
@@ -672,6 +699,10 @@ export function PosterGenerator({
 
   const handleDownloadRequest = async (type: DownloadType) => {
     if (!validateInputs()) return
+
+    // Verificar límite diario antes de permitir la descarga
+    const allowed = await checkDailyLimit()
+    if (!allowed) return
 
     setDownloadType(type)
     setIsFileNameDialogOpen(true)
@@ -1829,6 +1860,11 @@ export function PosterGenerator({
             </DialogContent>
           </Dialog>
         )}
+
+        <PremiumUpgradeModal
+          open={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+        />
       </div>
     </TooltipProvider>
   )

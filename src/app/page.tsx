@@ -13,12 +13,22 @@ export default function Home() {
     description: 'Herramienta para piñateros: imprime moldes y diseños de piñatas en tamaño real divididos en hojas carta, oficio o tabloide.',
     applicationCategory: 'DesignApplication',
     operatingSystem: 'Web',
-    offers: {
-      '@type': 'Offer',
-      priceCurrency: 'MXN',
-      price: '0',
-      availability: 'https://schema.org/InStock',
-    },
+    offers: [
+      {
+        '@type': 'Offer',
+        priceCurrency: 'MXN',
+        price: '0',
+        name: 'Gratuito (1 molde/día)',
+        availability: 'https://schema.org/InStock',
+      },
+      {
+        '@type': 'Offer',
+        priceCurrency: 'MXN',
+        price: '50',
+        name: 'Premium (ilimitado por 12 meses)',
+        availability: 'https://schema.org/InStock',
+      },
+    ],
     creator: {
       '@type': 'Person',
       name: 'Ricardo Hernández',
@@ -42,7 +52,7 @@ export default function Home() {
         name: '¿Puedo usar PiñataPoster gratis?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Sí, PiñataPoster es completamente gratis. Puedes usar todas las funciones sin registro, sin pagos y sin marcas de agua.',
+          text: 'Sí, puedes crear 1 molde gratis al día iniciando sesión con Google. Para uso ilimitado sin restricciones, puedes obtener acceso premium por solo $50 MXN al año.',
         },
       },
       {
@@ -182,11 +192,11 @@ export default function Home() {
                 href="/generator"
                 className="inline-flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl shadow-2xl shadow-purple-500/25 transition-all hover:scale-105 active:scale-95 touch-target"
               >
-                Crear mi molde gratis
+                Crear mi molde
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <p className="text-xs sm:text-sm text-purple-300/60">
-                100% gratis · Sin registro · Sin marca de agua
+                1 molde gratis al día · Ilimitado desde $50 MXN/año
               </p>
             </div>
           </div>
@@ -274,7 +284,7 @@ export default function Home() {
                 },
                 {
                   q: '¿PiñataPoster es gratis?',
-                  a: 'Sí, PiñataPoster es completamente gratis. Puedes usar todas las funciones sin registro, sin pagos y sin marcas de agua.',
+                  a: 'Sí, puedes crear 1 molde gratis al día con tu cuenta de Google. Para uso ilimitado, puedes obtener acceso premium por $50 MXN al año.',
                 },
                 {
                   q: '¿En qué tamaños de papel puedo imprimir?',
