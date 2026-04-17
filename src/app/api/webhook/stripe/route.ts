@@ -17,11 +17,14 @@ export async function POST(req: NextRequest) {
   let event: Stripe.Event
 
   try {
-    if (webhookSecret && sig) {
+    if (webhookSecret) {
+      if (!sig) {
+        return NextResponse.json({ error: 'Falta firma de Stripe' }, { status: 400 })
+      }
       event = stripe.webhooks.constructEvent(body, sig, webhookSecret)
     } else {
-      // Sin webhook secret (desarrollo) — parsear directamente
-      console.warn('⚠️ Webhook sin verificación de firma')
+      // Sin webhook secret (solo desarrollo local)
+      console.warn('⚠️ Webhook sin verificación de firma — solo para desarrollo')
       event = JSON.parse(body) as Stripe.Event
     }
   } catch (err) {

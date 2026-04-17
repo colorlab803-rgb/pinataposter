@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     // Verificar que el uid del pago coincida con el usuario autenticado (prevenir hijacking)
     if (paid && authenticatedUid) {
       const sessionUid = session.metadata?.uid
-      if (sessionUid && sessionUid !== authenticatedUid) {
+      if (!sessionUid || sessionUid !== authenticatedUid) {
         return NextResponse.json({ error: 'Sesión de pago no corresponde a tu cuenta' }, { status: 403 })
       }
 
