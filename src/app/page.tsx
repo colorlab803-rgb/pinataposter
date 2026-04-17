@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap } from 'lucide-react'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { DonationBanner } from '@/components/DonationBanner'
 import { AdBanner } from '@/components/ads/AdBanner'
 import { AdNativeBanner } from '@/components/ads/AdNativeBanner'
 export default function Home() {
@@ -336,9 +335,6 @@ export default function Home() {
             </Link>
           </div>
         </section>
-
-        {/* Donation Banner */}
-        <DonationBanner />
 
         {/* Footer */}
         <footer className="relative border-t border-white/10 py-6 px-4 text-center">

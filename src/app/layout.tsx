@@ -3,7 +3,6 @@ import './globals.css';
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { AuthProvider } from '@/components/AuthProvider';
-import { DonationModal } from '@/components/DonationModal';
 import { TrackVisit } from '@/components/TrackVisit';
 import { AdScripts } from '@/components/ads/AdScripts';
 
@@ -101,7 +100,6 @@ export default function RootLayout({
           <AuthProvider>
           {children}
           </AuthProvider>
-          <DonationModal />
           <TrackVisit />
           <AdScripts />
           <Toaster 
