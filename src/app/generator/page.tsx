@@ -6,7 +6,6 @@ import { PosterGenerator } from '@/components/PosterGenerator'
 import { Scissors, ArrowLeft, Loader2, LogOut, Crown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { AdNativeBanner } from '@/components/ads/AdNativeBanner'
 import { PremiumPromoPopup, PremiumBanner } from '@/components/PremiumPromoPopup'
 import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
 import { useAuth } from '@/components/AuthProvider'
@@ -173,9 +172,7 @@ export default function GeneratorPage() {
 
         <main>
             <PosterGenerator />
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <AdNativeBanner />
-          </div>
+
         </main>
       </div>
 
