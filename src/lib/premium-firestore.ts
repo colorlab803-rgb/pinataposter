@@ -9,7 +9,7 @@ export interface PremiumData {
   email: string
   expiresAt: number
   stripeSessionId: string
-  paymentMethod: 'card' | 'oxxo'
+  paymentMethod: 'card' | 'oxxo' | 'manual'
   paidAt: number
   amount: number
 }
@@ -18,7 +18,7 @@ export async function setPremiumInFirestore(
   uid: string,
   email: string,
   stripeSessionId: string,
-  paymentMethod: 'card' | 'oxxo',
+  paymentMethod: 'card' | 'oxxo' | 'manual',
   amount: number = 5000
 ): Promise<void> {
   const db = getFirebaseAdminFirestore()

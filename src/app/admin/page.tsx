@@ -16,8 +16,14 @@ import {
   BarChart3,
   RefreshCw,
   ArrowLeft,
+  Search,
+  Crown,
+  CheckCircle,
+  AlertCircle,
+  User,
 } from 'lucide-react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 interface SurveyData {
   total: number
@@ -35,6 +41,23 @@ interface StatsData {
   generatorByDay: Array<{ date: string; action: string; count: number }>
 }
 
+interface UserData {
+  uid: string
+  email: string | null
+  displayName: string | null
+  provider: string
+  createdAt: string | null
+  lastSignIn: string | null
+  photoURL: string | null
+  premium?: {
+    active: boolean
+    paymentMethod: string
+    amount: number
+    paidAt: number
+    expiresAt: number
+  } | null
+}
+
 export default function AdminPage() {
   const [password, setPassword] = useState('')
   const [authenticated, setAuthenticated] = useState(false)
@@ -44,6 +67,13 @@ export default function AdminPage() {
   const [statsData, setStatsData] = useState<StatsData | null>(null)
   const [loading, setLoading] = useState(false)
   const [storedPassword, setStoredPassword] = useState('')
+  
+  // Estados para activación manual de premium
+  const [searchEmail, setSearchEmail] = useState('')
+  const [searching, setSearching] = useState(false)
+  const [activating, setActivating] = useState(false)
+  const [userData, setUserData] = useState<UserData | null>(null)
+  const [searchError, setSearchError] = useState('')
 
   const fetchData = useCallback(async (pwd: string) => {
     setLoading(true)
@@ -105,6 +135,75 @@ export default function AdminPage() {
     setStatsData(null)
     setPassword('')
     setStoredPassword('')
+  }
+
+  async function handleSearchUser(e: React.FormEvent) {
+    e.preventDefault()
+    if (!searchEmail.trim()) return
+
+    setSearching(true)
+    setSearchError('')
+    setUserData(null)
+
+    try {
+      const res = await fetch(`/api/admin/search-user?email=${encodeURIComponent(searchEmail)}`, {
+        headers: { 'x-admin-password': storedPassword },
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setSearchError(data.error || 'Error al buscar usuario')
+        toast.error(data.error || 'Error al buscar usuario')
+      } else {
+        setUserData(data)
+        toast.success('Usuario encontrado')
+      }
+    } catch (error) {
+      setSearchError('Error de conexión')
+      toast.error('Error de conexión')
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  async function handleActivatePremium() {
+    if (!userData) return
+
+    setActivating(true)
+
+    try {
+      const res = await fetch('/api/admin/activate-premium', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': storedPassword,
+        },
+        body: JSON.stringify({
+          uid: userData.uid,
+          email: userData.email,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        toast.error(data.error || 'Error al activar premium')
+      } else {
+        toast.success('Premium activado exitosamente')
+        // Recargar datos del usuario
+        const refreshRes = await fetch(`/api/admin/search-user?email=${encodeURIComponent(userData.email || '')}`, {
+          headers: { 'x-admin-password': storedPassword },
+        })
+        if (refreshRes.ok) {
+          setUserData(await refreshRes.json())
+        }
+      }
+    } catch (error) {
+      toast.error('Error de conexión')
+    } finally {
+      setActivating(false)
+    }
   }
 
   if (!authenticated) {
@@ -376,6 +475,167 @@ export default function AdminPage() {
             <p className="text-purple-300">No hay datos todavía. Los datos aparecerán cuando los usuarios usen la app.</p>
           </div>
         )}
+
+        {/* Activación Manual de Premium */}
+        <section>
+          <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <Crown className="h-5 w-5 text-yellow-400" />
+            Activar Premium Manual
+          </h2>
+          <Card className="bg-white/5 border-white/10">
+            <CardContent className="pt-6">
+              <form onSubmit={handleSearchUser} className="space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    type="email"
+                    placeholder="Buscar usuario por email"
+                    value={searchEmail}
+                    onChange={(e) => setSearchEmail(e.target.value)}
+                    className="bg-white/5 border-white/10 text-white flex-1"
+                    disabled={searching || activating}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={searching || !searchEmail.trim()}
+                    className="bg-purple-600 hover:bg-purple-700 whitespace-nowrap"
+                  >
+                    {searching ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Buscando...
+                      </>
+                    ) : (
+                      <>
+                        <Search className="h-4 w-4 mr-2" />
+                        Buscar
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+
+              {searchError && (
+                <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 text-red-400" />
+                  <p className="text-sm text-red-300">{searchError}</p>
+                </div>
+              )}
+
+              {userData && (
+                <div className="mt-6 space-y-4">
+                  {/* Información del usuario */}
+                  <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                    <div className="flex items-start gap-3">
+                      {userData.photoURL ? (
+                        <img
+                          src={userData.photoURL}
+                          alt=""
+                          className="w-12 h-12 rounded-full border border-white/20"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center">
+                          <User className="h-6 w-6 text-purple-400" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-semibold">
+                          {userData.displayName || 'Sin nombre'}
+                        </p>
+                        <p className="text-sm text-purple-300 truncate">{userData.email}</p>
+                        <p className="text-xs text-purple-400/60 mt-1">
+                          Proveedor: {userData.provider}
+                        </p>
+                        {userData.createdAt && (
+                          <p className="text-xs text-purple-400/60">
+                            Registrado: {new Date(userData.createdAt).toLocaleDateString('es-MX')}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Estado Premium */}
+                  <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                        <Crown className="h-4 w-4 text-yellow-400" />
+                        Estado Premium
+                      </h3>
+                      {userData.premium?.active ? (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
+                          <CheckCircle className="h-3 w-3" />
+                          Activo
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">
+                          Inactivo
+                        </span>
+                      )}
+                    </div>
+
+                    {userData.premium?.active ? (
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-purple-300">Método de pago:</span>
+                          <span className="text-white">
+                            {userData.premium.paymentMethod === 'card' ? 'Tarjeta' :
+                             userData.premium.paymentMethod === 'oxxo' ? 'OXXO' :
+                             userData.premium.paymentMethod === 'manual' ? 'Manual' :
+                             userData.premium.paymentMethod}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-purple-300">Monto:</span>
+                          <span className="text-white">${userData.premium.amount / 100} MXN</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-purple-300">Expira:</span>
+                          <span className="text-white">
+                            {new Date(userData.premium.expiresAt).toLocaleDateString('es-MX')}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-purple-300">
+                        Este usuario no tiene premium activo
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Botón de activar */}
+                  {!userData.premium?.active && (
+                    <Button
+                      onClick={handleActivatePremium}
+                      disabled={activating}
+                      className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white font-semibold py-6"
+                    >
+                      {activating ? (
+                        <>
+                          <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
+                          Activando Premium...
+                        </>
+                      ) : (
+                        <>
+                          <Crown className="h-5 w-5 mr-2" />
+                          Activar Premium (1 año) - $50 MXN
+                        </>
+                      )}
+                    </Button>
+                  )}
+
+                  {userData.premium?.active && (
+                    <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-400" />
+                      <p className="text-sm text-green-300">
+                        El usuario ya tiene premium activo. No es necesario activarlo nuevamente.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </section>
       </main>
     </div>
   )
