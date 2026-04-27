@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/firebase-admin'
 import { uploadImage } from '@/lib/storage'
+import { MAX_IMAGE_SIZE_BYTES, MAX_IMAGE_SIZE_MB } from '@/lib/types/catalog'
 import { randomUUID } from 'crypto'
-
-const MAX_SIZE = 2 * 1024 * 1024 // 2MB
 
 export async function POST(request: Request) {
   const user = await getUserFromRequest(request)
@@ -24,8 +23,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Solo se permiten imágenes' }, { status: 400 })
     }
 
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: 'La imagen excede 2MB' }, { status: 400 })
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      return NextResponse.json({ error: `La imagen excede ${MAX_IMAGE_SIZE_MB}MB` }, { status: 400 })
     }
 
     const buffer = Buffer.from(await file.arrayBuffer())

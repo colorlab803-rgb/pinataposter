@@ -73,5 +73,5 @@ export const STORE_THEMES: { value: StoreTheme; label: string; colors: string }[
 ]
 
 export const MAX_PRODUCT_IMAGES = 5
-export const MAX_IMAGE_SIZE_MB = 2
+export const MAX_IMAGE_SIZE_MB = 20
 export const MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
