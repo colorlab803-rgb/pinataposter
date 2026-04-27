@@ -114,7 +114,7 @@ function LoginContent() {
             </div>
             <CardTitle className="text-2xl text-white">Iniciar sesión</CardTitle>
             <CardDescription className="text-gray-400">
-              Accede a tus moldes y activa premium si quieres catálogo digital para tu negocio
+              Accede a tus moldes y activa premium si quieres descargas ilimitadas
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

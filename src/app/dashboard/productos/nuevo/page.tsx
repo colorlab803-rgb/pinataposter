@@ -1,9 +1,13 @@
-'use client'
-
+import { redirect } from 'next/navigation'
 import { ProductForm } from '@/components/catalog/ProductForm'
 import { CatalogPremiumGuard } from '@/components/catalog/CatalogPremiumGuard'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 export default function NuevoProductoPage() {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    redirect('/dashboard')
+  }
+
   return (
     <CatalogPremiumGuard>
       <div className="max-w-4xl mx-auto">

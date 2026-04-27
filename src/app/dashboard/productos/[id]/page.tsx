@@ -1,11 +1,18 @@
-'use client'
-
-import { use } from 'react'
+import { redirect } from 'next/navigation'
 import { ProductForm } from '@/components/catalog/ProductForm'
 import { CatalogPremiumGuard } from '@/components/catalog/CatalogPremiumGuard'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
-export default function EditarProductoPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default async function EditarProductoPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    redirect('/dashboard')
+  }
+
+  const { id } = await params
 
   return (
     <CatalogPremiumGuard>

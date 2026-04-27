@@ -68,15 +68,15 @@ export function PremiumUpgradeModal({
             </div>
             <div>
               <h2 className="text-lg font-bold text-white">Activa premium por 12 meses</h2>
-              <p className="text-xs text-purple-300/70">Moldes ilimitados y catálogo digital para tu emprendimiento</p>
+              <p className="text-xs text-purple-300/70">Moldes ilimitados para tu emprendimiento</p>
             </div>
           </div>
         </div>
 
         <div className="px-6 py-5 space-y-5">
           <p className="text-sm text-purple-200/80 leading-relaxed">
-            Desbloquea <strong className="text-white">moldes ilimitados</strong> y publica tu emprendimiento con
-            un <strong className="text-white">catálogo digital premium</strong> por un único pago anual.
+            Desbloquea <strong className="text-white">moldes ilimitados</strong> por un único pago anual
+            para seguir creando sin frenar tu trabajo.
           </p>
 
           <div className="space-y-3">
@@ -87,9 +87,8 @@ export function PremiumUpgradeModal({
             <div className="grid gap-2">
               {[
                 { icon: Zap, text: 'Moldes ilimitados, sin tope de descargas' },
-                { icon: Store, text: 'Catálogo digital para tu emprendimiento sin costo extra' },
                 { icon: Clock, text: 'Válido por 12 meses completos' },
-                { icon: Shield, text: 'Mantén tu catálogo visible y editable todo el año' },
+                { icon: Shield, text: 'Acceso premium para seguir trabajando sin interrupciones' },
                 { icon: Store, text: 'Paga con tarjeta o en efectivo en OXXO' },
               ].map(({ icon: Icon, text }, i) => (
                 <div key={i} className="flex items-center gap-2.5 text-sm text-purple-200/70">

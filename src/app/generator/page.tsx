@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import { useCatalogAccess } from '@/lib/useCatalogAccess'
 import { PremiumCatalogAnnouncement } from '@/components/catalog/PremiumCatalogAnnouncement'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 function GoogleLoginScreen() {
   const { signInWithGoogle } = useAuth()
@@ -47,7 +48,7 @@ function GoogleLoginScreen() {
           </div>
           <h1 className="text-3xl font-bold text-white">PiñataPoster</h1>
           <p className="text-purple-200/80 text-sm max-w-sm mx-auto">
-            Inicia sesión con Google para crear moldes de piñata y activar premium si quieres catálogo digital para tu emprendimiento
+            Inicia sesión con Google para crear moldes de piñata y activar premium si quieres descargas ilimitadas
           </p>
         </div>
 
@@ -72,7 +73,7 @@ function GoogleLoginScreen() {
 
           <div className="space-y-2 text-xs text-purple-300/50">
             <p>✨ 5 descargas gratis incluidas</p>
-            <p>👑 Premium desde $50 MXN/año: moldes ilimitados + catálogo digital</p>
+            <p>👑 Premium desde $50 MXN/año: moldes ilimitados por 12 meses</p>
           </div>
         </div>
 
@@ -180,11 +181,13 @@ export default function GeneratorPage() {
       </div>
 
       <PremiumPromoPopup onUpgradeClick={handleUpgradeClick} />
-      <PremiumCatalogAnnouncement
-        enabled={catalogAccess.status === 'premium'}
-        userKey={user?.uid}
-        context="generator"
-      />
+      {DIGITAL_CATALOG_ENABLED && (
+        <PremiumCatalogAnnouncement
+          enabled={catalogAccess.status === 'premium'}
+          userKey={user?.uid}
+          context="generator"
+        />
+      )}
       <PremiumUpgradeModal
         open={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}

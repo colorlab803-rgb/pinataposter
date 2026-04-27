@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/firebase-admin'
 import { getFirestore } from '@/lib/db'
 import { getCatalogAccessForUser, isCatalogWritable } from '@/lib/catalog-access'
+import { catalogDisabledResponse } from '@/lib/digital-catalog.server'
 import type { CatalogAccess } from '@/lib/types/catalog-access'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 function slugify(text: string): string {
   return text
@@ -26,6 +28,10 @@ function premiumRequiredResponse(catalogAccess: CatalogAccess) {
 }
 
 export async function GET(request: Request) {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    return catalogDisabledResponse()
+  }
+
   const user = await getUserFromRequest(request)
   if (!user) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
@@ -43,6 +49,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    return catalogDisabledResponse()
+  }
+
   const user = await getUserFromRequest(request)
   if (!user) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
@@ -111,6 +121,10 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    return catalogDisabledResponse()
+  }
+
   const user = await getUserFromRequest(request)
   if (!user) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })

@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server'
 import { getFirestore } from '@/lib/db'
+import { catalogDisabledResponse } from '@/lib/digital-catalog.server'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 export async function GET(request: Request) {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    return catalogDisabledResponse()
+  }
+
   const { searchParams } = new URL(request.url)
   const slug = searchParams.get('slug')
 

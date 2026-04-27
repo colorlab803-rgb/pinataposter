@@ -126,7 +126,7 @@ export default function RegistroPage() {
             </div>
             <CardTitle className="text-2xl text-white">Crear cuenta</CardTitle>
             <CardDescription className="text-gray-400">
-              Empieza con 5 descargas gratis y activa premium si quieres catálogo digital
+              Empieza con 5 descargas gratis y activa premium si quieres moldes ilimitados
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

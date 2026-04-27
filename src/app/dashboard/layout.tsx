@@ -5,13 +5,18 @@ import { AuthGuard } from '@/components/AuthGuard'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Store, Package, LayoutDashboard, ExternalLink, LogOut, ArrowLeft } from 'lucide-react'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 import { cn } from '@/lib/utils'
 
-const navItems = [
-  { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
-  { href: '/dashboard/tienda', label: 'Mi Tienda', icon: Store },
-  { href: '/dashboard/productos', label: 'Productos', icon: Package },
-]
+const navItems = DIGITAL_CATALOG_ENABLED
+  ? [
+      { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
+      { href: '/dashboard/tienda', label: 'Mi Tienda', icon: Store },
+      { href: '/dashboard/productos', label: 'Productos', icon: Package },
+    ]
+  : [
+      { href: '/dashboard', label: 'Inicio', icon: LayoutDashboard },
+    ]
 
 function DashboardSidebar() {
   const pathname = usePathname()
@@ -24,7 +29,9 @@ function DashboardSidebar() {
           <span className="text-2xl">🪅</span>
           <span className="font-bold text-white">PiñataPoster</span>
         </Link>
-        <p className="text-xs text-gray-500 mt-1">Catálogo Premium</p>
+        <p className="text-xs text-gray-500 mt-1">
+          {DIGITAL_CATALOG_ENABLED ? 'Catálogo Premium' : 'Panel de usuario'}
+        </p>
       </div>
 
       <nav className="flex-1 p-3 space-y-1">
@@ -83,7 +90,9 @@ function MobileHeader() {
       <div className="flex items-center justify-between px-4 py-3">
         <Link href="/dashboard" className="flex items-center gap-2">
           <span className="text-xl">🪅</span>
-          <span className="font-bold text-white text-sm">Catálogo</span>
+          <span className="font-bold text-white text-sm">
+            {DIGITAL_CATALOG_ENABLED ? 'Catálogo' : 'Panel'}
+          </span>
         </Link>
         <button
           onClick={signOut}

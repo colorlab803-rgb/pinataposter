@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { markCatalogAnnouncementPending, setPremiumStatus } from '@/lib/premium'
 import { useAuth } from '@/components/AuthProvider'
 import { CheckCircle2, Loader2, Clock, Store } from 'lucide-react'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 function PremiumExitoContent() {
   const searchParams = useSearchParams()
@@ -38,7 +39,7 @@ function PremiumExitoContent() {
           // Pago completado (tarjeta) — activar inmediatamente
           setPremiumStatus(data.email || user?.email || 'premium@pinataposter.com')
           const premiumUserKey = data.uid || user?.uid
-          if (premiumUserKey) {
+          if (DIGITAL_CATALOG_ENABLED && premiumUserKey) {
             markCatalogAnnouncementPending(premiumUserKey)
           }
           setStatus('success')
@@ -77,9 +78,9 @@ function PremiumExitoContent() {
           <h1 className="text-2xl font-bold text-white">¡Acceso activado! 🎉</h1>
           <p className="text-purple-300">
             Tu acceso ilimitado está activo por <strong className="text-white">12 meses</strong>.
-            Ya puedes crear todos los moldes que necesites y lanzar tu catálogo digital para tu negocio de piñatas.
+            Ya puedes crear todos los moldes que necesites para tu negocio de piñatas.
           </p>
-          <p className="text-sm text-purple-400">Redirigiendo al dashboard para crear tu catálogo...</p>
+          <p className="text-sm text-purple-400">Redirigiendo a tu dashboard...</p>
         </>
       )}
 
@@ -98,7 +99,7 @@ function PremiumExitoContent() {
               <span className="text-sm font-medium">Pago pendiente</span>
             </div>
             <p className="text-xs text-amber-300/70">
-              Tienes hasta 3 días para realizar el pago. Una vez confirmado, podrás usar el generador sin límites y activar tu catálogo digital premium.
+              Tienes hasta 3 días para realizar el pago. Una vez confirmado, podrás usar el generador sin límites.
             </p>
           </div>
           <button

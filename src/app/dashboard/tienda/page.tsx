@@ -1,9 +1,13 @@
-'use client'
-
+import { redirect } from 'next/navigation'
 import { StoreForm } from '@/components/catalog/StoreForm'
 import { CatalogPremiumGuard } from '@/components/catalog/CatalogPremiumGuard'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 export default function TiendaPage() {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    redirect('/dashboard')
+  }
+
   return (
     <CatalogPremiumGuard>
       <div className="max-w-4xl mx-auto">

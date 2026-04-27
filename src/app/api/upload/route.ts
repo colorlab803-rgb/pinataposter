@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/firebase-admin'
+import { catalogDisabledResponse } from '@/lib/digital-catalog.server'
 import { uploadImage } from '@/lib/storage'
 import { MAX_IMAGE_SIZE_BYTES, MAX_IMAGE_SIZE_MB } from '@/lib/types/catalog'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 import { randomUUID } from 'crypto'
 
 export async function POST(request: Request) {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    return catalogDisabledResponse()
+  }
+
   const user = await getUserFromRequest(request)
   if (!user) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })

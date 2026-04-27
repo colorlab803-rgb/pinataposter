@@ -5,20 +5,28 @@ import { useAuth } from '@/components/AuthProvider'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Store, Package, ExternalLink, Plus, Loader2, Sparkles, ArrowRight } from 'lucide-react'
+import { Store, Package, ExternalLink, Plus, Loader2, Sparkles, ArrowRight, Crown, Scissors } from 'lucide-react'
 import type { Store as StoreType } from '@/lib/types/catalog'
 import { useCatalogAccess } from '@/lib/useCatalogAccess'
 import { CatalogPremiumPaywall } from '@/components/catalog/CatalogPremiumPaywall'
 import { PremiumCatalogAnnouncement } from '@/components/catalog/PremiumCatalogAnnouncement'
+import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 export default function DashboardPage() {
   const { user, getIdToken } = useAuth()
-  const { loading: accessLoading, catalogAccess } = useCatalogAccess()
+  const { loading: accessLoading, premium, catalogAccess } = useCatalogAccess()
   const [store, setStore] = useState<StoreType | null>(null)
   const [productCount, setProductCount] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   useEffect(() => {
+    if (!DIGITAL_CATALOG_ENABLED) {
+      setLoading(false)
+      return
+    }
+
     async function loadData() {
       const token = await getIdToken()
       if (!token) return
@@ -55,6 +63,81 @@ export default function DashboardPage() {
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
       </div>
+    )
+  }
+
+  if (!DIGITAL_CATALOG_ENABLED) {
+    return (
+      <>
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div>
+            <h1 className="text-2xl font-bold text-white">
+              ¡Hola, {user?.displayName || 'Piñatero'}! 🪅
+            </h1>
+            <p className="text-gray-400 mt-1">
+              Administra tu acceso y vuelve al generador cuando quieras crear más moldes.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card className="bg-gray-900/50 border-gray-800">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-gray-400">Generador</CardTitle>
+                <Scissors className="h-4 w-4 text-purple-400" />
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-gray-300">
+                  Entra al generador para subir diseños, ajustar medidas y descargar tus moldes.
+                </p>
+                <Link href="/generator">
+                  <Button className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600">
+                    Ir al generador
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-900/50 border-gray-800">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-gray-400">Premium</CardTitle>
+                <Crown className="h-4 w-4 text-pink-400" />
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-white text-xl font-bold">
+                  {premium ? 'Activo' : 'Plan básico'}
+                </p>
+                <p className="text-gray-400">
+                  {premium
+                    ? 'Tu cuenta ya tiene moldes ilimitados activos.'
+                    : 'Activa premium para quitar el límite de descargas durante 12 meses.'}
+                </p>
+                {premium ? (
+                  <Link href="/generator">
+                    <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:text-white">
+                      Seguir creando
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button
+                    size="sm"
+                    className="bg-pink-600 hover:bg-pink-700 text-white"
+                    onClick={() => setShowUpgradeModal(true)}
+                  >
+                    Activar premium
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <PremiumUpgradeModal
+          open={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+          redirectTo="/dashboard"
+        />
+      </>
     )
   }
 

@@ -1,6 +1,8 @@
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { getFirestore } from '@/lib/db'
 import { getCatalogAccessForOwner, isCatalogPubliclyAccessible } from '@/lib/catalog-access'
+import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 import CatalogoClient from './CatalogoClient'
 
 interface Props {
@@ -8,6 +10,10 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    return { title: 'Catálogo no encontrado' }
+  }
+
   const { slug } = await params
   const db = getFirestore()
   const snapshot = await db.collection('stores').where('slug', '==', slug).limit(1).get()
@@ -44,6 +50,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CatalogoPage({ params }: Props) {
+  if (!DIGITAL_CATALOG_ENABLED) {
+    notFound()
+  }
+
   const { slug } = await params
   return <CatalogoClient slug={slug} />
 }

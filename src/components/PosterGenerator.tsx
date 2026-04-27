@@ -1251,7 +1251,7 @@ export function PosterGenerator({
                   {usageStatus.remainingFree} de {usageStatus.freeLimit} descargas gratis restantes
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Cuando se agoten, premium activa moldes ilimitados y tu catálogo digital por $50 MXN durante 12 meses.
+                  Cuando se agoten, premium activa moldes ilimitados por $50 MXN durante 12 meses.
                 </p>
               </div>
               <p className="text-xs font-medium text-muted-foreground">
