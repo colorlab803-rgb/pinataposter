@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import Stripe from 'stripe'
 import { verifyIdToken } from '@/lib/firebase-admin'
 import { setPremiumInFirestore } from '@/lib/premium-firestore'
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2026-03-25.dahlia',
-  })
-}
+import { getStripe } from '@/lib/stripe'
 
 export async function GET(req: NextRequest) {
   const sessionId = req.nextUrl.searchParams.get('session_id')
@@ -30,7 +24,7 @@ export async function GET(req: NextRequest) {
   try {
     const stripe = getStripe()
     const session = await stripe.checkout.sessions.retrieve(sessionId)
-    
+
     const paid = session.payment_status === 'paid'
     const email = session.customer_details?.email || session.metadata?.email || null
     const paymentStatus = session.payment_status

@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { setPremiumInFirestore } from '@/lib/premium-firestore'
-
-function getStripe() {
-  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2026-03-25.dahlia',
-  })
-}
+import { getStripe } from '@/lib/stripe'
 
 export async function POST(req: NextRequest) {
   const stripe = getStripe()
@@ -36,7 +31,7 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
-        
+
         // Para pagos con tarjeta, payment_status será 'paid'
         // Para OXXO, será 'unpaid' (se paga después)
         if (session.payment_status === 'paid') {
@@ -54,7 +49,7 @@ export async function POST(req: NextRequest) {
 
       case 'checkout.session.async_payment_failed': {
         const session = event.data.object as Stripe.Checkout.Session
-        console.log(`Pago OXXO fallido para sesión ${session.id}`, session.metadata)
+        console.warn(`Pago OXXO fallido para sesión ${session.id}`, session.metadata)
         break
       }
     }
@@ -76,5 +71,4 @@ async function activatePremium(session: Stripe.Checkout.Session, paymentMethod: 
   }
 
   await setPremiumInFirestore(uid, email, session.id, paymentMethod, session.amount_total || 5000)
-  console.log(`✅ Premium activado para uid=${uid}, email=${email}, método=${paymentMethod}`)
 }
