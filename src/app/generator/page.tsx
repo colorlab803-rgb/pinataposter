@@ -11,6 +11,8 @@ import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
 import { useAuth } from '@/components/AuthProvider'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { useCatalogAccess } from '@/lib/useCatalogAccess'
+import { PremiumCatalogAnnouncement } from '@/components/catalog/PremiumCatalogAnnouncement'
 
 function GoogleLoginScreen() {
   const { signInWithGoogle } = useAuth()
@@ -88,6 +90,7 @@ function GoogleLoginScreen() {
 
 export default function GeneratorPage() {
   const { user, loading: authLoading, configured, signOut } = useAuth()
+  const { catalogAccess } = useCatalogAccess()
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   const handleUpgradeClick = useCallback(() => {
@@ -177,6 +180,11 @@ export default function GeneratorPage() {
       </div>
 
       <PremiumPromoPopup onUpgradeClick={handleUpgradeClick} />
+      <PremiumCatalogAnnouncement
+        enabled={catalogAccess.status === 'premium'}
+        userKey={user?.uid}
+        context="generator"
+      />
       <PremiumUpgradeModal
         open={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}

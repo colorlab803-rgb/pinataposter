@@ -5,10 +5,11 @@ import { useAuth } from '@/components/AuthProvider'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Store, Package, ExternalLink, Plus, Loader2 } from 'lucide-react'
+import { Store, Package, ExternalLink, Plus, Loader2, Sparkles, ArrowRight } from 'lucide-react'
 import type { Store as StoreType } from '@/lib/types/catalog'
 import { useCatalogAccess } from '@/lib/useCatalogAccess'
 import { CatalogPremiumPaywall } from '@/components/catalog/CatalogPremiumPaywall'
+import { PremiumCatalogAnnouncement } from '@/components/catalog/PremiumCatalogAnnouncement'
 
 export default function DashboardPage() {
   const { user, getIdToken } = useAuth()
@@ -47,6 +48,7 @@ export default function DashboardPage() {
 
   const canManageCatalog = catalogAccess.status === 'premium'
   const canViewPublicCatalog = catalogAccess.status === 'premium' || catalogAccess.status === 'grace'
+  const showCatalogLaunchCta = canManageCatalog && !store
 
   if (loading || accessLoading) {
     return (
@@ -73,10 +75,43 @@ export default function DashboardPage() {
         <CatalogPremiumPaywall catalogAccess={catalogAccess} storeSlug={store?.slug} />
       )}
 
+      <PremiumCatalogAnnouncement
+        enabled={canManageCatalog}
+        userKey={user?.uid}
+        hasStore={Boolean(store)}
+        storeSlug={store?.slug}
+      />
+
+      {showCatalogLaunchCta && (
+        <Card className="border-purple-500/20 bg-gradient-to-br from-purple-600/15 via-slate-900 to-pink-600/10 shadow-xl shadow-purple-500/10">
+          <CardContent className="flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-3">
+              <span className="inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-500/10 px-3 py-1 text-xs font-semibold text-purple-200">
+                <Sparkles className="h-3.5 w-3.5" />
+                Nuevo en premium
+              </span>
+              <div className="space-y-1">
+                <h2 className="text-2xl font-bold text-white">Crea tu catálogo digital para tu negocio de piñatas</h2>
+                <p className="max-w-2xl text-sm text-purple-100/75">
+                  Tu premium ya incluye página pública, datos de contacto y espacio para publicar tus productos sin pagar extra.
+                </p>
+              </div>
+            </div>
+
+            <Link href="/dashboard/tienda">
+              <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600 sm:w-auto">
+                Crear catálogo digital
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="bg-gray-900/50 border-gray-800">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-gray-400">Mi Tienda</CardTitle>
+            <CardTitle className="text-sm font-medium text-gray-400">Catálogo Digital</CardTitle>
             <Store className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
@@ -87,7 +122,7 @@ export default function DashboardPage() {
                   {canManageCatalog ? (
                     <Link href="/dashboard/tienda">
                       <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:text-white">
-                        Editar
+                        Editar catálogo
                       </Button>
                     </Link>
                   ) : (
@@ -109,14 +144,14 @@ export default function DashboardPage() {
               <div className="space-y-3">
                 <p className="text-gray-500">
                   {canManageCatalog
-                    ? 'Aún no has configurado tu tienda'
+                    ? 'Tu premium ya puede publicar un catálogo digital para tu negocio'
                     : 'Activa premium para crear y publicar tu tienda digital'}
                 </p>
                 {canManageCatalog ? (
                   <Link href="/dashboard/tienda">
                     <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
                       <Plus className="h-3 w-3 mr-1" />
-                      Configurar tienda
+                      Crear catálogo digital
                     </Button>
                   </Link>
                 ) : null}

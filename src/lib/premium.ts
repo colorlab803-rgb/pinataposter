@@ -1,6 +1,8 @@
 import type { CatalogAccess } from './types/catalog-access'
 
 const PREMIUM_KEY = 'pinataposter_premium'
+const CATALOG_ANNOUNCEMENT_SEEN_KEY = 'pinataposter_catalog_announcement_seen_v1'
+const CATALOG_ANNOUNCEMENT_PENDING_KEY = 'pinataposter_catalog_announcement_pending_v1'
 
 interface PremiumData {
   expiresAt: number
@@ -39,6 +41,10 @@ export function clearPremiumStatus(): void {
   localStorage.removeItem(PREMIUM_KEY)
 }
 
+function getScopedStorageKey(baseKey: string, subject: string): string {
+  return `${baseKey}:${subject}`
+}
+
 export function getPremiumEmail(): string | null {
   if (typeof window === 'undefined') return null
   try {
@@ -50,6 +56,31 @@ export function getPremiumEmail(): string | null {
   } catch {
     return null
   }
+}
+
+export function hasSeenCatalogAnnouncement(subject: string): boolean {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem(getScopedStorageKey(CATALOG_ANNOUNCEMENT_SEEN_KEY, subject)) === 'true'
+}
+
+export function markCatalogAnnouncementSeen(subject: string): void {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(getScopedStorageKey(CATALOG_ANNOUNCEMENT_SEEN_KEY, subject), 'true')
+}
+
+export function hasPendingCatalogAnnouncement(subject: string): boolean {
+  if (typeof window === 'undefined') return false
+  return localStorage.getItem(getScopedStorageKey(CATALOG_ANNOUNCEMENT_PENDING_KEY, subject)) === 'true'
+}
+
+export function markCatalogAnnouncementPending(subject: string): void {
+  if (typeof window === 'undefined') return
+  localStorage.setItem(getScopedStorageKey(CATALOG_ANNOUNCEMENT_PENDING_KEY, subject), 'true')
+}
+
+export function clearCatalogAnnouncementPending(subject: string): void {
+  if (typeof window === 'undefined') return
+  localStorage.removeItem(getScopedStorageKey(CATALOG_ANNOUNCEMENT_PENDING_KEY, subject))
 }
 
 export async function checkPremiumServer(idToken: string): Promise<PremiumStatusResponse> {

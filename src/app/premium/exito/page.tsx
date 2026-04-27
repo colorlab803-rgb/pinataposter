@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { setPremiumStatus } from '@/lib/premium'
+import { markCatalogAnnouncementPending, setPremiumStatus } from '@/lib/premium'
 import { useAuth } from '@/components/AuthProvider'
 import { CheckCircle2, Loader2, Clock, Store } from 'lucide-react'
 
@@ -37,8 +37,12 @@ function PremiumExitoContent() {
         if (data.paid) {
           // Pago completado (tarjeta) — activar inmediatamente
           setPremiumStatus(data.email || user?.email || 'premium@pinataposter.com')
+          const premiumUserKey = data.uid || user?.uid
+          if (premiumUserKey) {
+            markCatalogAnnouncementPending(premiumUserKey)
+          }
           setStatus('success')
-          setTimeout(() => router.push('/generator'), 3000)
+          setTimeout(() => router.push('/dashboard'), 2800)
         } else if (data.paymentStatus === 'unpaid') {
           // OXXO — pago pendiente
           setStatus('pending_oxxo')
@@ -73,9 +77,9 @@ function PremiumExitoContent() {
           <h1 className="text-2xl font-bold text-white">¡Acceso activado! 🎉</h1>
           <p className="text-purple-300">
             Tu acceso ilimitado está activo por <strong className="text-white">12 meses</strong>.
-            Ya puedes crear todos los moldes que necesites y mantener activo el catálogo digital de tu emprendimiento.
+            Ya puedes crear todos los moldes que necesites y lanzar tu catálogo digital para tu negocio de piñatas.
           </p>
-          <p className="text-sm text-purple-400">Redirigiendo al generador...</p>
+          <p className="text-sm text-purple-400">Redirigiendo al dashboard para crear tu catálogo...</p>
         </>
       )}
 
