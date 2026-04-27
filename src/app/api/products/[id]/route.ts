@@ -1,6 +1,19 @@
 import { NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/firebase-admin'
 import { getFirestore } from '@/lib/db'
+import { getCatalogAccessForUser, isCatalogWritable } from '@/lib/catalog-access'
+import type { CatalogAccess } from '@/lib/types/catalog-access'
+
+function premiumRequiredResponse(catalogAccess: CatalogAccess) {
+  return NextResponse.json(
+    {
+      error: 'El catálogo digital ahora es exclusivo para usuarios premium',
+      code: 'CATALOG_PREMIUM_REQUIRED',
+      catalogAccess,
+    },
+    { status: 403 }
+  )
+}
 
 async function verifyProductOwnership(productId: string, userId: string) {
   const db = getFirestore()
@@ -42,6 +55,11 @@ export async function PUT(
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
 
+  const catalogAccess = await getCatalogAccessForUser(user.uid)
+  if (!isCatalogWritable(catalogAccess)) {
+    return premiumRequiredResponse(catalogAccess)
+  }
+
   const result = await verifyProductOwnership(id, user.uid)
   if (!result) {
     return NextResponse.json({ error: 'Producto no encontrado' }, { status: 404 })
@@ -75,6 +93,11 @@ export async function DELETE(
   const user = await getUserFromRequest(request)
   if (!user) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
+  const catalogAccess = await getCatalogAccessForUser(user.uid)
+  if (!isCatalogWritable(catalogAccess)) {
+    return premiumRequiredResponse(catalogAccess)
   }
 
   const result = await verifyProductOwnership(id, user.uid)

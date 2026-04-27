@@ -73,7 +73,7 @@ function PremiumExitoContent() {
           <h1 className="text-2xl font-bold text-white">¡Acceso activado! 🎉</h1>
           <p className="text-purple-300">
             Tu acceso ilimitado está activo por <strong className="text-white">12 meses</strong>.
-            Ya puedes crear todos los moldes que necesites sin restricciones.
+            Ya puedes crear todos los moldes que necesites y mantener activo el catálogo digital de tu emprendimiento.
           </p>
           <p className="text-sm text-purple-400">Redirigiendo al generador...</p>
         </>
@@ -94,7 +94,7 @@ function PremiumExitoContent() {
               <span className="text-sm font-medium">Pago pendiente</span>
             </div>
             <p className="text-xs text-amber-300/70">
-              Tienes hasta 3 días para realizar el pago. Una vez confirmado, podrás usar el generador sin límites.
+              Tienes hasta 3 días para realizar el pago. Una vez confirmado, podrás usar el generador sin límites y activar tu catálogo digital premium.
             </p>
           </div>
           <button

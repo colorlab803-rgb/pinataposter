@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { getFirestore } from '@/lib/db'
+import { getCatalogAccessForOwner, isCatalogPubliclyAccessible } from '@/lib/catalog-access'
 import CatalogoClient from './CatalogoClient'
 
 interface Props {
@@ -16,6 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const store = snapshot.docs[0].data()
+  const catalogAccess = await getCatalogAccessForOwner(store.userId, store.createdAt)
+
+  if (!isCatalogPubliclyAccessible(catalogAccess)) {
+    return { title: 'Catálogo no encontrado' }
+  }
+
   const title = `${store.businessName} — Catálogo de Piñatas`
   const description = store.description || `Descubre el catálogo de piñatas de ${store.businessName}`
 

@@ -1,6 +1,19 @@
 import { NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/firebase-admin'
 import { getFirestore } from '@/lib/db'
+import { getCatalogAccessForUser, isCatalogWritable } from '@/lib/catalog-access'
+import type { CatalogAccess } from '@/lib/types/catalog-access'
+
+function premiumRequiredResponse(catalogAccess: CatalogAccess) {
+  return NextResponse.json(
+    {
+      error: 'El catálogo digital ahora es exclusivo para usuarios premium',
+      code: 'CATALOG_PREMIUM_REQUIRED',
+      catalogAccess,
+    },
+    { status: 403 }
+  )
+}
 
 export async function GET(request: Request) {
   const user = await getUserFromRequest(request)
@@ -31,6 +44,11 @@ export async function POST(request: Request) {
   const user = await getUserFromRequest(request)
   if (!user) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
+  const catalogAccess = await getCatalogAccessForUser(user.uid)
+  if (!isCatalogWritable(catalogAccess)) {
+    return premiumRequiredResponse(catalogAccess)
   }
 
   const body = await request.json()

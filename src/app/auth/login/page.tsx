@@ -37,7 +37,7 @@ function LoginContent() {
             <p className="text-4xl mb-4">🔧</p>
             <h2 className="text-xl font-bold text-white mb-2">Firebase no configurado</h2>
             <p className="text-gray-400 text-sm mb-4">
-              Para usar el catálogo digital, configura las variables NEXT_PUBLIC_FIREBASE_* en tu archivo .env.local
+              Para usar PiñataPoster, configura las variables NEXT_PUBLIC_FIREBASE_* en tu archivo .env.local
             </p>
             <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm">
               Volver al inicio
@@ -114,7 +114,7 @@ function LoginContent() {
             </div>
             <CardTitle className="text-2xl text-white">Iniciar sesión</CardTitle>
             <CardDescription className="text-gray-400">
-              Accede a tu catálogo digital de piñatas
+              Accede a tus moldes y activa premium si quieres catálogo digital para tu negocio
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

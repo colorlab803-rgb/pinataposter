@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getFirestore } from '@/lib/db'
+import { getCatalogAccessForOwner, isCatalogPubliclyAccessible } from '@/lib/catalog-access'
 
 export async function GET(
   _request: Request,
@@ -15,6 +16,11 @@ export async function GET(
 
   const doc = snapshot.docs[0]
   const data = doc.data()
+  const catalogAccess = await getCatalogAccessForOwner(data.userId, data.createdAt)
+
+  if (!isCatalogPubliclyAccessible(catalogAccess)) {
+    return NextResponse.json({ error: 'Tienda no encontrada' }, { status: 404 })
+  }
 
   // Solo devolver datos públicos
   return NextResponse.json({

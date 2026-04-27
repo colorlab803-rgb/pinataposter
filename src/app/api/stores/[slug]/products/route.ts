@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getFirestore } from '@/lib/db'
+import { getCatalogAccessForOwner, isCatalogPubliclyAccessible } from '@/lib/catalog-access'
 
 export async function GET(
   _request: Request,
@@ -14,7 +15,15 @@ export async function GET(
     return NextResponse.json({ error: 'Tienda no encontrada' }, { status: 404 })
   }
 
-  const storeId = storeSnap.docs[0].id
+  const storeDoc = storeSnap.docs[0]
+  const storeData = storeDoc.data()
+  const catalogAccess = await getCatalogAccessForOwner(storeData.userId, storeData.createdAt)
+
+  if (!isCatalogPubliclyAccessible(catalogAccess)) {
+    return NextResponse.json({ error: 'Tienda no encontrada' }, { status: 404 })
+  }
+
+  const storeId = storeDoc.id
 
   // Obtener productos disponibles
   const productsSnap = await db

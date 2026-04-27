@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
             currency: 'mxn',
             product_data: {
               name: 'PiñataPoster — Acceso Ilimitado',
-              description: 'Moldes ilimitados por 12 meses. Sin tope de descargas.',
+              description: 'Moldes ilimitados y catálogo digital por 12 meses.',
             },
             unit_amount: 5000,
           },

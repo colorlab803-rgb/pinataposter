@@ -35,7 +35,7 @@ export default function RegistroPage() {
           <p className="text-4xl mb-4">🔧</p>
           <h2 className="text-xl font-bold text-white mb-2">Firebase no configurado</h2>
           <p className="text-gray-400 text-sm mb-4">
-            Para usar el catálogo digital, configura las variables NEXT_PUBLIC_FIREBASE_* en tu archivo .env.local
+            Para usar PiñataPoster, configura las variables NEXT_PUBLIC_FIREBASE_* en tu archivo .env.local
           </p>
           <Link href="/" className="text-purple-400 hover:text-purple-300 text-sm">
             Volver al inicio
@@ -126,7 +126,7 @@ export default function RegistroPage() {
             </div>
             <CardTitle className="text-2xl text-white">Crear cuenta</CardTitle>
             <CardDescription className="text-gray-400">
-              Crea tu catálogo digital de piñatas
+              Empieza con 5 descargas gratis y activa premium si quieres catálogo digital
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

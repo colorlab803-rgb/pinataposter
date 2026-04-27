@@ -6,10 +6,13 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Store, Package, ExternalLink, Plus, Loader2 } from 'lucide-react'
-import type { Store as StoreType, Product } from '@/lib/types/catalog'
+import type { Store as StoreType } from '@/lib/types/catalog'
+import { useCatalogAccess } from '@/lib/useCatalogAccess'
+import { CatalogPremiumPaywall } from '@/components/catalog/CatalogPremiumPaywall'
 
 export default function DashboardPage() {
   const { user, getIdToken } = useAuth()
+  const { loading: accessLoading, catalogAccess } = useCatalogAccess()
   const [store, setStore] = useState<StoreType | null>(null)
   const [productCount, setProductCount] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -42,7 +45,10 @@ export default function DashboardPage() {
     loadData()
   }, [getIdToken])
 
-  if (loading) {
+  const canManageCatalog = catalogAccess.status === 'premium'
+  const canViewPublicCatalog = catalogAccess.status === 'premium' || catalogAccess.status === 'grace'
+
+  if (loading || accessLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
@@ -56,8 +62,16 @@ export default function DashboardPage() {
         <h1 className="text-2xl font-bold text-white">
           ¡Hola, {user?.displayName || 'Piñatero'}! 🪅
         </h1>
-        <p className="text-gray-400 mt-1">Administra tu catálogo digital de piñatas</p>
+        <p className="text-gray-400 mt-1">
+          {canManageCatalog
+            ? 'Administra tu catálogo digital de piñatas'
+            : 'Premium desbloquea tu catálogo digital y moldes ilimitados'}
+        </p>
       </div>
+
+      {!canManageCatalog && (
+        <CatalogPremiumPaywall catalogAccess={catalogAccess} storeSlug={store?.slug} />
+      )}
 
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="bg-gray-900/50 border-gray-800">
@@ -70,28 +84,42 @@ export default function DashboardPage() {
               <div className="space-y-3">
                 <p className="text-xl font-bold text-white">{store.businessName}</p>
                 <div className="flex gap-2">
-                  <Link href="/dashboard/tienda">
-                    <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:text-white">
-                      Editar
+                  {canManageCatalog ? (
+                    <Link href="/dashboard/tienda">
+                      <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:text-white">
+                        Editar
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button size="sm" variant="outline" disabled className="border-gray-700 text-gray-500">
+                      Solo lectura
                     </Button>
-                  </Link>
-                  <Link href={`/catalogo/${store.slug}`} target="_blank">
-                    <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:text-white">
-                      <ExternalLink className="h-3 w-3 mr-1" />
-                      Ver catálogo
-                    </Button>
-                  </Link>
+                  )}
+                  {canViewPublicCatalog && (
+                    <Link href={`/catalogo/${store.slug}`} target="_blank">
+                      <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:text-white">
+                        <ExternalLink className="h-3 w-3 mr-1" />
+                        Ver catálogo
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             ) : (
               <div className="space-y-3">
-                <p className="text-gray-500">Aún no has configurado tu tienda</p>
-                <Link href="/dashboard/tienda">
-                  <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
-                    <Plus className="h-3 w-3 mr-1" />
-                    Configurar tienda
-                  </Button>
-                </Link>
+                <p className="text-gray-500">
+                  {canManageCatalog
+                    ? 'Aún no has configurado tu tienda'
+                    : 'Activa premium para crear y publicar tu tienda digital'}
+                </p>
+                {canManageCatalog ? (
+                  <Link href="/dashboard/tienda">
+                    <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
+                      <Plus className="h-3 w-3 mr-1" />
+                      Configurar tienda
+                    </Button>
+                  </Link>
+                ) : null}
               </div>
             )}
           </CardContent>
@@ -111,19 +139,25 @@ export default function DashboardPage() {
                     Ver todos
                   </Button>
                 </Link>
-                <Link href="/dashboard/productos/nuevo">
-                  <Button size="sm" className="bg-pink-600 hover:bg-pink-700 text-white">
-                    <Plus className="h-3 w-3 mr-1" />
-                    Agregar
+                {canManageCatalog ? (
+                  <Link href="/dashboard/productos/nuevo">
+                    <Button size="sm" className="bg-pink-600 hover:bg-pink-700 text-white">
+                      <Plus className="h-3 w-3 mr-1" />
+                      Agregar
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button size="sm" disabled className="bg-gray-800 text-gray-500">
+                    Premium requerido
                   </Button>
-                </Link>
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {store && (
+      {store && canViewPublicCatalog && (
         <Card className="bg-gray-900/50 border-gray-800">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3 text-sm">

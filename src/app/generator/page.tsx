@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { PosterGenerator } from '@/components/PosterGenerator'
-import { Scissors, ArrowLeft, Loader2, LogOut, Crown } from 'lucide-react'
+import { Scissors, ArrowLeft, Loader2, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { PremiumPromoPopup, PremiumBanner } from '@/components/PremiumPromoPopup'
@@ -45,7 +45,7 @@ function GoogleLoginScreen() {
           </div>
           <h1 className="text-3xl font-bold text-white">PiñataPoster</h1>
           <p className="text-purple-200/80 text-sm max-w-sm mx-auto">
-            Inicia sesión con Google para crear tus moldes de piñata en tamaño real
+            Inicia sesión con Google para crear moldes de piñata y activar premium si quieres catálogo digital para tu emprendimiento
           </p>
         </div>
 
@@ -70,7 +70,7 @@ function GoogleLoginScreen() {
 
           <div className="space-y-2 text-xs text-purple-300/50">
             <p>✨ 5 descargas gratis incluidas</p>
-            <p>👑 Acceso ilimitado desde $50 MXN/año</p>
+            <p>👑 Premium desde $50 MXN/año: moldes ilimitados + catálogo digital</p>
           </div>
         </div>
 

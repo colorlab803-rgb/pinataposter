@@ -1,8 +1,17 @@
+import type { CatalogAccess } from './types/catalog-access'
+
 const PREMIUM_KEY = 'pinataposter_premium'
 
 interface PremiumData {
   expiresAt: number
   email: string
+}
+
+export interface PremiumStatusResponse {
+  premium: boolean
+  expiresAt?: number | null
+  paymentMethod?: 'card' | 'oxxo' | 'manual' | null
+  catalogAccess?: CatalogAccess
 }
 
 export function isPremiumUser(): boolean {
@@ -43,16 +52,13 @@ export function getPremiumEmail(): string | null {
   }
 }
 
-export async function checkPremiumServer(idToken: string): Promise<{
-  premium: boolean
-  expiresAt?: number
-}> {
+export async function checkPremiumServer(idToken: string): Promise<PremiumStatusResponse> {
   try {
     const res = await fetch('/api/premium/check', {
       headers: { Authorization: `Bearer ${idToken}` },
     })
-    if (!res.ok) return { premium: false }
-    const data = await res.json()
+    if (!res.ok) return { premium: false, expiresAt: null, paymentMethod: null }
+    const data = await res.json() as PremiumStatusResponse
     
     // Si el servidor dice que es premium, sincronizar localStorage
     if (data.premium && data.expiresAt) {
@@ -65,7 +71,7 @@ export async function checkPremiumServer(idToken: string): Promise<{
     
     return data
   } catch {
-    return { premium: false }
+    return { premium: false, expiresAt: null, paymentMethod: null }
   }
 }
 

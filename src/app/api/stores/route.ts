@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import { getUserFromRequest } from '@/lib/firebase-admin'
 import { getFirestore } from '@/lib/db'
+import { getCatalogAccessForUser, isCatalogWritable } from '@/lib/catalog-access'
+import type { CatalogAccess } from '@/lib/types/catalog-access'
 
 function slugify(text: string): string {
   return text
@@ -10,6 +12,17 @@ function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 60)
+}
+
+function premiumRequiredResponse(catalogAccess: CatalogAccess) {
+  return NextResponse.json(
+    {
+      error: 'El catálogo digital ahora es exclusivo para usuarios premium',
+      code: 'CATALOG_PREMIUM_REQUIRED',
+      catalogAccess,
+    },
+    { status: 403 }
+  )
 }
 
 export async function GET(request: Request) {
@@ -33,6 +46,11 @@ export async function POST(request: Request) {
   const user = await getUserFromRequest(request)
   if (!user) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
+  const catalogAccess = await getCatalogAccessForUser(user.uid)
+  if (!isCatalogWritable(catalogAccess)) {
+    return premiumRequiredResponse(catalogAccess)
   }
 
   const body = await request.json()
@@ -96,6 +114,11 @@ export async function PUT(request: Request) {
   const user = await getUserFromRequest(request)
   if (!user) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
+  const catalogAccess = await getCatalogAccessForUser(user.uid)
+  if (!isCatalogWritable(catalogAccess)) {
+    return premiumRequiredResponse(catalogAccess)
   }
 
   const body = await request.json()

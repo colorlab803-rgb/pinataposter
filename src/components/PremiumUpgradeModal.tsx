@@ -9,16 +9,21 @@ import { toast } from 'sonner'
 interface PremiumUpgradeModalProps {
   open: boolean
   onClose: () => void
+  redirectTo?: string
 }
 
-export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps) {
+export function PremiumUpgradeModal({
+  open,
+  onClose,
+  redirectTo = '/generator',
+}: PremiumUpgradeModalProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { user, getIdToken } = useAuth()
 
   async function handleCheckout() {
     if (!user) {
-      router.push('/auth/login?redirect=/generator')
+      router.push(`/auth/login?redirect=${encodeURIComponent(redirectTo)}`)
       return
     }
 
@@ -62,16 +67,16 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
               <Crown className="h-5 w-5 text-purple-400" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Tus 5 descargas gratis se agotaron</h2>
-              <p className="text-xs text-purple-300/70">Desbloquea el acceso ilimitado por 12 meses</p>
+              <h2 className="text-lg font-bold text-white">Activa premium por 12 meses</h2>
+              <p className="text-xs text-purple-300/70">Moldes ilimitados y catálogo digital para tu emprendimiento</p>
             </div>
           </div>
         </div>
 
         <div className="px-6 py-5 space-y-5">
           <p className="text-sm text-purple-200/80 leading-relaxed">
-            Ya usaste tus <strong className="text-white">5 descargas gratis</strong>.
-            Continúa generando sin límite durante todo un año con un único pago.
+            Desbloquea <strong className="text-white">moldes ilimitados</strong> y publica tu emprendimiento con
+            un <strong className="text-white">catálogo digital premium</strong> por un único pago anual.
           </p>
 
           <div className="space-y-3">
@@ -82,8 +87,9 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
             <div className="grid gap-2">
               {[
                 { icon: Zap, text: 'Moldes ilimitados, sin tope de descargas' },
+                { icon: Store, text: 'Catálogo digital para tu emprendimiento sin costo extra' },
                 { icon: Clock, text: 'Válido por 12 meses completos' },
-                { icon: Shield, text: 'Acceso prioritario al generador' },
+                { icon: Shield, text: 'Mantén tu catálogo visible y editable todo el año' },
                 { icon: Store, text: 'Paga con tarjeta o en efectivo en OXXO' },
               ].map(({ icon: Icon, text }, i) => (
                 <div key={i} className="flex items-center gap-2.5 text-sm text-purple-200/70">

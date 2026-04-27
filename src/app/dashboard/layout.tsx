@@ -24,7 +24,7 @@ function DashboardSidebar() {
           <span className="text-2xl">🪅</span>
           <span className="font-bold text-white">PiñataPoster</span>
         </Link>
-        <p className="text-xs text-gray-500 mt-1">Catálogo Digital</p>
+        <p className="text-xs text-gray-500 mt-1">Catálogo Premium</p>
       </div>
 
       <nav className="flex-1 p-3 space-y-1">

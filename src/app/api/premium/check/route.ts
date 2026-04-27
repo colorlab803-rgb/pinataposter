@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyIdToken } from '@/lib/firebase-admin'
 import { isPremiumInFirestore, getPremiumData } from '@/lib/premium-firestore'
+import { getCatalogAccessForUser } from '@/lib/catalog-access'
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('Authorization')
@@ -14,6 +15,7 @@ export async function GET(req: NextRequest) {
     const uid = decoded.uid
 
     const premium = await isPremiumInFirestore(uid)
+    const catalogAccess = await getCatalogAccessForUser(uid)
     
     if (premium) {
       const data = await getPremiumData(uid)
@@ -21,10 +23,17 @@ export async function GET(req: NextRequest) {
         premium: true,
         expiresAt: data?.expiresAt || null,
         paymentMethod: data?.paymentMethod || null,
+        catalogAccess,
       })
     }
 
-    return NextResponse.json({ premium: false })
+    const data = await getPremiumData(uid)
+    return NextResponse.json({
+      premium: false,
+      expiresAt: data?.expiresAt || null,
+      paymentMethod: data?.paymentMethod || null,
+      catalogAccess,
+    })
   } catch (error) {
     console.error('Error verificando premium:', error)
     return NextResponse.json({ error: 'Error de autenticación' }, { status: 401 })

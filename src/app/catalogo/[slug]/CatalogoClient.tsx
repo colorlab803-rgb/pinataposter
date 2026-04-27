@@ -61,7 +61,7 @@ export default function CatalogoClient({ slug }: CatalogoClientProps) {
         <div>
           <p className="text-4xl mb-4">🪅</p>
           <h1 className="text-xl font-bold text-white mb-2">Catálogo no encontrado</h1>
-          <p className="text-gray-400 mb-6">Este catálogo no existe o fue eliminado</p>
+          <p className="text-gray-400 mb-6">Este catálogo no existe o no está disponible</p>
           <Link href="/" className="text-purple-400 hover:text-purple-300">
             Ir a PiñataPoster
           </Link>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/components/AuthProvider'
 import { Button } from '@/components/ui/button'
@@ -8,17 +8,14 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Loader2, Package, Trash2, Eye, EyeOff, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
 import type { Product } from '@/lib/types/catalog'
+import { CatalogPremiumGuard } from '@/components/catalog/CatalogPremiumGuard'
 
-export default function ProductosPage() {
+function ProductosPageContent() {
   const { getIdToken } = useAuth()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadProducts()
-  }, [])
-
-  async function loadProducts() {
+  const loadProducts = useCallback(async () => {
     const token = await getIdToken()
     if (!token) return
     try {
@@ -32,7 +29,11 @@ export default function ProductosPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [getIdToken])
+
+  useEffect(() => {
+    loadProducts()
+  }, [loadProducts])
 
   async function toggleAvailability(product: Product) {
     const token = await getIdToken()
@@ -170,5 +171,13 @@ export default function ProductosPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function ProductosPage() {
+  return (
+    <CatalogPremiumGuard>
+      <ProductosPageContent />
+    </CatalogPremiumGuard>
   )
 }

@@ -10,51 +10,51 @@ const PROMO_MESSAGES = [
   {
     icon: Zap,
     title: '¡Moldes ilimitados!',
-    text: 'Por solo $50 MXN al año, crea todos los moldes que necesites sin tope de descargas.',
+    text: 'Por $50 MXN al año crea moldes ilimitados y activa el catálogo digital de tu emprendimiento.',
     cta: 'Desbloquear ahora',
   },
   {
     icon: Sparkles,
-    title: '¿Ya casi agotas tus 5 gratis?',
-    text: 'Usuarios premium crean moldes ilimitados. ¡Solo $50 pesos por todo un año!',
-    cta: 'Quiero acceso ilimitado',
+    title: 'Premium también impulsa tu negocio',
+    text: 'Además de moldes ilimitados, premium te deja publicar tu catálogo digital sin pagar extra.',
+    cta: 'Quiero mi catálogo premium',
   },
   {
     icon: Crown,
     title: 'Sé premium por menos de $5/mes',
-    text: '$50 MXN dividido en 12 meses = ¡menos de $5 al mes! Moldes ilimitados todo el año.',
+    text: '$50 MXN dividido en 12 meses. Mantén moldes ilimitados y tu catálogo activo todo el año.',
     cta: 'Activar premium',
   },
   {
     icon: Star,
     title: '⭐ Oferta especial',
-    text: 'Acceso ilimitado al generador por un año completo. Sin esperas, sin límites.',
+    text: 'Acceso ilimitado al generador y catálogo digital premium por un año completo.',
     cta: 'Aprovechar por $50 MXN',
   },
   {
     icon: Infinity,
     title: 'Sin límites, sin preocupaciones',
-    text: 'Piñateros profesionales necesitan herramientas sin restricciones. Hazte premium hoy.',
+    text: 'Piñateros profesionales necesitan moldes sin límite y una vitrina digital activa para vender más.',
     cta: 'Obtener acceso ilimitado',
   },
   {
     icon: Clock,
     title: 'No te quedes sin descargas',
-    text: 'Desbloquea moldes ilimitados ahora mismo por solo $50 MXN al año.',
+    text: 'Desbloquea moldes ilimitados y conserva tu catálogo digital por solo $50 MXN al año.',
     cta: 'Desbloquear todo',
   },
 ]
 
 // Toasts persuasivos que aparecen cada cierto tiempo
 const TOAST_MESSAGES = [
-  '💡 ¿Sabías que por $50 MXN tienes moldes ilimitados por un año?',
-  '🪅 Los piñateros más productivos usan el plan ilimitado',
-  '⚡ Ahorra tiempo: crea todos los moldes que necesites de una vez',
-  '🔥 El plan ilimitado cuesta menos que una piñata pequeña',
-  '👑 Únete a los piñateros premium — $50 MXN por 12 meses',
+  '💡 Premium incluye moldes ilimitados y catálogo digital por $50 MXN al año',
+  '🪅 Los piñateros premium crean y venden desde un solo lugar',
+  '⚡ Ahorra tiempo: genera moldes y muestra tu trabajo en un catálogo digital',
+  '🔥 El plan premium cuesta menos que una piñata pequeña',
+  '👑 Únete a los piñateros premium — moldes ilimitados + catálogo activo',
   '📐 Tus 5 descargas gratis se van rápido si trabajas seguido',
-  '💰 Menos de $5 al mes por moldes ilimitados',
-  '🎯 Desbloquea ilimitado antes de quedarte sin descargas',
+  '💰 Menos de $5 al mes por moldes ilimitados y tu escaparate digital',
+  '🎯 Activa premium antes de pausar tu catálogo digital',
 ]
 
 interface PremiumPromoPopupProps {
@@ -195,7 +195,7 @@ export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
 
         <div className="bg-purple-500/10 px-5 py-2 border-t border-purple-500/20">
           <p className="text-[10px] text-purple-300/40 text-center">
-            Pago único de $50 MXN · Tarjeta o OXXO · 12 meses
+            Pago único de $50 MXN · Moldes ilimitados + catálogo digital · 12 meses
           </p>
         </div>
       </div>
@@ -236,8 +236,8 @@ export function PremiumBanner({ onUpgradeClick }: { onUpgradeClick: () => void }
         <div className="flex items-center gap-2 min-w-0">
           <Crown className="h-4 w-4 text-purple-400 shrink-0" />
           <p className="text-xs text-purple-200/80 truncate">
-            <span className="hidden sm:inline">Desbloquea todo el potencial · </span>
-            <strong className="text-white">Moldes ilimitados por $50 MXN/año</strong>
+            <span className="hidden sm:inline">Desbloquea tu negocio · </span>
+            <strong className="text-white">Moldes ilimitados + catálogo digital por $50 MXN/año</strong>
           </p>
         </div>
         <button
