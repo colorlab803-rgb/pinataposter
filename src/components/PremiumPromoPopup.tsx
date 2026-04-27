@@ -10,12 +10,12 @@ const PROMO_MESSAGES = [
   {
     icon: Zap,
     title: '¡Moldes ilimitados!',
-    text: 'Por solo $50 MXN al año, crea todos los moldes que necesites sin límite diario.',
+    text: 'Por solo $50 MXN al año, crea todos los moldes que necesites sin tope de descargas.',
     cta: 'Desbloquear ahora',
   },
   {
     icon: Sparkles,
-    title: '¿Necesitas más moldes hoy?',
+    title: '¿Ya casi agotas tus 5 gratis?',
     text: 'Usuarios premium crean moldes ilimitados. ¡Solo $50 pesos por todo un año!',
     cta: 'Quiero acceso ilimitado',
   },
@@ -39,8 +39,8 @@ const PROMO_MESSAGES = [
   },
   {
     icon: Clock,
-    title: '¿Volverás mañana por otro molde?',
-    text: 'O desbloquea moldes ilimitados ahora mismo por solo $50 MXN al año.',
+    title: 'No te quedes sin descargas',
+    text: 'Desbloquea moldes ilimitados ahora mismo por solo $50 MXN al año.',
     cta: 'Desbloquear todo',
   },
 ]
@@ -52,9 +52,9 @@ const TOAST_MESSAGES = [
   '⚡ Ahorra tiempo: crea todos los moldes que necesites de una vez',
   '🔥 El plan ilimitado cuesta menos que una piñata pequeña',
   '👑 Únete a los piñateros premium — $50 MXN por 12 meses',
-  '📐 ¿Muchos diseños en mente? Con premium los haces todos hoy',
+  '📐 Tus 5 descargas gratis se van rápido si trabajas seguido',
   '💰 Menos de $5 al mes por moldes ilimitados',
-  '🎯 Tu próximo molde podría ser el que más vendas — no esperes a mañana',
+  '🎯 Desbloquea ilimitado antes de quedarte sin descargas',
 ]
 
 interface PremiumPromoPopupProps {

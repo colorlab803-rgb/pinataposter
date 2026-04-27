@@ -62,16 +62,16 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
               <Crown className="h-5 w-5 text-purple-400" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Límite diario alcanzado</h2>
-              <p className="text-xs text-purple-300/70">Ya usaste tu molde del día</p>
+              <h2 className="text-lg font-bold text-white">Tus 5 descargas gratis se agotaron</h2>
+              <p className="text-xs text-purple-300/70">Desbloquea el acceso ilimitado por 12 meses</p>
             </div>
           </div>
         </div>
 
         <div className="px-6 py-5 space-y-5">
           <p className="text-sm text-purple-200/80 leading-relaxed">
-            Tu plan actual incluye <strong className="text-white">1 molde por día</strong>. 
-            Desbloquea el acceso ilimitado por todo un año con un único pago.
+            Ya usaste tus <strong className="text-white">5 descargas gratis</strong>.
+            Continúa generando sin límite durante todo un año con un único pago.
           </p>
 
           <div className="space-y-3">
@@ -81,7 +81,7 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
             </h3>
             <div className="grid gap-2">
               {[
-                { icon: Zap, text: 'Moldes ilimitados, sin restricciones diarias' },
+                { icon: Zap, text: 'Moldes ilimitados, sin tope de descargas' },
                 { icon: Clock, text: 'Válido por 12 meses completos' },
                 { icon: Shield, text: 'Acceso prioritario al generador' },
                 { icon: Store, text: 'Paga con tarjeta o en efectivo en OXXO' },
@@ -125,7 +125,7 @@ export function PremiumUpgradeModal({ open, onClose }: PremiumUpgradeModalProps)
             onClick={onClose}
             className="w-full py-2.5 px-4 rounded-xl text-sm text-purple-300/60 hover:text-purple-200 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
           >
-            Vuelve mañana por otro molde
+            Seguir editando
           </button>
 
           <p className="text-[11px] text-center text-purple-300/40">

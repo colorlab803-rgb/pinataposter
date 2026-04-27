@@ -45,6 +45,7 @@ const BLEED_CM = 0.5
 type PaperSize = keyof typeof paperSizes
 type Orientation = 'portrait' | 'landscape'
 type DownloadType = 'pdf' | 'zip'
+type NativeShareResult = 'shared' | 'cancelled' | 'unavailable'
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
 const MAX_IMAGE_DIMENSION = 16000 // px
@@ -70,6 +71,15 @@ interface PosterGeneratorProps {
   onProcessedImageChange?: (src: string | null) => void
   onImageDimensionsChange?: (dims: { width: number; height: number }) => void
   triggerDownload?: { format: 'pdf' | 'zip'; projectName?: string } | null
+}
+
+interface UsageStatus {
+  canGenerate: boolean
+  exhausted: boolean
+  freeLimit: number
+  isPremium: boolean
+  remainingFree: number
+  usedCount: number
 }
 
 export function PosterGenerator({ 
@@ -132,39 +142,78 @@ export function PosterGenerator({
   // Auto-crop state
   const [isAutoCropping, setIsAutoCropping] = useState(false)
 
-  // Daily usage limit state
+  // Free quota state
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
-  const [limitReached, setLimitReached] = useState(false)
+  const [usageStatus, setUsageStatus] = useState<UsageStatus | null>(null)
+  const [isUsageLoading, setIsUsageLoading] = useState(false)
   const { user, getIdToken } = useAuth()
 
-  const checkDailyLimit = useCallback(async (): Promise<boolean> => {
-    if (!user) return false
-    if (limitReached) {
-      setShowUpgradeModal(true)
-      return false
+  const fetchUsageStatus = useCallback(async (options?: { silent?: boolean }): Promise<UsageStatus | null> => {
+    if (!user) {
+      setUsageStatus(null)
+      setIsUsageLoading(false)
+      return null
     }
+
+    try {
+      setIsUsageLoading(true)
+      const token = await getIdToken()
+      if (!token) return null
+      const res = await fetch('/api/molde-usage', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`)
+      }
+      const data = await res.json() as UsageStatus
+      setUsageStatus(data)
+      return data
+    } catch (error) {
+      console.error('Error consultando cuota gratis:', error)
+      if (!options?.silent) {
+        toast.error('No pudimos consultar tus descargas gratis disponibles.')
+      }
+      return null
+    } finally {
+      setIsUsageLoading(false)
+    }
+  }, [user, getIdToken])
+
+  const ensureCanExport = useCallback(async (): Promise<boolean> => {
+    if (!user) return false
+
+    const status = usageStatus ?? await fetchUsageStatus()
+    if (!status) return false
+    if (status.isPremium || status.canGenerate) return true
+
+    setShowUpgradeModal(true)
+    return false
+  }, [user, usageStatus, fetchUsageStatus])
+
+  const consumeSuccessfulExport = useCallback(async () => {
+    if (!user) return
+
     try {
       const token = await getIdToken()
-      if (!token) return false
+      if (!token) return
+
       const res = await fetch('/api/molde-usage', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       })
-      const data = await res.json()
-      if (!data.allowed) {
-        setLimitReached(true)
-        setShowUpgradeModal(true)
-        return false
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`)
       }
-      if (data.isPremium) return true
-      // Free user: uso registrado exitosamente
-      return true
-    } catch {
-      // Si falla la verificación, denegar por seguridad
-      setShowUpgradeModal(true)
-      return false
+
+      const data = await res.json() as UsageStatus
+      setUsageStatus(data)
+    } catch (error) {
+      console.error('Error registrando exportación gratis:', error)
+      void fetchUsageStatus({ silent: true })
+      toast.warning('Tu archivo quedó listo, pero no pudimos actualizar tu contador gratis.')
     }
-  }, [user, getIdToken, limitReached])
+  }, [user, getIdToken, fetchUsageStatus])
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const isMobile = useIsMobile()
@@ -179,8 +228,12 @@ export function PosterGenerator({
            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
   }
 
+  useEffect(() => {
+    void fetchUsageStatus({ silent: true })
+  }, [fetchUsageStatus])
+
   /** En móvil, intenta compartir el archivo con la Web Share API nativa */
-  const shareFileNative = async (blob: Blob, fileName: string, fileType: 'pdf' | 'zip'): Promise<boolean> => {
+  const shareFileNative = async (blob: Blob, fileName: string, fileType: 'pdf' | 'zip'): Promise<NativeShareResult> => {
     try {
       if (navigator.share && navigator.canShare) {
         const mimeType = fileType === 'pdf' ? 'application/pdf' : 'application/zip'
@@ -190,15 +243,14 @@ export function PosterGenerator({
             title: `Mi ${fileType.toUpperCase()} de PiñataPoster`,
             files: [file]
           })
-          return true
+          return 'shared'
         }
       }
     } catch (err: unknown) {
-      // Si el usuario cancela el share, no es un error real
-      if (err instanceof Error && err.name === 'AbortError') return true
+      if (err instanceof Error && err.name === 'AbortError') return 'cancelled'
       console.warn('Web Share API no disponible o falló:', err)
     }
-    return false
+    return 'unavailable'
   }
 
   const handleDownloadComplete = (fileName: string, fileType: 'pdf' | 'zip', blob: Blob) => {
@@ -319,7 +371,7 @@ export function PosterGenerator({
       if (triggerDownload.projectName) {
         // Auto-descarga (MoldeIA) — verificar límite antes de generar
         const attemptWithCheck = async () => {
-          const allowed = await checkDailyLimit()
+          const allowed = await ensureCanExport()
           if (!allowed) return
 
           let attempts = 0
@@ -342,8 +394,6 @@ export function PosterGenerator({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerDownload])
-
-  // Verificar rate-limit al montar el componente — deshabilitado (sin auth)
 
   const getPrintableArea = useCallback(() => {
     const paperDim = paperSizes[paperSize]
@@ -715,8 +765,7 @@ export function PosterGenerator({
   const handleDownloadRequest = async (type: DownloadType) => {
     if (!validateInputs()) return
 
-    // Verificar límite diario antes de permitir la descarga
-    const allowed = await checkDailyLimit()
+    const allowed = await ensureCanExport()
     if (!allowed) return
 
     setDownloadType(type)
@@ -724,8 +773,9 @@ export function PosterGenerator({
   }
 
   const handleConfirmDownload = async () => {
-    // Doble verificación: si el límite se alcanzó entre la solicitud y la confirmación
-    if (limitReached) {
+    const status = await fetchUsageStatus()
+    if (!status) return
+    if (!status.isPremium && !status.canGenerate) {
       setShowUpgradeModal(true)
       setIsFileNameDialogOpen(false)
       return
@@ -997,20 +1047,22 @@ export function PosterGenerator({
       const pdfBlob = doc.output('blob')
 
       if (isMobileDevice()) {
-        // En móvil: usar Web Share API nativa para mejor experiencia
-        const shared = await shareFileNative(pdfBlob, finalFileName, 'pdf')
-        if (!shared) {
-          // Fallback: descargar con saveAs si Share API no está disponible
+        const shareResult = await shareFileNative(pdfBlob, finalFileName, 'pdf')
+        if (shareResult === 'cancelled') {
+          return
+        }
+        if (shareResult === 'unavailable') {
           saveAs(pdfBlob, finalFileName)
         }
-        // Mostrar modal de opciones post-descarga
         handleDownloadComplete(finalFileName, 'pdf', pdfBlob)
+        await consumeSuccessfulExport()
         toast.success("¡PDF listo!", {
-          description: shared ? "Tu archivo se compartió exitosamente." : `Archivo: ${finalFileName}`,
+          description: shareResult === 'shared'
+            ? "Tu archivo se compartió exitosamente."
+            : `Archivo: ${finalFileName}`,
           duration: 4000,
         })
       } else {
-        // En escritorio: descargar + abrir vista previa
         saveAs(pdfBlob, finalFileName)
         
         const pdfUrl = URL.createObjectURL(pdfBlob)
@@ -1027,6 +1079,7 @@ export function PosterGenerator({
         }, 300000)
         
         handleDownloadComplete(finalFileName, 'pdf', pdfBlob)
+        await consumeSuccessfulExport()
         toast.success("¡PDF Descargado!", {
           description: (
             <div className="space-y-1">
@@ -1086,13 +1139,17 @@ export function PosterGenerator({
         const zipBlob = await zip.generateAsync({ type: 'blob' })
 
         if (isMobileDevice()) {
-          const shared = await shareFileNative(zipBlob, finalFileName, 'zip')
-          if (!shared) {
+          const shareResult = await shareFileNative(zipBlob, finalFileName, 'zip')
+          if (shareResult === 'cancelled') {
+            return
+          }
+          if (shareResult === 'unavailable') {
             saveAs(zipBlob, finalFileName)
           }
           handleDownloadComplete(finalFileName, 'zip', zipBlob)
+          await consumeSuccessfulExport()
           toast.success("¡ZIP listo!", {
-            description: shared 
+            description: shareResult === 'shared'
               ? `Archivo con ${pagesToInclude.length} imagen${pagesToInclude.length > 1 ? 'es' : ''} compartido.`
               : `Archivo: ${finalFileName}`,
             duration: 4000,
@@ -1100,6 +1157,7 @@ export function PosterGenerator({
         } else {
           saveAs(zipBlob, finalFileName)
           handleDownloadComplete(finalFileName, 'zip', zipBlob)
+          await consumeSuccessfulExport()
           toast.success("¡ZIP Descargado!", {
             description: (
               <div className="space-y-1">
@@ -1180,6 +1238,28 @@ export function PosterGenerator({
         <div className="mb-4 sm:mb-6">
           <Stepper steps={steps} currentStep={currentStep} />
         </div>
+
+        {usageStatus && !usageStatus.isPremium && (
+          <div className={`mb-4 sm:mb-6 rounded-xl border px-4 py-3 ${
+            usageStatus.exhausted
+              ? 'border-amber-500/30 bg-amber-500/10'
+              : 'border-sky-500/20 bg-sky-500/10'
+          }`}>
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  {usageStatus.remainingFree} de {usageStatus.freeLimit} descargas gratis restantes
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Cuando se agoten, el acceso ilimitado se activa con un pago único de $50 MXN por 12 meses.
+                </p>
+              </div>
+              <p className="text-xs font-medium text-muted-foreground">
+                {usageStatus.usedCount} usadas
+              </p>
+            </div>
+          </div>
+        )}
 
         <Card className="shadow-lg">
           <CardContent className="p-3 sm:p-6">
@@ -1594,11 +1674,22 @@ export function PosterGenerator({
                           </div>
                         </div>
                       )}
+                      {isUsageLoading && (
+                        <div className="mb-3 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
+                          Consultando tus descargas gratis disponibles...
+                        </div>
+                      )}
                       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                       <Button 
                         size="lg" 
                         onClick={() => handleDownloadRequest('pdf')}
-                        disabled={isProcessing || !grid || selectedPages.size === 0 || limitReached}
+                        disabled={
+                          isProcessing ||
+                          isUsageLoading ||
+                          !grid ||
+                          selectedPages.size === 0 ||
+                          (!!usageStatus && !usageStatus.isPremium && usageStatus.exhausted)
+                        }
                         className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
                         {isProcessing && downloadType === 'pdf' ? (
@@ -1613,7 +1704,13 @@ export function PosterGenerator({
                         variant="outline" 
                         size="lg" 
                         onClick={() => handleDownloadRequest('zip')}
-                        disabled={isProcessing || !grid || selectedPages.size === 0 || limitReached}
+                        disabled={
+                          isProcessing ||
+                          isUsageLoading ||
+                          !grid ||
+                          selectedPages.size === 0 ||
+                          (!!usageStatus && !usageStatus.isPremium && usageStatus.exhausted)
+                        }
                         className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
                         {isProcessing && downloadType === 'zip' ? (

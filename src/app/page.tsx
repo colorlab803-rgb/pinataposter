@@ -16,7 +16,7 @@ export default function Home() {
         '@type': 'Offer',
         priceCurrency: 'MXN',
         price: '0',
-        name: 'Básico (1 molde/día)',
+        name: 'Básico (5 descargas gratis)',
         availability: 'https://schema.org/InStock',
       },
       {
@@ -50,7 +50,7 @@ export default function Home() {
         name: '¿Cómo funciona PiñataPoster?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Inicia sesión con Google, sube tu diseño, define el tamaño y descarga tu molde. El plan básico incluye 1 molde al día. Para uso ilimitado, obtén acceso premium por solo $50 MXN al año.',
+          text: 'Inicia sesión con Google, sube tu diseño, define el tamaño y descarga tu molde. El plan básico incluye 5 descargas gratis. Para uso ilimitado, obtén acceso premium por solo $50 MXN al año.',
         },
       },
       {
@@ -194,7 +194,7 @@ export default function Home() {
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <p className="text-xs sm:text-sm text-purple-300/60">
-                1 molde al día · Ilimitado desde $50 MXN/año
+                5 descargas gratis · Ilimitado desde $50 MXN/año
               </p>
             </div>
           </div>
@@ -272,7 +272,7 @@ export default function Home() {
                 },
                 {
                   q: '¿Cómo funciona PiñataPoster?',
-                  a: 'Inicia sesión con Google, sube tu diseño, define el tamaño y descarga tu molde. El plan básico incluye 1 molde al día. Para uso ilimitado, obtén acceso premium por $50 MXN al año.',
+                  a: 'Inicia sesión con Google, sube tu diseño, define el tamaño y descarga tu molde. El plan básico incluye 5 descargas gratis. Para uso ilimitado, obtén acceso premium por $50 MXN al año.',
                 },
                 {
                   q: '¿En qué tamaños de papel puedo imprimir?',
