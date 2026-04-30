@@ -64,7 +64,7 @@ interface PremiumPromoPopupProps {
 export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
   const [visible, setVisible] = useState(false)
   const [messageIndex, setMessageIndex] = useState(0)
-  const [isPremium, setIsPremium] = useState(false)
+  const [isPremium, setIsPremium] = useState<boolean | null>(null)
   const [dismissed, setDismissed] = useState(false)
   const { user, getIdToken, loading: authLoading } = useAuth()
 
@@ -78,14 +78,14 @@ export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
         const token = await getIdToken()
         if (token) {
           const result = await syncPremiumFromServer(token)
-          if (result) {
-            setIsPremium(true)
-            return
-          }
+          setIsPremium(result)
+          return
         }
       } catch {}
     }
-    setIsPremium(false)
+    if (user) {
+      setIsPremium(false)
+    }
   }, [user, getIdToken])
 
   useEffect(() => {
@@ -94,11 +94,11 @@ export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
 
   // Popup flotante: aparece cada 45 segundos
   useEffect(() => {
-    if (isPremium) return
+    if (isPremium !== false) return
 
     // Primer popup a los 20 segundos
     const firstTimer = setTimeout(() => {
-      if (!isPremium) {
+      if (isPremium === false) {
         setMessageIndex(Math.floor(Math.random() * PROMO_MESSAGES.length))
         setVisible(true)
         setDismissed(false)
@@ -107,7 +107,7 @@ export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
 
     // Repetir cada 45 segundos
     const interval = setInterval(() => {
-      if (!isPremium) {
+      if (isPremium === false) {
         setMessageIndex(Math.floor(Math.random() * PROMO_MESSAGES.length))
         setVisible(true)
         setDismissed(false)
@@ -122,10 +122,10 @@ export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
 
   // Toast notifications: cada 60 segundos, empezando a los 35s
   useEffect(() => {
-    if (isPremium) return
+    if (isPremium !== false) return
 
     const firstToast = setTimeout(() => {
-      if (!isPremium) {
+      if (isPremium === false) {
         const msg = TOAST_MESSAGES[Math.floor(Math.random() * TOAST_MESSAGES.length)]
         toast(msg, {
           duration: 5000,
@@ -138,7 +138,7 @@ export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
     }, 35_000)
 
     const interval = setInterval(() => {
-      if (!isPremium) {
+      if (isPremium === false) {
         const msg = TOAST_MESSAGES[Math.floor(Math.random() * TOAST_MESSAGES.length)]
         toast(msg, {
           duration: 5000,
@@ -156,7 +156,7 @@ export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
     }
   }, [isPremium, onUpgradeClick])
 
-  if (isPremium || !visible || dismissed) return null
+  if (isPremium !== false || !visible || dismissed) return null
 
   const promo = PROMO_MESSAGES[messageIndex]
   const Icon = promo.icon
@@ -221,7 +221,10 @@ export function PremiumBanner({ onUpgradeClick }: { onUpgradeClick: () => void }
             setIsPremium(result)
             return
           }
-        } catch {}
+        } catch {
+          setIsPremium(true)
+          return
+        }
       }
       setIsPremium(false)
     }
