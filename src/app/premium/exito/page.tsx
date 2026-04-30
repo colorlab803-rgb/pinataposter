@@ -77,7 +77,7 @@ function PremiumExitoContent() {
           </div>
           <h1 className="text-2xl font-bold text-white">¡Acceso activado! 🎉</h1>
           <p className="text-purple-300">
-            Tu acceso ilimitado está activo por <strong className="text-white">12 meses</strong>.
+            Tu pago anual activó <strong className="text-white">12 meses</strong> de PiñataPoster ilimitado.
             Ya puedes crear todos los moldes que necesites para tu negocio de piñatas.
           </p>
           <p className="text-sm text-purple-400">Redirigiendo a tu dashboard...</p>

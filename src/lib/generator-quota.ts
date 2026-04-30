@@ -1,9 +1,6 @@
-import { Timestamp } from 'firebase-admin/firestore'
-import { getFirebaseAdminFirestore } from './firebase-admin'
 import { getPremiumData } from './premium-firestore'
 
-const COLLECTION = 'generator_quota'
-export const FREE_EXPORT_LIMIT = 5
+export const FREE_EXPORT_LIMIT = 0
 
 export interface GeneratorQuotaStatus {
   canGenerate: boolean
@@ -18,20 +15,14 @@ export interface GeneratorQuotaConsumeResult extends GeneratorQuotaStatus {
   consumed: boolean
 }
 
-function buildGrantKey(expiresAt: number | null): string {
-  return expiresAt ? `premium-expiry:${expiresAt}` : 'initial'
-}
-
-function buildStatus(usedCount: number): GeneratorQuotaStatus {
-  const remainingFree = Math.max(0, FREE_EXPORT_LIMIT - usedCount)
-
+function buildLockedStatus(): GeneratorQuotaStatus {
   return {
-    canGenerate: remainingFree > 0,
-    exhausted: remainingFree <= 0,
+    canGenerate: false,
+    exhausted: true,
     freeLimit: FREE_EXPORT_LIMIT,
     isPremium: false,
-    remainingFree,
-    usedCount,
+    remainingFree: 0,
+    usedCount: 0,
   }
 }
 
@@ -41,13 +32,12 @@ function buildPremiumStatus(): GeneratorQuotaStatus {
     exhausted: false,
     freeLimit: FREE_EXPORT_LIMIT,
     isPremium: true,
-    remainingFree: FREE_EXPORT_LIMIT,
+    remainingFree: 0,
     usedCount: 0,
   }
 }
 
-async function resolveFreeQuota(uid: string, consume: boolean): Promise<GeneratorQuotaConsumeResult> {
-  const db = getFirebaseAdminFirestore()
+async function resolveGeneratorAccess(uid: string): Promise<GeneratorQuotaConsumeResult> {
   const premiumData = await getPremiumData(uid)
   const premiumActive = premiumData ? Date.now() < premiumData.expiresAt : false
 
@@ -58,52 +48,14 @@ async function resolveFreeQuota(uid: string, consume: boolean): Promise<Generato
     }
   }
 
-  const expectedGrantKey = buildGrantKey(premiumData?.expiresAt ?? null)
-  const docRef = db.collection(COLLECTION).doc(uid)
-
-  return db.runTransaction(async (transaction) => {
-    const snapshot = await transaction.get(docRef)
-    const existing = snapshot.data()
-    const now = Timestamp.now()
-
-    const needsReset =
-      !snapshot.exists ||
-      existing?.grantKey !== expectedGrantKey ||
-      existing?.freeLimit !== FREE_EXPORT_LIMIT ||
-      typeof existing?.usedCount !== 'number'
-
-    let usedCount = needsReset ? 0 : existing.usedCount
-    let consumed = false
-
-    if (consume && usedCount < FREE_EXPORT_LIMIT) {
-      usedCount += 1
-      consumed = true
-    }
-
-    if (needsReset || consumed) {
-      transaction.set(
-        docRef,
-        {
-          uid,
-          freeLimit: FREE_EXPORT_LIMIT,
-          usedCount,
-          grantKey: expectedGrantKey,
-          createdAt: existing?.createdAt ?? now,
-          updatedAt: now,
-        },
-        { merge: true }
-      )
-    }
-
-    return {
-      ...buildStatus(usedCount),
-      consumed,
-    }
-  })
+  return {
+    ...buildLockedStatus(),
+    consumed: false,
+  }
 }
 
 export async function getGeneratorQuotaStatus(uid: string): Promise<GeneratorQuotaStatus> {
-  const result = await resolveFreeQuota(uid, false)
+  const result = await resolveGeneratorAccess(uid)
   return {
     canGenerate: result.canGenerate,
     exhausted: result.exhausted,
@@ -115,5 +67,5 @@ export async function getGeneratorQuotaStatus(uid: string): Promise<GeneratorQuo
 }
 
 export async function consumeGeneratorQuota(uid: string): Promise<GeneratorQuotaConsumeResult> {
-  return resolveFreeQuota(uid, true)
+  return resolveGeneratorAccess(uid)
 }

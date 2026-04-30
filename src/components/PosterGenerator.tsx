@@ -142,7 +142,7 @@ export function PosterGenerator({
   // Auto-crop state
   const [isAutoCropping, setIsAutoCropping] = useState(false)
 
-  // Free quota state
+  // Access state
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [usageStatus, setUsageStatus] = useState<UsageStatus | null>(null)
   const [isUsageLoading, setIsUsageLoading] = useState(false)
@@ -169,9 +169,9 @@ export function PosterGenerator({
       setUsageStatus(data)
       return data
     } catch (error) {
-      console.error('Error consultando cuota gratis:', error)
+      console.error('Error consultando acceso premium:', error)
       if (!options?.silent) {
-        toast.error('No pudimos consultar tus descargas gratis disponibles.')
+        toast.error('No pudimos verificar tu acceso premium.')
       }
       return null
     } finally {
@@ -182,38 +182,19 @@ export function PosterGenerator({
   const ensureCanExport = useCallback(async (): Promise<boolean> => {
     if (!user) return false
 
-    const status = usageStatus ?? await fetchUsageStatus()
+    const status = await fetchUsageStatus()
     if (!status) return false
     if (status.isPremium || status.canGenerate) return true
 
     setShowUpgradeModal(true)
     return false
-  }, [user, usageStatus, fetchUsageStatus])
+  }, [user, fetchUsageStatus])
 
   const consumeSuccessfulExport = useCallback(async () => {
     if (!user) return
 
-    try {
-      const token = await getIdToken()
-      if (!token) return
-
-      const res = await fetch('/api/molde-usage', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-      })
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`)
-      }
-
-      const data = await res.json() as UsageStatus
-      setUsageStatus(data)
-    } catch (error) {
-      console.error('Error registrando exportación gratis:', error)
-      void fetchUsageStatus({ silent: true })
-      toast.warning('Tu archivo quedó listo, pero no pudimos actualizar tu contador gratis.')
-    }
-  }, [user, getIdToken, fetchUsageStatus])
+    await fetchUsageStatus({ silent: true })
+  }, [user, fetchUsageStatus])
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const isMobile = useIsMobile()
@@ -1240,23 +1221,27 @@ export function PosterGenerator({
         </div>
 
         {usageStatus && !usageStatus.isPremium && (
-          <div className={`mb-4 sm:mb-6 rounded-xl border px-4 py-3 ${
-            usageStatus.exhausted
-              ? 'border-amber-500/30 bg-amber-500/10'
-              : 'border-sky-500/20 bg-sky-500/10'
-          }`}>
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  {usageStatus.remainingFree} de {usageStatus.freeLimit} descargas gratis restantes
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Cuando se agoten, premium activa moldes ilimitados por $50 MXN durante 12 meses.
-                </p>
+          <div className="mb-4 sm:mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    La descarga requiere acceso anual
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    PiñataPoster ya no tiene diseños gratis. Paga $50 MXN al año y disfruta 12 meses ilimitados.
+                  </p>
+                </div>
               </div>
-              <p className="text-xs font-medium text-muted-foreground">
-                {usageStatus.usedCount} usadas
-              </p>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setShowUpgradeModal(true)}
+                className="w-full sm:w-auto"
+              >
+                Activar por $50 MXN
+              </Button>
             </div>
           </div>
         )}
@@ -1676,7 +1661,7 @@ export function PosterGenerator({
                       )}
                       {isUsageLoading && (
                         <div className="mb-3 p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground">
-                          Consultando tus descargas gratis disponibles...
+                          Verificando tu acceso premium...
                         </div>
                       )}
                       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
@@ -1687,8 +1672,7 @@ export function PosterGenerator({
                           isProcessing ||
                           isUsageLoading ||
                           !grid ||
-                          selectedPages.size === 0 ||
-                          (!!usageStatus && !usageStatus.isPremium && usageStatus.exhausted)
+                          selectedPages.size === 0
                         }
                         className="w-full sm:w-auto touch-target min-h-[48px]"
                       >
@@ -1708,8 +1692,7 @@ export function PosterGenerator({
                           isProcessing ||
                           isUsageLoading ||
                           !grid ||
-                          selectedPages.size === 0 ||
-                          (!!usageStatus && !usageStatus.isPremium && usageStatus.exhausted)
+                          selectedPages.size === 0
                         }
                         className="w-full sm:w-auto touch-target min-h-[48px]"
                       >

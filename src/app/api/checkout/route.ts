@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: 'mxn',
             product_data: {
-              name: 'PiñataPoster — Acceso Ilimitado',
-              description: 'Moldes ilimitados por 12 meses.',
+              name: 'PiñataPoster — Acceso anual ilimitado',
+              description: 'Pago anual de $50 MXN. Disfruta 12 meses de PiñataPoster ilimitado.',
             },
             unit_amount: 5000,
           },

@@ -114,7 +114,7 @@ function LoginContent() {
             </div>
             <CardTitle className="text-2xl text-white">Iniciar sesión</CardTitle>
             <CardDescription className="text-gray-400">
-              Accede a tus moldes y activa premium si quieres descargas ilimitadas
+              Accede a tu cuenta y activa el pago anual para descargar moldes ilimitados durante 12 meses
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

@@ -617,7 +617,7 @@ export default function AdminPage() {
                       ) : (
                         <>
                           <Crown className="h-5 w-5 mr-2" />
-                          Activar Premium (1 año) - $50 MXN
+                          Activar Premium (12 meses) - $50 MXN
                         </>
                       )}
                     </Button>

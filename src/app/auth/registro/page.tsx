@@ -126,7 +126,7 @@ export default function RegistroPage() {
             </div>
             <CardTitle className="text-2xl text-white">Crear cuenta</CardTitle>
             <CardDescription className="text-gray-400">
-              Empieza con 5 descargas gratis y activa premium si quieres moldes ilimitados
+              Crea tu cuenta y activa el pago anual de $50 MXN para descargar moldes ilimitados durante 12 meses
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

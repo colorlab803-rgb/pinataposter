@@ -3,7 +3,7 @@
 Divide cualquier imagen para imprimirla a gran escala en varias hojas.
 Ideal para posters, piñatas, patrones y manualidades.
 
-**Gratis, ilimitado, sin registro, sin marca de agua.**
+**Pago anual de $50 MXN: 12 meses de PiñataPoster ilimitado.**
 
 🌐 **https://pinataposter.com**
 
@@ -16,7 +16,7 @@ Ideal para posters, piñatas, patrones y manualidades.
 - Orientación vertical u horizontal
 - Guías de corte y sangrado para pegado perfecto
 - Plano de armado automático
-- Descarga en PDF o ZIP
+- Descarga en PDF o ZIP con acceso anual activo
 - Dark/Light mode
 
 ## Stack

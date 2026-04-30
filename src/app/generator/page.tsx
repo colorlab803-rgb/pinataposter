@@ -48,7 +48,7 @@ function GoogleLoginScreen() {
           </div>
           <h1 className="text-3xl font-bold text-white">PiñataPoster</h1>
           <p className="text-purple-200/80 text-sm max-w-sm mx-auto">
-            Inicia sesión con Google para crear moldes de piñata y activar premium si quieres descargas ilimitadas
+            Inicia sesión con Google para crear moldes de piñata. Para descargar, activa el pago anual de $50 MXN.
           </p>
         </div>
 
@@ -72,8 +72,8 @@ function GoogleLoginScreen() {
           </button>
 
           <div className="space-y-2 text-xs text-purple-300/50">
-            <p>✨ 5 descargas gratis incluidas</p>
-            <p>👑 Premium desde $50 MXN/año: moldes ilimitados por 12 meses</p>
+            <p>👑 $50 MXN al año</p>
+            <p>✨ Disfruta 12 meses de PiñataPoster ilimitado</p>
           </div>
         </div>
 

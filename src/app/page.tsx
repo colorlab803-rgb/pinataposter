@@ -15,15 +15,8 @@ export default function Home() {
       {
         '@type': 'Offer',
         priceCurrency: 'MXN',
-        price: '0',
-        name: 'Básico (5 descargas gratis)',
-        availability: 'https://schema.org/InStock',
-      },
-      {
-        '@type': 'Offer',
-        priceCurrency: 'MXN',
         price: '50',
-        name: 'Premium (moldes ilimitados por 12 meses)',
+        name: 'Acceso anual ilimitado (12 meses)',
         availability: 'https://schema.org/InStock',
       },
     ],
@@ -50,7 +43,7 @@ export default function Home() {
         name: '¿Cómo funciona PiñataPoster?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Inicia sesión con Google, sube tu diseño, define el tamaño y descarga tu molde. El plan básico incluye 5 descargas gratis. El plan premium agrega moldes ilimitados por $50 MXN al año.',
+          text: 'Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar PDF o ZIP necesitas el acceso anual: $50 MXN por 12 meses de PiñataPoster ilimitado.',
         },
       },
       {
@@ -164,7 +157,7 @@ export default function Home() {
                 </span>
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-purple-200 max-w-xl mx-auto">
-                Sube tu diseño, define el tamaño y descarga un PDF dividido en hojas listas para imprimir, recortar y armar. Si activas premium, obtienes moldes ilimitados durante 12 meses.
+                Sube tu diseño, define el tamaño y descarga un PDF dividido en hojas listas para imprimir, recortar y armar. El acceso anual cuesta $50 MXN e incluye 12 meses ilimitados.
               </p>
             </div>
 
@@ -194,7 +187,7 @@ export default function Home() {
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <p className="text-xs sm:text-sm text-purple-300/60">
-                5 descargas gratis · Premium: moldes ilimitados desde $50 MXN/año
+                Pago anual de $50 MXN · 12 meses de PiñataPoster ilimitado
               </p>
             </div>
           </div>
@@ -272,11 +265,11 @@ export default function Home() {
                 },
                 {
                   q: '¿Cómo funciona PiñataPoster?',
-                  a: 'Inicia sesión con Google, sube tu diseño, define el tamaño y descarga tu molde. El plan básico incluye 5 descargas gratis. Premium cuesta $50 MXN al año e incluye moldes ilimitados.',
+                  a: 'Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar tu molde en PDF o ZIP necesitas el acceso anual: $50 MXN por 12 meses de PiñataPoster ilimitado.',
                 },
                 {
                   q: '¿Qué incluye el plan premium?',
-                  a: 'El plan premium incluye moldes ilimitados por 12 meses para que sigas descargando sin límite.',
+                  a: 'El plan premium incluye 12 meses de PiñataPoster ilimitado por un pago anual de $50 MXN.',
                 },
                 {
                   q: '¿En qué tamaños de papel puedo imprimir?',

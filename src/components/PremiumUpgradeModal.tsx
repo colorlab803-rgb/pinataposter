@@ -67,28 +67,28 @@ export function PremiumUpgradeModal({
               <Crown className="h-5 w-5 text-purple-400" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Activa premium por 12 meses</h2>
-              <p className="text-xs text-purple-300/70">Moldes ilimitados para tu emprendimiento</p>
+              <h2 className="text-lg font-bold text-white">Acceso anual ilimitado</h2>
+              <p className="text-xs text-purple-300/70">$50 MXN por 12 meses de PiñataPoster</p>
             </div>
           </div>
         </div>
 
         <div className="px-6 py-5 space-y-5">
           <p className="text-sm text-purple-200/80 leading-relaxed">
-            Desbloquea <strong className="text-white">moldes ilimitados</strong> por un único pago anual
-            para seguir creando sin frenar tu trabajo.
+            PiñataPoster ya no funciona con diseños gratis. Activa <strong className="text-white">12 meses ilimitados</strong>
+            con un pago anual de $50 MXN para descargar todos los moldes que necesites.
           </p>
 
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-white flex items-center gap-2">
               <Shield className="h-4 w-4 text-purple-400" />
-              Acceso Ilimitado
+              Acceso anual
             </h3>
             <div className="grid gap-2">
               {[
-                { icon: Zap, text: 'Moldes ilimitados, sin tope de descargas' },
-                { icon: Clock, text: 'Válido por 12 meses completos' },
-                { icon: Shield, text: 'Acceso premium para seguir trabajando sin interrupciones' },
+                { icon: Zap, text: 'PiñataPoster ilimitado durante 12 meses' },
+                { icon: Clock, text: 'Pago anual único de $50 MXN' },
+                { icon: Shield, text: 'Descarga PDF y ZIP sin límites mientras tu acceso esté activo' },
                 { icon: Store, text: 'Paga con tarjeta o en efectivo en OXXO' },
               ].map(({ icon: Icon, text }, i) => (
                 <div key={i} className="flex items-center gap-2.5 text-sm text-purple-200/70">
@@ -105,7 +105,7 @@ export function PremiumUpgradeModal({
               <span className="text-lg text-purple-300 ml-1">MXN</span>
             </div>
             <p className="text-xs text-purple-300/60">
-              Pago único · Se activa inmediatamente · 12 meses de acceso
+              Pago anual · Se activa inmediatamente · 12 meses de acceso ilimitado
             </p>
             <button
               onClick={handleCheckout}
@@ -120,7 +120,7 @@ export function PremiumUpgradeModal({
               ) : (
                 <>
                   <Zap className="h-5 w-5" />
-                  Desbloquear acceso ilimitado
+                  Pagar $50 MXN por 12 meses
                 </>
               )}
             </button>
@@ -130,7 +130,7 @@ export function PremiumUpgradeModal({
             onClick={onClose}
             className="w-full py-2.5 px-4 rounded-xl text-sm text-purple-300/60 hover:text-purple-200 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
           >
-            Seguir editando
+            Seguir editando sin descargar
           </button>
 
           <p className="text-[11px] text-center text-purple-300/40">

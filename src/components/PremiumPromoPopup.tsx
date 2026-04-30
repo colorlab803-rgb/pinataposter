@@ -9,52 +9,52 @@ import { toast } from 'sonner'
 const PROMO_MESSAGES = [
   {
     icon: Zap,
-    title: '¡Moldes ilimitados!',
-    text: 'Por $50 MXN al año crea moldes ilimitados sin preocuparte por el contador.',
-    cta: 'Desbloquear ahora',
+    title: 'Acceso anual ilimitado',
+    text: 'Paga $50 MXN al año y disfruta 12 meses de PiñataPoster ilimitado.',
+    cta: 'Activar por $50 MXN',
   },
   {
     icon: Sparkles,
-    title: 'Trabaja sin interrupciones',
-    text: 'Premium elimina el límite de descargas para que sigas produciendo cuando lo necesites.',
-    cta: 'Quiero acceso ilimitado',
+    title: 'Descarga sin límites',
+    text: 'Activa el acceso anual para exportar todos los PDF y ZIP que necesites.',
+    cta: 'Quiero 12 meses',
   },
   {
     icon: Crown,
-    title: 'Sé premium por menos de $5/mes',
-    text: '$50 MXN dividido en 12 meses. Mantén moldes ilimitados todo el año.',
+    title: '12 meses por $50 MXN',
+    text: 'Un solo pago anual desbloquea PiñataPoster ilimitado durante todo el año.',
     cta: 'Activar premium',
   },
   {
     icon: Star,
-    title: '⭐ Oferta especial',
-    text: 'Acceso ilimitado al generador por un año completo.',
+    title: 'Pago anual',
+    text: 'Disfruta 12 meses de acceso ilimitado por $50 MXN.',
     cta: 'Aprovechar por $50 MXN',
   },
   {
     icon: Infinity,
-    title: 'Sin límites, sin preocupaciones',
-    text: 'Piñateros profesionales necesitan moldes sin límite para trabajar más rápido.',
+    title: 'Sin modo gratis',
+    text: 'PiñataPoster ahora requiere acceso anual para descargar moldes.',
     cta: 'Obtener acceso ilimitado',
   },
   {
     icon: Clock,
-    title: 'No te quedes sin descargas',
-    text: 'Desbloquea moldes ilimitados por solo $50 MXN al año.',
+    title: 'Todo el año activo',
+    text: 'Desbloquea moldes ilimitados por $50 MXN al año.',
     cta: 'Desbloquear todo',
   },
 ]
 
 // Toasts persuasivos que aparecen cada cierto tiempo
 const TOAST_MESSAGES = [
-  '💡 Premium incluye moldes ilimitados por $50 MXN al año',
-  '🪅 Los piñateros premium trabajan sin frenar por el contador',
+  '💡 Pago anual de $50 MXN: 12 meses de PiñataPoster ilimitado',
+  '🪅 Activa premium para descargar moldes sin límites',
   '⚡ Ahorra tiempo: genera todos los moldes que necesites',
   '🔥 El plan premium cuesta menos que una piñata pequeña',
-  '👑 Únete a los piñateros premium — moldes ilimitados por 12 meses',
-  '📐 Tus 5 descargas gratis se van rápido si trabajas seguido',
-  '💰 Menos de $5 al mes por moldes ilimitados',
-  '🎯 Activa premium antes de quedarte sin descargas',
+  '👑 12 meses de moldes ilimitados por $50 MXN',
+  '📐 PiñataPoster ya no tiene diseños gratis',
+  '💰 Menos de $5 al mes por acceso anual ilimitado',
+  '🎯 Paga una vez al año y descarga sin límites',
 ]
 
 interface PremiumPromoPopupProps {
@@ -195,7 +195,7 @@ export function PremiumPromoPopup({ onUpgradeClick }: PremiumPromoPopupProps) {
 
         <div className="bg-purple-500/10 px-5 py-2 border-t border-purple-500/20">
           <p className="text-[10px] text-purple-300/40 text-center">
-            Pago único de $50 MXN · Moldes ilimitados · 12 meses
+            Pago anual de $50 MXN · PiñataPoster ilimitado · 12 meses
           </p>
         </div>
       </div>
@@ -236,8 +236,8 @@ export function PremiumBanner({ onUpgradeClick }: { onUpgradeClick: () => void }
         <div className="flex items-center gap-2 min-w-0">
           <Crown className="h-4 w-4 text-purple-400 shrink-0" />
           <p className="text-xs text-purple-200/80 truncate">
-            <span className="hidden sm:inline">Desbloquea tu negocio · </span>
-            <strong className="text-white">Moldes ilimitados por $50 MXN/año</strong>
+            <span className="hidden sm:inline">Sin modo gratis · </span>
+            <strong className="text-white">12 meses ilimitados por $50 MXN al año</strong>
           </p>
         </div>
         <button

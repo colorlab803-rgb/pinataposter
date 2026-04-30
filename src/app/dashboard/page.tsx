@@ -105,12 +105,12 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <p className="text-white text-xl font-bold">
-                  {premium ? 'Activo' : 'Plan básico'}
+                  {premium ? 'Activo' : 'Sin premium'}
                 </p>
                 <p className="text-gray-400">
                   {premium
                     ? 'Tu cuenta ya tiene moldes ilimitados activos.'
-                    : 'Activa premium para quitar el límite de descargas durante 12 meses.'}
+                    : 'Activa el pago anual de $50 MXN para usar PiñataPoster ilimitado durante 12 meses.'}
                 </p>
                 {premium ? (
                   <Link href="/generator">

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getFirebaseAdminFirestore } from '@/lib/firebase-admin'
-import { setPremiumInFirestore } from '@/lib/premium-firestore'
+import { getPremiumData, setPremiumInFirestore } from '@/lib/premium-firestore'
 
 export async function POST(request: NextRequest) {
   const password = request.headers.get('x-admin-password')
@@ -16,8 +15,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'UID y email requeridos' }, { status: 400 })
     }
 
-    // Activar premium por 1 año con método manual
+    // Activar premium por 12 meses con método manual
     await setPremiumInFirestore(uid, email, 'manual_activation', 'manual', 5000)
+    const premiumData = await getPremiumData(uid)
 
     return NextResponse.json({
       success: true,
@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       data: {
         uid,
         email,
-        expiresAt: Date.now() + 365 * 24 * 60 * 60 * 1000,
+        expiresAt: premiumData?.expiresAt ?? null,
         paymentMethod: 'manual',
         amount: 5000,
       },
