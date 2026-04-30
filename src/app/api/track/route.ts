@@ -6,20 +6,27 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { type, page, action } = body
 
-    const db = getFirestore()
-
-    if (type === 'visit' && page) {
-      await db.collection('page_visits').add({
-        page,
-        created_at: new Date(),
-      })
-    } else if (type === 'generator' && action) {
-      await db.collection('generator_uses').add({
-        action,
-        created_at: new Date(),
-      })
-    } else {
+    if ((type !== 'visit' || !page) && (type !== 'generator' || !action)) {
       return NextResponse.json({ error: 'Tipo inválido' }, { status: 400 })
+    }
+
+    try {
+      const db = getFirestore()
+
+      if (type === 'visit') {
+        await db.collection('page_visits').add({
+          page,
+          created_at: new Date(),
+        })
+      } else {
+        await db.collection('generator_uses').add({
+          action,
+          created_at: new Date(),
+        })
+      }
+    } catch (error) {
+      console.warn('Tracking omitido:', error instanceof Error ? error.message : error)
+      return NextResponse.json({ success: true, tracked: false })
     }
 
     return NextResponse.json({ success: true })
