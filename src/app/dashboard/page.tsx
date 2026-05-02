@@ -11,6 +11,7 @@ import { useCatalogAccess } from '@/lib/useCatalogAccess'
 import { CatalogPremiumPaywall } from '@/components/catalog/CatalogPremiumPaywall'
 import { PremiumCatalogAnnouncement } from '@/components/catalog/PremiumCatalogAnnouncement'
 import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
+import { PaymentSupportNotice } from '@/components/PaymentSupportNotice'
 import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 export default function DashboardPage() {
@@ -78,6 +79,8 @@ export default function DashboardPage() {
               Administra tu acceso y vuelve al generador cuando quieras crear más moldes.
             </p>
           </div>
+
+          <PaymentSupportNotice />
 
           <div className="grid gap-4 md:grid-cols-2">
             <Card className="bg-gray-900/50 border-gray-800">
@@ -157,6 +160,9 @@ export default function DashboardPage() {
       {!canManageCatalog && (
         <CatalogPremiumPaywall catalogAccess={catalogAccess} storeSlug={store?.slug} />
       )}
+
+      <PaymentSupportNotice />
+
 
       <PremiumCatalogAnnouncement
         enabled={canManageCatalog}

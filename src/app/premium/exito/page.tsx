@@ -6,6 +6,7 @@ import { markCatalogAnnouncementPending, setPremiumStatus } from '@/lib/premium'
 import { useAuth } from '@/components/AuthProvider'
 import { CheckCircle2, Loader2, Clock, Store } from 'lucide-react'
 import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
+import { PaymentSupportNotice } from '@/components/PaymentSupportNotice'
 
 function PremiumExitoContent() {
   const searchParams = useSearchParams()
@@ -114,7 +115,7 @@ function PremiumExitoContent() {
       {status === 'error' && (
         <>
           <h1 className="text-2xl font-bold text-white">Algo salió mal</h1>
-          <p className="text-purple-300">No pudimos verificar tu pago. Si ya pagaste, contacta soporte.</p>
+          <p className="text-purple-300">No pudimos verificar tu pago automáticamente. Si ya realizaste tu pago, repórtalo en el formulario de abajo y activaremos tu acceso manualmente.</p>
           <button
             onClick={() => router.push('/generator')}
             className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors"
@@ -123,6 +124,8 @@ function PremiumExitoContent() {
           </button>
         </>
       )}
+
+      {status !== 'loading' && <PaymentSupportNotice />}
     </div>
   )
 }

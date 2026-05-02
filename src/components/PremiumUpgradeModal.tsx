@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
 import { Zap, Shield, Clock, Loader2, Store, Crown, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { PaymentSupportNotice } from '@/components/PaymentSupportNotice'
 
 interface PremiumUpgradeModalProps {
   open: boolean
@@ -52,8 +53,8 @@ export function PremiumUpgradeModal({
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md px-4">
-      <div className="max-w-lg w-full rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-white/10 shadow-2xl shadow-purple-500/10 overflow-hidden relative">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md px-4 py-6 overflow-y-auto">
+      <div className="max-w-lg w-full rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-white/10 shadow-2xl shadow-purple-500/10 overflow-hidden relative my-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors z-10"
@@ -136,6 +137,8 @@ export function PremiumUpgradeModal({
           <p className="text-[11px] text-center text-purple-300/40">
             Pago seguro procesado por Stripe · Acepta tarjeta y OXXO
           </p>
+
+          <PaymentSupportNotice variant="compact" />
         </div>
       </div>
     </div>
