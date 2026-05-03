@@ -99,8 +99,8 @@ export default function RootLayout({
         >
           <AuthProvider>
           {children}
-          </AuthProvider>
           <PaymentSupportAnnouncementModal />
+          </AuthProvider>
           <TrackVisit />
           <Toaster 
             theme="dark" 

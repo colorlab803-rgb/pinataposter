@@ -1,41 +1,54 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { LifeBuoy, Mail, Copy, Check, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { LifeBuoy, X, MessageCircle } from 'lucide-react'
+import { useAuth } from '@/components/AuthProvider'
+import type { User } from 'firebase/auth'
 
-const SUPPORT_EMAIL = 'rickying0328@gmail.com'
-const STORAGE_KEY = 'pinataposter:payment-support-notice-v1'
+const WHATSAPP_NUMBER = '524493468117'
+const STORAGE_KEY = 'pinataposter:payment-support-notice-v2'
 
-const SUPPORT_SUBJECT = 'Reporte de pago no activado - PiñataPoster'
-const SUPPORT_BODY = `Hola, realicé mi pago anual de PiñataPoster pero mi acceso de 12 meses no se activó automáticamente. Adjunto los datos para que lo activen manualmente:
+const WHATSAPP_MESSAGE = `Hola, realicé mi pago anual de PiñataPoster pero mi acceso de 12 meses no se activó automáticamente. Adjunto comprobante y mis datos:
 
 - Nombre completo:
-- Correo con el que estoy registrado:
-- Fecha y hora aproximada del pago:
-- Comprobante de pago (adjunto):
-
-Gracias.`
+- Correo registrado:
+- Fecha y hora del pago:
+- (Adjunto comprobante de pago)`
 
 export function PaymentSupportAnnouncementModal() {
+  const { user, loading } = useAuth()
   const [open, setOpen] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const prevUserRef = useRef<User | null | undefined>(undefined)
+  const initialLoadDone = useRef(false)
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    try {
-      const dismissed = window.localStorage.getItem(STORAGE_KEY)
-      if (!dismissed) {
-        const t = setTimeout(() => setOpen(true), 1200)
-        return () => clearTimeout(t)
-      }
-    } catch {
-      setOpen(true)
-    }
-  }, [])
+    if (loading) return
 
-  const mailto = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
-    SUPPORT_SUBJECT
-  )}&body=${encodeURIComponent(SUPPORT_BODY)}`
+    if (!initialLoadDone.current) {
+      // Primera resolución de auth: solo recordar estado inicial, no mostrar
+      initialLoadDone.current = true
+      prevUserRef.current = user
+      return
+    }
+
+    // Detectar login real: null → User
+    if (prevUserRef.current === null && user !== null) {
+      try {
+        const dismissed = window.localStorage.getItem(STORAGE_KEY)
+        if (!dismissed) {
+          const t = setTimeout(() => setOpen(true), 800)
+          prevUserRef.current = user
+          return () => clearTimeout(t)
+        }
+      } catch {
+        setOpen(true)
+      }
+    }
+
+    prevUserRef.current = user
+  }, [user, loading])
+
+  const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
   function dismissForever() {
     try {
@@ -46,13 +59,6 @@ export function PaymentSupportAnnouncementModal() {
 
   function closeOnce() {
     setOpen(false)
-  }
-
-  function copyEmail() {
-    navigator.clipboard.writeText(SUPPORT_EMAIL).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
   }
 
   if (!open) return null
@@ -87,40 +93,32 @@ export function PaymentSupportAnnouncementModal() {
             Si <strong className="text-white">ya realizaste tu pago anual de $50 MXN</strong> (hoy
             o en días pasados) y tu acceso de <strong className="text-white">12 meses</strong> no
             se activó automáticamente,{' '}
-            <strong className="text-white">no necesitas pagar de nuevo</strong>. Repórtalo a
-            nuestro correo de soporte y activamos tu acceso manualmente.
+            <strong className="text-white">no necesitas pagar de nuevo</strong>. Repórtalo por
+            WhatsApp y activamos tu acceso manualmente.
           </p>
 
           <div className="rounded-xl border border-amber-400/30 bg-amber-500/10 p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-amber-300" />
+              <MessageCircle className="h-4 w-4 text-amber-300" />
               <p className="text-sm font-semibold text-white">
-                Envíanos un correo a:
+                Escríbenos por WhatsApp:
               </p>
             </div>
-            <div className="flex items-center justify-between gap-2 rounded-lg bg-slate-950/60 border border-amber-400/20 px-3 py-2">
-              <code className="text-sm font-mono text-amber-200 break-all">
-                {SUPPORT_EMAIL}
+            <div className="flex items-center gap-2 rounded-lg bg-slate-950/60 border border-amber-400/20 px-3 py-2">
+              <code className="text-sm font-mono text-amber-200">
+                449 346 8117
               </code>
-              <button
-                onClick={copyEmail}
-                className="shrink-0 inline-flex items-center gap-1 rounded-md border border-amber-400/30 px-2 py-1 text-[11px] font-medium text-amber-100 hover:bg-amber-400/10 transition-colors"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-3 w-3" />
-                    Copiado
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-3 w-3" />
-                    Copiar
-                  </>
-                )}
-              </button>
             </div>
+
+            {/* Aviso importante */}
+            <div className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2">
+              <p className="text-xs font-semibold text-red-300">
+                ⚠️ No se responderá el WhatsApp si no se envía comprobante de pago.
+              </p>
+            </div>
+
             <div className="space-y-1.5 pt-1">
-              <p className="text-xs font-semibold text-amber-100">Incluye estos datos:</p>
+              <p className="text-xs font-semibold text-amber-100">Incluye en tu mensaje:</p>
               <ul className="space-y-1 text-xs text-amber-100/85 pl-1">
                 <li className="flex items-start gap-2">
                   <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-amber-300" />
@@ -136,19 +134,21 @@ export function PaymentSupportAnnouncementModal() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-amber-300" />
-                  <span>Comprobante de pago (captura o PDF)</span>
+                  <strong className="text-amber-200">Comprobante de pago (captura o PDF) — obligatorio</strong>
                 </li>
               </ul>
             </div>
           </div>
 
           <a
-            href={mailto}
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={dismissForever}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-amber-500/25 transition-all hover:from-amber-400 hover:to-orange-400 hover:scale-[1.01] active:scale-[0.99]"
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-green-500/25 transition-all hover:from-green-400 hover:to-emerald-500 hover:scale-[1.01] active:scale-[0.99]"
           >
-            <Mail className="h-4 w-4" />
-            Abrir correo y reportar mi pago
+            <MessageCircle className="h-4 w-4" />
+            Abrir WhatsApp y reportar mi pago
           </a>
 
           <div className="flex flex-col sm:flex-row gap-2 pt-1 border-t border-white/5">
