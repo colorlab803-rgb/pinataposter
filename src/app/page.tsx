@@ -317,12 +317,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="relative border-t border-white/10 py-6 px-4 text-center">
-          <p className="text-xs text-purple-300/40">
-            © {new Date().getFullYear()} PiñataPoster. Hecho con ❤️ para la comunidad piñatera.
-          </p>
-        </footer>
       </main>
     </div>
   )

@@ -4,7 +4,6 @@ import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { AuthProvider } from '@/components/AuthProvider';
 import { TrackVisit } from '@/components/TrackVisit';
-import { PaymentSupportAnnouncementModal } from '@/components/PaymentSupportAnnouncementModal';
 
 const siteUrl = 'https://pinataposter.com';
 const title = 'PiñataPoster - Imprime Moldes y Diseños de Piñatas en Tamaño Real';
@@ -98,9 +97,19 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-          {children}
-          <PaymentSupportAnnouncementModal />
+            {children}
           </AuthProvider>
+          <footer className="relative border-t border-white/10 bg-gray-950 px-4 py-4 text-center">
+            <p className="text-xs text-gray-400">
+              Soporte:{' '}
+              <a
+                href="mailto:rickying0328@gmail.com"
+                className="font-medium text-purple-300 hover:text-white"
+              >
+                rickying0328@gmail.com
+              </a>
+            </p>
+          </footer>
           <TrackVisit />
           <Toaster 
             theme="dark" 

@@ -6,7 +6,6 @@ import { markCatalogAnnouncementPending, setPremiumStatus } from '@/lib/premium'
 import { useAuth } from '@/components/AuthProvider'
 import { CheckCircle2, Loader2, Clock, Store } from 'lucide-react'
 import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
-import { PaymentSupportNotice } from '@/components/PaymentSupportNotice'
 
 function PremiumExitoContent() {
   const searchParams = useSearchParams()
@@ -125,7 +124,6 @@ function PremiumExitoContent() {
         </>
       )}
 
-      {status !== 'loading' && <PaymentSupportNotice />}
     </div>
   )
 }

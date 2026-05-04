@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
 import { Zap, Shield, Clock, Loader2, Store, Crown, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { PaymentSupportNotice } from '@/components/PaymentSupportNotice'
 
 interface PremiumUpgradeModalProps {
   open: boolean
@@ -138,7 +137,6 @@ export function PremiumUpgradeModal({
             Pago seguro procesado por Stripe · Acepta tarjeta y OXXO
           </p>
 
-          <PaymentSupportNotice variant="compact" />
         </div>
       </div>
     </div>
