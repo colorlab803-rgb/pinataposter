@@ -26,6 +26,29 @@ export function formatAnnualPassPrice(cents: number): string {
   return `$${Math.round(cents / 100)} ${ANNUAL_PASS_CURRENCY}`
 }
 
+export function formatAnnualPassRemaining(ms: number): string {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000))
+  const days = Math.floor(totalSeconds / 86_400)
+  const hours = Math.floor((totalSeconds % 86_400) / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+  const pad = (value: number) => value.toString().padStart(2, '0')
+
+  if (days > 0) {
+    return `${days} ${days === 1 ? 'día' : 'días'} ${pad(hours)} h ${pad(minutes)} min ${pad(seconds)} s`
+  }
+
+  if (hours > 0) {
+    return `${pad(hours)} h ${pad(minutes)} min ${pad(seconds)} s`
+  }
+
+  if (minutes > 0) {
+    return `${pad(minutes)} min ${pad(seconds)} s`
+  }
+
+  return `${pad(seconds)} s`
+}
+
 export function buildAnnualPassPricing(
   nowMs: number,
   startsAt: number | null
