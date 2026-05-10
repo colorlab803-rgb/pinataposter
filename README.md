@@ -3,7 +3,7 @@
 Divide cualquier imagen para imprimirla a gran escala en varias hojas.
 Ideal para posters, piñatas, patrones y manualidades.
 
-**Pago anual de $50 MXN: 12 meses de PiñataPoster ilimitado.**
+**Pase anual de PiñataPoster: $50 MXN durante la semana promocional del Día de las Madres y $150 MXN después.**
 
 🌐 **https://pinataposter.com**
 
@@ -38,6 +38,14 @@ npm run dev
 ```bash
 docker compose up -d --build
 ```
+
+Para iniciar el contador real de una semana al momento del deploy:
+
+```bash
+ANNUAL_PASS_PROMO_START_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)" docker compose up -d --build
+```
+
+Si `ANNUAL_PASS_PROMO_START_AT` no está configurada o tiene una fecha inválida, el checkout cobra el precio regular de $150 MXN.
 
 La app corre en `localhost:3010` y se expone a internet vía Cloudflare Tunnel.
 

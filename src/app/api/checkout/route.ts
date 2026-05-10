@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyIdToken } from '@/lib/firebase-admin'
+import { getAnnualPassPricing } from '@/lib/annual-pass-pricing'
 import { getStripe } from '@/lib/stripe'
 
 export async function POST(req: NextRequest) {
@@ -28,7 +29,11 @@ export async function POST(req: NextRequest) {
     }
 
     const stripe = getStripe()
+    const pricing = getAnnualPassPricing()
     const origin = req.headers.get('origin') || 'https://pinataposter.com'
+    const checkoutDescription = pricing.isPromoActive
+      ? `Promoción Día de las Madres: ${pricing.displayPrice} por 12 meses de PiñataPoster ilimitado. Después costará ${pricing.regularDisplayPrice}.`
+      : `Pase anual de ${pricing.displayPrice}. Incluye 12 meses de PiñataPoster ilimitado.`
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -38,10 +43,10 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: 'mxn',
             product_data: {
-              name: 'PiñataPoster — Acceso anual ilimitado',
-              description: 'Pago anual de $50 MXN. Disfruta 12 meses de PiñataPoster ilimitado.',
+              name: 'PiñataPoster — Pase anual ilimitado',
+              description: checkoutDescription,
             },
-            unit_amount: 5000,
+            unit_amount: pricing.priceCents,
           },
           quantity: 1,
         },
@@ -49,11 +54,19 @@ export async function POST(req: NextRequest) {
       metadata: {
         uid,
         email,
+        pricePhase: pricing.phase,
+        priceCents: String(pricing.priceCents),
+        promoStartsAt: pricing.startsAtIso || '',
+        promoEndsAt: pricing.endsAtIso || '',
       },
       payment_intent_data: {
         metadata: {
           uid,
           email,
+          pricePhase: pricing.phase,
+          priceCents: String(pricing.priceCents),
+          promoStartsAt: pricing.startsAtIso || '',
+          promoEndsAt: pricing.endsAtIso || '',
         },
       },
       success_url: `${origin}/premium/exito?session_id={CHECKOUT_SESSION_ID}`,

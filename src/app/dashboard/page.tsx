@@ -11,6 +11,7 @@ import { useCatalogAccess } from '@/lib/useCatalogAccess'
 import { CatalogPremiumPaywall } from '@/components/catalog/CatalogPremiumPaywall'
 import { PremiumCatalogAnnouncement } from '@/components/catalog/PremiumCatalogAnnouncement'
 import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
+import { AnnualPassPromoText } from '@/components/AnnualPassPricing'
 import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 export default function DashboardPage() {
@@ -110,7 +111,7 @@ export default function DashboardPage() {
                 <p className="text-gray-400">
                   {premium
                     ? 'Tu cuenta ya tiene moldes ilimitados activos.'
-                    : 'Activa el pago anual de $50 MXN para usar PiñataPoster ilimitado durante 12 meses.'}
+                    : <AnnualPassPromoText />}
                 </p>
                 {premium ? (
                   <Link href="/generator">

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { AlertTriangle, Crown, ExternalLink, Lock, Sparkles, Store, Zap } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { AnnualPassCtaText, AnnualPassPromoText } from '@/components/AnnualPassPricing'
 import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
 import type { CatalogAccess } from '@/lib/types/catalog-access'
 
@@ -74,7 +75,7 @@ export function CatalogPremiumPaywall({
 
           {!isGrace && (
             <div className="rounded-xl border border-purple-500/20 bg-purple-500/10 px-4 py-3 text-sm text-purple-100">
-              Premium desbloquea moldes ilimitados y el catálogo digital de tu emprendimiento por un solo pago anual.
+              <AnnualPassPromoText />
             </div>
           )}
         </CardHeader>
@@ -99,7 +100,7 @@ export function CatalogPremiumPaywall({
               className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white"
             >
               <Crown className="h-4 w-4 mr-2" />
-              Activar premium por $50 MXN
+              <AnnualPassCtaText />
             </Button>
 
             {storeSlug && isGrace && (

@@ -1,8 +1,13 @@
 import Link from 'next/link'
 import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap } from 'lucide-react'
+import { AnnualPassCompactLine, AnnualPassCountdownBadge, AnnualPassPromoText } from '@/components/AnnualPassPricing'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { getAnnualPassPricing } from '@/lib/annual-pass-pricing'
+
+export const dynamic = 'force-dynamic'
 
 export default function Home() {
+  const pricing = getAnnualPassPricing()
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
@@ -15,8 +20,8 @@ export default function Home() {
       {
         '@type': 'Offer',
         priceCurrency: 'MXN',
-        price: '50',
-        name: 'Acceso anual ilimitado (12 meses)',
+        price: String(Math.round(pricing.priceCents / 100)),
+        name: `Pase anual ilimitado (${pricing.displayPrice})`,
         availability: 'https://schema.org/InStock',
       },
     ],
@@ -43,7 +48,9 @@ export default function Home() {
         name: '¿Cómo funciona PiñataPoster?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar PDF o ZIP necesitas el acceso anual: $50 MXN por 12 meses de PiñataPoster ilimitado.',
+          text: pricing.isPromoActive
+            ? `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar PDF o ZIP necesitas el pase anual. Durante la promoción del Día de las Madres cuesta ${pricing.displayPrice}; después costará ${pricing.regularDisplayPrice}.`
+            : `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar PDF o ZIP necesitas el pase anual de ${pricing.displayPrice}.`,
         },
       },
       {
@@ -157,8 +164,9 @@ export default function Home() {
                 </span>
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-purple-200 max-w-xl mx-auto">
-                Sube tu diseño, define el tamaño y descarga un PDF dividido en hojas listas para imprimir, recortar y armar. El acceso anual cuesta $50 MXN e incluye 12 meses ilimitados.
+                Sube tu diseño, define el tamaño y descarga un PDF dividido en hojas listas para imprimir, recortar y armar. <AnnualPassPromoText initialPricing={pricing} />
               </p>
+              <AnnualPassCountdownBadge className="justify-center" initialPricing={pricing} />
             </div>
 
             {/* Features */}
@@ -187,7 +195,7 @@ export default function Home() {
                 <ArrowRight className="h-5 w-5" />
               </Link>
               <p className="text-xs sm:text-sm text-purple-300/60">
-                Pago anual de $50 MXN · 12 meses de PiñataPoster ilimitado
+                <AnnualPassCompactLine initialPricing={pricing} />
               </p>
             </div>
           </div>
@@ -265,11 +273,15 @@ export default function Home() {
                 },
                 {
                   q: '¿Cómo funciona PiñataPoster?',
-                  a: 'Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar tu molde en PDF o ZIP necesitas el acceso anual: $50 MXN por 12 meses de PiñataPoster ilimitado.',
+                  a: pricing.isPromoActive
+                    ? `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar tu molde en PDF o ZIP necesitas el pase anual. Durante la promoción del Día de las Madres cuesta ${pricing.displayPrice}; después costará ${pricing.regularDisplayPrice}.`
+                    : `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar tu molde en PDF o ZIP necesitas el pase anual de ${pricing.displayPrice}.`,
                 },
                 {
                   q: '¿Qué incluye el plan premium?',
-                  a: 'El plan premium incluye 12 meses de PiñataPoster ilimitado por un pago anual de $50 MXN.',
+                  a: pricing.isPromoActive
+                    ? `El pase anual incluye 12 meses de PiñataPoster ilimitado. Durante la promoción del Día de las Madres cuesta ${pricing.displayPrice}; después costará ${pricing.regularDisplayPrice}.`
+                    : `El pase anual incluye 12 meses de PiñataPoster ilimitado por ${pricing.displayPrice}.`,
                 },
                 {
                   q: '¿En qué tamaños de papel puedo imprimir?',

@@ -12,6 +12,12 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:3010:3000"
+    env_file:
+      - path: .env.production
+        required: false
+      - path: .env.local
+        required: false
     environment:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-PinataPoster2026!}
       - DISABLE_CHAT=true
+      - ANNUAL_PASS_PROMO_START_AT=${ANNUAL_PASS_PROMO_START_AT:-}

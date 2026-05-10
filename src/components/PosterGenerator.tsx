@@ -6,6 +6,7 @@ import 'react-image-crop/dist/ReactCrop.css'
 import { toast } from 'sonner'
 import { trackGeneratorUse } from '@/components/TrackVisit'
 import { useAuth } from '@/components/AuthProvider'
+import { AnnualPassCountdownBadge, AnnualPassHeadline, AnnualPassPromoText } from '@/components/AnnualPassPricing'
 import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
 
 import { Card, CardContent } from "@/components/ui/card"
@@ -1227,11 +1228,12 @@ export function PosterGenerator({
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
                 <div>
                   <p className="text-sm font-semibold text-foreground">
-                    La descarga requiere acceso anual
+                    <AnnualPassHeadline />
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    PiñataPoster ya no tiene diseños gratis. Paga $50 MXN al año y disfruta 12 meses ilimitados.
+                    <AnnualPassPromoText />
                   </p>
+                  <AnnualPassCountdownBadge className="mt-2" />
                 </div>
               </div>
               <Button
@@ -1240,7 +1242,7 @@ export function PosterGenerator({
                 onClick={() => setShowUpgradeModal(true)}
                 className="w-full sm:w-auto"
               >
-                Activar por $50 MXN
+                Adquirir pase anual
               </Button>
             </div>
           </div>

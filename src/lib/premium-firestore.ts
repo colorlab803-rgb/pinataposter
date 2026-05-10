@@ -1,4 +1,5 @@
 import { getFirebaseAdminFirestore } from './firebase-admin'
+import { getAnnualPassPricing } from './annual-pass-pricing'
 import { Timestamp } from 'firebase-admin/firestore'
 
 const COLLECTION = 'premium_users'
@@ -34,7 +35,7 @@ export async function setPremiumInFirestore(
   email: string,
   stripeSessionId: string,
   paymentMethod: 'card' | 'oxxo' | 'manual',
-  amount: number = 5000
+  amount: number = getAnnualPassPricing().priceCents
 ): Promise<void> {
   const db = getFirebaseAdminFirestore()
   const now = Date.now()

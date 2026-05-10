@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { PremiumPromoPopup, PremiumBanner } from '@/components/PremiumPromoPopup'
 import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
+import { AnnualPassCompactLine, AnnualPassPromoText } from '@/components/AnnualPassPricing'
 import { useAuth } from '@/components/AuthProvider'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -48,7 +49,7 @@ function GoogleLoginScreen() {
           </div>
           <h1 className="text-3xl font-bold text-white">PiñataPoster</h1>
           <p className="text-purple-200/80 text-sm max-w-sm mx-auto">
-            Inicia sesión con Google para crear moldes de piñata. Para descargar, activa el pago anual de $50 MXN.
+            Inicia sesión con Google para crear moldes de piñata. <AnnualPassPromoText />
           </p>
         </div>
 
@@ -72,7 +73,7 @@ function GoogleLoginScreen() {
           </button>
 
           <div className="space-y-2 text-xs text-purple-300/50">
-            <p>👑 $50 MXN al año</p>
+            <p><AnnualPassCompactLine /></p>
             <p>✨ Disfruta 12 meses de PiñataPoster ilimitado</p>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getAnnualPassPricing } from '@/lib/annual-pass-pricing'
 import { getPremiumData, setPremiumInFirestore } from '@/lib/premium-firestore'
 
 export async function POST(request: NextRequest) {
@@ -15,8 +16,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'UID y email requeridos' }, { status: 400 })
     }
 
+    const pricing = getAnnualPassPricing()
+
     // Activar premium por 12 meses con método manual
-    await setPremiumInFirestore(uid, email, 'manual_activation', 'manual', 5000)
+    await setPremiumInFirestore(uid, email, 'manual_activation', 'manual', pricing.priceCents)
     const premiumData = await getPremiumData(uid)
 
     return NextResponse.json({
@@ -27,7 +30,7 @@ export async function POST(request: NextRequest) {
         email,
         expiresAt: premiumData?.expiresAt ?? null,
         paymentMethod: 'manual',
-        amount: 5000,
+        amount: pricing.priceCents,
       },
     })
   } catch (error) {

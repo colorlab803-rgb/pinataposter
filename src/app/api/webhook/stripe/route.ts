@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { getAnnualPassPricing } from '@/lib/annual-pass-pricing'
 import { setPremiumInFirestore } from '@/lib/premium-firestore'
 import { getStripe } from '@/lib/stripe'
 
@@ -70,5 +71,5 @@ async function activatePremium(session: Stripe.Checkout.Session, paymentMethod: 
     return
   }
 
-  await setPremiumInFirestore(uid, email, session.id, paymentMethod, session.amount_total || 5000)
+  await setPremiumInFirestore(uid, email, session.id, paymentMethod, session.amount_total ?? getAnnualPassPricing().priceCents)
 }

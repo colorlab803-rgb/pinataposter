@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyIdToken } from '@/lib/firebase-admin'
+import { getAnnualPassPricing } from '@/lib/annual-pass-pricing'
 import { setPremiumInFirestore } from '@/lib/premium-firestore'
 import { getStripe } from '@/lib/stripe'
 
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
         email || '',
         sessionId,
         'card',
-        session.amount_total || 5000
+        session.amount_total ?? getAnnualPassPricing().priceCents
       )
     }
 

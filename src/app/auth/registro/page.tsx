@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/components/AuthProvider'
+import { AnnualPassPromoText } from '@/components/AnnualPassPricing'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -126,7 +127,7 @@ export default function RegistroPage() {
             </div>
             <CardTitle className="text-2xl text-white">Crear cuenta</CardTitle>
             <CardDescription className="text-gray-400">
-              Crea tu cuenta y activa el pago anual de $50 MXN para descargar moldes ilimitados durante 12 meses
+              Crea tu cuenta y activa tu pase anual. <AnnualPassPromoText />
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
+import { AnnualPassPriceText } from '@/components/AnnualPassPricing'
 import {
   Lock,
   LogOut,
@@ -617,7 +618,7 @@ export default function AdminPage() {
                       ) : (
                         <>
                           <Crown className="h-5 w-5 mr-2" />
-                          Activar Premium (12 meses) - $50 MXN
+                          Activar Premium (12 meses) - <AnnualPassPriceText />
                         </>
                       )}
                     </Button>
