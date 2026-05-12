@@ -6,8 +6,6 @@ import 'react-image-crop/dist/ReactCrop.css'
 import { toast } from 'sonner'
 import { trackGeneratorUse } from '@/components/TrackVisit'
 import { useAuth } from '@/components/AuthProvider'
-import { AnnualPassCountdownBadge, AnnualPassHeadline, AnnualPassPromoText } from '@/components/AnnualPassPricing'
-import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -144,14 +142,11 @@ export function PosterGenerator({
   const [isAutoCropping, setIsAutoCropping] = useState(false)
 
   // Access state
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
-  const [usageStatus, setUsageStatus] = useState<UsageStatus | null>(null)
   const [isUsageLoading, setIsUsageLoading] = useState(false)
   const { user, getIdToken } = useAuth()
 
   const fetchUsageStatus = useCallback(async (options?: { silent?: boolean }): Promise<UsageStatus | null> => {
     if (!user) {
-      setUsageStatus(null)
       setIsUsageLoading(false)
       return null
     }
@@ -167,7 +162,6 @@ export function PosterGenerator({
         throw new Error(`HTTP ${res.status}`)
       }
       const data = await res.json() as UsageStatus
-      setUsageStatus(data)
       return data
     } catch (error) {
       console.error('Error consultando acceso premium:', error)
@@ -180,6 +174,37 @@ export function PosterGenerator({
     }
   }, [user, getIdToken])
 
+  const startCheckout = useCallback(async (): Promise<void> => {
+    if (!user) {
+      toast.error('Inicia sesión para descargar tu molde.')
+      return
+    }
+
+    try {
+      setIsUsageLoading(true)
+      const idToken = await getIdToken()
+      if (!idToken) throw new Error('No se pudo obtener tu sesión')
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      })
+      const data = await res.json().catch(() => ({})) as { url?: string; error?: string }
+
+      if (!res.ok || !data.url) {
+        throw new Error(data.error || 'No se recibió URL de checkout')
+      }
+
+      window.location.href = data.url
+    } catch (error) {
+      console.error('Error al iniciar checkout:', error)
+      toast.error('No pudimos abrir el pago. Intenta de nuevo.')
+    } finally {
+      setIsUsageLoading(false)
+    }
+  }, [user, getIdToken])
+
   const ensureCanExport = useCallback(async (): Promise<boolean> => {
     if (!user) return false
 
@@ -187,9 +212,9 @@ export function PosterGenerator({
     if (!status) return false
     if (status.isPremium || status.canGenerate) return true
 
-    setShowUpgradeModal(true)
+    await startCheckout()
     return false
-  }, [user, fetchUsageStatus])
+  }, [user, fetchUsageStatus, startCheckout])
 
   const consumeSuccessfulExport = useCallback(async () => {
     if (!user) return
@@ -758,8 +783,10 @@ export function PosterGenerator({
     const status = await fetchUsageStatus()
     if (!status) return
     if (!status.isPremium && !status.canGenerate) {
-      setShowUpgradeModal(true)
       setIsFileNameDialogOpen(false)
+      setProjectName("")
+      setDownloadType(null)
+      await startCheckout()
       return
     }
     if (downloadType === 'pdf') {
@@ -1220,33 +1247,6 @@ export function PosterGenerator({
         <div className="mb-4 sm:mb-6">
           <Stepper steps={steps} currentStep={currentStep} />
         </div>
-
-        {usageStatus && !usageStatus.isPremium && (
-          <div className="mb-4 sm:mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    <AnnualPassHeadline />
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    <AnnualPassPromoText />
-                  </p>
-                  <AnnualPassCountdownBadge className="mt-2" />
-                </div>
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setShowUpgradeModal(true)}
-                className="w-full sm:w-auto"
-              >
-                Adquirir pase anual
-              </Button>
-            </div>
-          </div>
-        )}
 
         <Card className="shadow-lg">
           <CardContent className="p-3 sm:p-6">
@@ -1900,10 +1900,6 @@ export function PosterGenerator({
           </Dialog>
         )}
 
-        <PremiumUpgradeModal
-          open={showUpgradeModal}
-          onClose={() => setShowUpgradeModal(false)}
-        />
       </div>
     </TooltipProvider>
   )

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/components/AuthProvider'
-import { formatAnnualPassRemaining, useAnnualPassPricing } from '@/lib/useAnnualPassPricing'
+import { useAnnualPassPricing } from '@/lib/useAnnualPassPricing'
 import { Zap, Shield, Clock, Loader2, Store, Crown, X } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -73,15 +73,11 @@ export function PremiumUpgradeModal({
               <h2 className="text-lg font-bold text-white">
                 {pricingLoading
                   ? 'Consultando precio anual'
-                  : pricing.isPromoActive
-                  ? `Promo Día de las Madres en ${pricing.displayPrice}`
                   : `Pase anual en ${pricing.displayPrice}`}
               </h2>
               <p className="text-xs text-purple-300/70">
                 {pricingLoading
                   ? 'Confirmando el precio vigente'
-                  : pricing.isPromoActive
-                  ? `Después costará ${pricing.regularDisplayPrice}`
                   : '12 meses de PiñataPoster ilimitado'}
               </p>
             </div>
@@ -92,11 +88,6 @@ export function PremiumUpgradeModal({
           <p className="text-sm text-purple-200/80 leading-relaxed">
             {pricingLoading ? (
               'Consultando el precio vigente del pase anual.'
-            ) : pricing.isPromoActive ? (
-              <>
-                Aprovecha la promoción del Día de las Madres y adquiere tu <strong className="text-white">pase anual</strong> por {pricing.displayPrice} durante esta semana.
-                Después costará {pricing.regularDisplayPrice}. Gracias por usar PiñataPoster.
-              </>
             ) : (
               <>
                 Activa tu <strong className="text-white">pase anual</strong> por {pricing.displayPrice}.
@@ -104,13 +95,6 @@ export function PremiumUpgradeModal({
               </>
             )}
           </p>
-
-          {!pricingLoading && pricing.isPromoActive && (
-            <div className="rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-100 flex items-center justify-center gap-2">
-              <Clock className="h-4 w-4" />
-              El precio especial termina en {formatAnnualPassRemaining(pricing.remainingMs)}
-            </div>
-          )}
 
           <div className="space-y-3">
             <h3 className="text-sm font-semibold text-white flex items-center gap-2">
@@ -124,16 +108,12 @@ export function PremiumUpgradeModal({
                   icon: Clock,
                   text: pricingLoading
                     ? 'Precio anual vigente confirmado antes de pagar'
-                    : pricing.isPromoActive
-                    ? `Semana promocional Día de las Madres con precio anual de ${pricing.displayPrice}`
                     : `Precio anual vigente de ${pricing.displayPrice}`,
                 },
                 {
                   icon: Crown,
                   text: pricingLoading
                     ? 'El pase anual se activa al completar el pago'
-                    : pricing.isPromoActive
-                    ? `Después el pase anual costará ${pricing.regularDisplayPrice}`
                     : 'El pase anual mantiene 12 meses de acceso ilimitado',
                 },
                 { icon: Shield, text: 'Descarga PDF y ZIP sin límites mientras tu acceso esté activo' },
@@ -155,8 +135,6 @@ export function PremiumUpgradeModal({
             <p className="text-xs text-purple-300/60">
               {pricingLoading
                 ? 'Confirmando precio vigente'
-                : pricing.isPromoActive
-                ? `Promo Día de las Madres · Después ${pricing.regularDisplayPrice} · 12 meses de acceso ilimitado`
                 : 'Se activa inmediatamente · 12 meses de acceso ilimitado'}
             </p>
             <button

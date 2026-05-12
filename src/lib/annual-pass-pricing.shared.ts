@@ -1,9 +1,10 @@
-export type AnnualPassPricePhase = 'promo' | 'regular'
+export type AnnualPassPricePhase = 'regular'
 
 export const ANNUAL_PASS_CURRENCY = 'MXN'
-export const ANNUAL_PASS_PROMO_PRICE_CENTS = 5000
-export const ANNUAL_PASS_REGULAR_PRICE_CENTS = 15000
-export const ANNUAL_PASS_PROMO_DURATION_MS = 7 * 24 * 60 * 60 * 1000
+export const ANNUAL_PASS_PRICE_CENTS = 5000
+export const ANNUAL_PASS_PROMO_PRICE_CENTS = ANNUAL_PASS_PRICE_CENTS
+export const ANNUAL_PASS_REGULAR_PRICE_CENTS = ANNUAL_PASS_PRICE_CENTS
+export const ANNUAL_PASS_PROMO_DURATION_MS = 0
 
 export interface AnnualPassPricing {
   currency: typeof ANNUAL_PASS_CURRENCY
@@ -50,30 +51,24 @@ export function formatAnnualPassRemaining(ms: number): string {
 }
 
 export function buildAnnualPassPricing(
-  nowMs: number,
-  startsAt: number | null
+  _nowMs: number,
+  _startsAt: number | null
 ): AnnualPassPricing {
-  const endsAt = startsAt ? startsAt + ANNUAL_PASS_PROMO_DURATION_MS : null
-  const isPromoActive = Boolean(startsAt && endsAt && nowMs >= startsAt && nowMs < endsAt)
-  const phase: AnnualPassPricePhase = isPromoActive ? 'promo' : 'regular'
-  const priceCents = isPromoActive ? ANNUAL_PASS_PROMO_PRICE_CENTS : ANNUAL_PASS_REGULAR_PRICE_CENTS
-  const remainingMs = isPromoActive && endsAt ? Math.max(endsAt - nowMs, 0) : 0
-
   return {
     currency: ANNUAL_PASS_CURRENCY,
-    phase,
-    isPromoActive,
-    priceCents,
+    phase: 'regular',
+    isPromoActive: false,
+    priceCents: ANNUAL_PASS_PRICE_CENTS,
     promoPriceCents: ANNUAL_PASS_PROMO_PRICE_CENTS,
     regularPriceCents: ANNUAL_PASS_REGULAR_PRICE_CENTS,
-    displayPrice: formatAnnualPassPrice(priceCents),
+    displayPrice: formatAnnualPassPrice(ANNUAL_PASS_PRICE_CENTS),
     promoDisplayPrice: formatAnnualPassPrice(ANNUAL_PASS_PROMO_PRICE_CENTS),
     regularDisplayPrice: formatAnnualPassPrice(ANNUAL_PASS_REGULAR_PRICE_CENTS),
-    startsAt,
-    endsAt,
-    startsAtIso: startsAt ? new Date(startsAt).toISOString() : null,
-    endsAtIso: endsAt ? new Date(endsAt).toISOString() : null,
-    remainingMs,
+    startsAt: null,
+    endsAt: null,
+    startsAtIso: null,
+    endsAtIso: null,
+    remainingMs: 0,
   }
 }
 

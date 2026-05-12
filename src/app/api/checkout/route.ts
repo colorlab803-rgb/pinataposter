@@ -31,9 +31,7 @@ export async function POST(req: NextRequest) {
     const stripe = getStripe()
     const pricing = getAnnualPassPricing()
     const origin = req.headers.get('origin') || 'https://pinataposter.com'
-    const checkoutDescription = pricing.isPromoActive
-      ? `Promoción Día de las Madres: ${pricing.displayPrice} por 12 meses de PiñataPoster ilimitado. Después costará ${pricing.regularDisplayPrice}.`
-      : `Pase anual de ${pricing.displayPrice}. Incluye 12 meses de PiñataPoster ilimitado.`
+    const checkoutDescription = `Pase anual de ${pricing.displayPrice}. Incluye 12 meses de PiñataPoster ilimitado.`
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
@@ -56,8 +54,6 @@ export async function POST(req: NextRequest) {
         email,
         pricePhase: pricing.phase,
         priceCents: String(pricing.priceCents),
-        promoStartsAt: pricing.startsAtIso || '',
-        promoEndsAt: pricing.endsAtIso || '',
       },
       payment_intent_data: {
         metadata: {
@@ -65,8 +61,6 @@ export async function POST(req: NextRequest) {
           email,
           pricePhase: pricing.phase,
           priceCents: String(pricing.priceCents),
-          promoStartsAt: pricing.startsAtIso || '',
-          promoEndsAt: pricing.endsAtIso || '',
         },
       },
       success_url: `${origin}/premium/exito?session_id={CHECKOUT_SESSION_ID}`,

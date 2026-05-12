@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Scissors, ArrowRight, FileDown, Layers, Ruler, Zap } from 'lucide-react'
-import { AnnualPassCompactLine, AnnualPassCountdownBadge, AnnualPassPromoText } from '@/components/AnnualPassPricing'
+import { AnnualPassCompactLine, AnnualPassPromoText } from '@/components/AnnualPassPricing'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { getAnnualPassPricing } from '@/lib/annual-pass-pricing'
 
@@ -48,9 +48,7 @@ export default function Home() {
         name: '¿Cómo funciona PiñataPoster?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: pricing.isPromoActive
-            ? `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar PDF o ZIP necesitas el pase anual. Durante la promoción del Día de las Madres cuesta ${pricing.displayPrice}; después costará ${pricing.regularDisplayPrice}.`
-            : `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar PDF o ZIP necesitas el pase anual de ${pricing.displayPrice}.`,
+          text: `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar PDF o ZIP necesitas el pase anual de ${pricing.displayPrice}.`,
         },
       },
       {
@@ -166,7 +164,6 @@ export default function Home() {
               <p className="text-base sm:text-lg md:text-xl text-purple-200 max-w-xl mx-auto">
                 Sube tu diseño, define el tamaño y descarga un PDF dividido en hojas listas para imprimir, recortar y armar. <AnnualPassPromoText initialPricing={pricing} />
               </p>
-              <AnnualPassCountdownBadge className="justify-center" initialPricing={pricing} />
             </div>
 
             {/* Features */}
@@ -273,15 +270,11 @@ export default function Home() {
                 },
                 {
                   q: '¿Cómo funciona PiñataPoster?',
-                  a: pricing.isPromoActive
-                    ? `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar tu molde en PDF o ZIP necesitas el pase anual. Durante la promoción del Día de las Madres cuesta ${pricing.displayPrice}; después costará ${pricing.regularDisplayPrice}.`
-                    : `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar tu molde en PDF o ZIP necesitas el pase anual de ${pricing.displayPrice}.`,
+                  a: `Inicia sesión con Google, sube tu diseño y define el tamaño. Para descargar tu molde en PDF o ZIP necesitas el pase anual de ${pricing.displayPrice}.`,
                 },
                 {
                   q: '¿Qué incluye el plan premium?',
-                  a: pricing.isPromoActive
-                    ? `El pase anual incluye 12 meses de PiñataPoster ilimitado. Durante la promoción del Día de las Madres cuesta ${pricing.displayPrice}; después costará ${pricing.regularDisplayPrice}.`
-                    : `El pase anual incluye 12 meses de PiñataPoster ilimitado por ${pricing.displayPrice}.`,
+                  a: `El pase anual incluye 12 meses de PiñataPoster ilimitado por ${pricing.displayPrice}.`,
                 },
                 {
                   q: '¿En qué tamaños de papel puedo imprimir?',
@@ -317,7 +310,7 @@ export default function Home() {
               ¿Listo para crear tu piñata?
             </h2>
             <p className="text-purple-300 mb-6">
-              Miles de piñateros ya imprimen sus moldes y promocionan su emprendimiento con PiñataPoster.
+              Miles de piñateros ya imprimen sus moldes y muestran su emprendimiento con PiñataPoster.
             </p>
             <Link
               href="/generator"

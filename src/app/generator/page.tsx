@@ -1,20 +1,15 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { PosterGenerator } from '@/components/PosterGenerator'
 import { Scissors, ArrowLeft, Loader2, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { PremiumPromoPopup, PremiumBanner } from '@/components/PremiumPromoPopup'
-import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
 import { AnnualPassCompactLine, AnnualPassPromoText } from '@/components/AnnualPassPricing'
 import { useAuth } from '@/components/AuthProvider'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { useCatalogAccess } from '@/lib/useCatalogAccess'
-import { PremiumCatalogAnnouncement } from '@/components/catalog/PremiumCatalogAnnouncement'
-import { DIGITAL_CATALOG_ENABLED } from '@/lib/feature-flags'
 
 function GoogleLoginScreen() {
   const { signInWithGoogle } = useAuth()
@@ -92,12 +87,6 @@ function GoogleLoginScreen() {
 
 export default function GeneratorPage() {
   const { user, loading: authLoading, configured, signOut } = useAuth()
-  const { catalogAccess } = useCatalogAccess()
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
-
-  const handleUpgradeClick = useCallback(() => {
-    setShowUpgradeModal(true)
-  }, [])
 
   if (authLoading) {
     return (
@@ -173,26 +162,11 @@ export default function GeneratorPage() {
           </div>
         </header>
 
-        <PremiumBanner onUpgradeClick={handleUpgradeClick} />
-
         <main>
             <PosterGenerator />
 
         </main>
       </div>
-
-      <PremiumPromoPopup onUpgradeClick={handleUpgradeClick} />
-      {DIGITAL_CATALOG_ENABLED && (
-        <PremiumCatalogAnnouncement
-          enabled={catalogAccess.status === 'premium'}
-          userKey={user?.uid}
-          context="generator"
-        />
-      )}
-      <PremiumUpgradeModal
-        open={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-      />
     </div>
   )
 }
