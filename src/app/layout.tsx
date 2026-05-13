@@ -4,6 +4,7 @@ import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { AuthProvider } from '@/components/AuthProvider';
 import { TrackVisit } from '@/components/TrackVisit';
+import { AnnualPassActivationPrompt } from '@/components/AnnualPassActivationPrompt';
 
 const siteUrl = 'https://pinataposter.com';
 const title = 'PiñataPoster - Imprime Moldes y Diseños de Piñatas en Tamaño Real';
@@ -98,6 +99,7 @@ export default function RootLayout({
         >
           <AuthProvider>
             {children}
+            <AnnualPassActivationPrompt />
           </AuthProvider>
           <footer className="relative border-t border-white/10 bg-gray-950 px-4 py-4 text-center">
             <p className="text-xs text-gray-400">

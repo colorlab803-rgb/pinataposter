@@ -11,12 +11,14 @@ interface PremiumUpgradeModalProps {
   open: boolean
   onClose: () => void
   redirectTo?: string
+  secondaryActionLabel?: string
 }
 
 export function PremiumUpgradeModal({
   open,
   onClose,
   redirectTo = '/generator',
+  secondaryActionLabel = 'Seguir editando sin descargar',
 }: PremiumUpgradeModalProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -160,7 +162,7 @@ export function PremiumUpgradeModal({
             onClick={onClose}
             className="w-full py-2.5 px-4 rounded-xl text-sm text-purple-300/60 hover:text-purple-200 hover:bg-white/5 transition-all flex items-center justify-center gap-2"
           >
-            Seguir editando sin descargar
+            {secondaryActionLabel}
           </button>
 
           <p className="text-[11px] text-center text-purple-300/40">

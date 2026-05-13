@@ -6,6 +6,7 @@ import 'react-image-crop/dist/ReactCrop.css'
 import { toast } from 'sonner'
 import { trackGeneratorUse } from '@/components/TrackVisit'
 import { useAuth } from '@/components/AuthProvider'
+import { PremiumUpgradeModal } from '@/components/PremiumUpgradeModal'
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -137,6 +138,7 @@ export function PosterGenerator({
   const [isFileNameDialogOpen, setIsFileNameDialogOpen] = useState(false)
   const [projectName, setProjectName] = useState("")
   const [downloadType, setDownloadType] = useState<DownloadType | null>(null)
+  const [isAnnualPassModalOpen, setIsAnnualPassModalOpen] = useState(false)
 
   // Auto-crop state
   const [isAutoCropping, setIsAutoCropping] = useState(false)
@@ -174,37 +176,6 @@ export function PosterGenerator({
     }
   }, [user, getIdToken])
 
-  const startCheckout = useCallback(async (): Promise<void> => {
-    if (!user) {
-      toast.error('Inicia sesión para descargar tu molde.')
-      return
-    }
-
-    try {
-      setIsUsageLoading(true)
-      const idToken = await getIdToken()
-      if (!idToken) throw new Error('No se pudo obtener tu sesión')
-
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken }),
-      })
-      const data = await res.json().catch(() => ({})) as { url?: string; error?: string }
-
-      if (!res.ok || !data.url) {
-        throw new Error(data.error || 'No se recibió URL de checkout')
-      }
-
-      window.location.href = data.url
-    } catch (error) {
-      console.error('Error al iniciar checkout:', error)
-      toast.error('No pudimos abrir el pago. Intenta de nuevo.')
-    } finally {
-      setIsUsageLoading(false)
-    }
-  }, [user, getIdToken])
-
   const ensureCanExport = useCallback(async (): Promise<boolean> => {
     if (!user) return false
 
@@ -212,9 +183,9 @@ export function PosterGenerator({
     if (!status) return false
     if (status.isPremium || status.canGenerate) return true
 
-    await startCheckout()
+    setIsAnnualPassModalOpen(true)
     return false
-  }, [user, fetchUsageStatus, startCheckout])
+  }, [user, fetchUsageStatus])
 
   const consumeSuccessfulExport = useCallback(async () => {
     if (!user) return
@@ -786,7 +757,7 @@ export function PosterGenerator({
       setIsFileNameDialogOpen(false)
       setProjectName("")
       setDownloadType(null)
-      await startCheckout()
+      setIsAnnualPassModalOpen(true)
       return
     }
     if (downloadType === 'pdf') {
@@ -1899,6 +1870,12 @@ export function PosterGenerator({
             </DialogContent>
           </Dialog>
         )}
+
+        <PremiumUpgradeModal
+          open={isAnnualPassModalOpen}
+          onClose={() => setIsAnnualPassModalOpen(false)}
+          redirectTo="/generator"
+        />
 
       </div>
     </TooltipProvider>
